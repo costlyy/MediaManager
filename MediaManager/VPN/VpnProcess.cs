@@ -311,7 +311,7 @@ namespace MediaManager.VPN
 
 			#endregion
 
-			#region VPN Process Destroy
+			#region VPN Process KillProcess
 
 			private void MaintainDestroy()
 			{

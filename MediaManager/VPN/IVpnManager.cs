@@ -14,6 +14,10 @@ namespace MediaManager.VPN
 
 		void Restart();
 
+		void ToggleEnabledState(bool enabled);
+
+		bool IsConnected();
+
 		void QueueCommand(VpnSocketCommand command);
 
 		List<VpnSocketResponse> GetCommandResponses();

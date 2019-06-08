@@ -16,7 +16,8 @@
 		public const int MAIN_IDLE_LOCAL_IP_BASE = 20;
 		public const int MAIN_IDLE_LOCAL_IP_RANGE = 42;
 
+		// TODO: Flip these for any release
 		public const bool CORE_LEAK_EXCEPTIONS = true;
-		public const bool CORE_DOWNLOADER_REQUIRES_VPN = true;
+		public const bool CORE_DOWNLOADER_REQUIRES_VPN = false;
 	}
 }

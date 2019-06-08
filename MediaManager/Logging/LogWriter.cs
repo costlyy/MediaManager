@@ -159,7 +159,7 @@ namespace MediaManager.Logging
 				{
 					HeartbeatManager.Instance.Stop();
 
-					if (MessageBox.Show($"LogWriter.Write: \n\n{printValue}") == DialogResult.OK)
+					if (MessageBox.Show($"Script Assert! \n\n{printValue}") == DialogResult.OK)
 					{
 						HeartbeatManager.Instance.Start(HeartbeatManager.OperatingMode.Active);
 					}

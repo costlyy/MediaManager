@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Windows.Forms;
 using MediaManager.Core;
 using MediaManager.Logging;
@@ -18,7 +20,8 @@ namespace MediaManager.VPN
 
 		public enum VpnManagerState
 		{
-			LoadingConfigs = 0,
+			InitControls = 0,
+			LoadingConfigs,
 			Idle,
 			Starting,
 			LoadingProcess,
@@ -28,11 +31,33 @@ namespace MediaManager.VPN
 			Stopped,
 			Disconnect,
 			DisconnectAndKill,
+			Pause,
 			Terminated,
 			Retrying,
 			Restart,
 			Error,
 			Cleanup,
+		}
+
+		private enum ControlButtons
+		{
+			Invalid,
+			VpnToggle,
+			VpnPause,
+			NextConfig
+		}
+
+		private enum DisplayBoxes
+		{
+			Invalid,
+			ActiveConfig,
+			ExternalIp,
+		}
+
+		private enum DisplayLabels
+		{
+			Invalid,
+			CountdownTimer
 		}
 
 		private string _currentError = "";
@@ -51,6 +76,12 @@ namespace MediaManager.VPN
 		private DateTime _connectTime;
 
 		private Dictionary<int, List<string>> _errorMessages = new Dictionary<int, List<string>>();
+		private Dictionary<ControlButtons, Button> _controlButtonsDictionary = new Dictionary<ControlButtons, Button>();
+		private Dictionary<DisplayBoxes, TextBox> _displayBoxesDictionary = new Dictionary<DisplayBoxes, TextBox>();
+		private Dictionary<DisplayLabels, Label> _displayLabelsDictionary = new Dictionary<DisplayLabels, Label>();
+
+		private DateTime _ipUpdateTime;
+		private int _additionalSeconds;
 
 		private VpnManagerState _state;
 		public int State => (int)_state;
@@ -86,6 +117,9 @@ namespace MediaManager.VPN
 		{
 			switch (_state)
 			{
+				case VpnManagerState.InitControls:
+					ProcessInitControls();
+					break;
 				case VpnManagerState.LoadingConfigs:
 					ProcessLoadConfigs();
 					break;
@@ -115,6 +149,9 @@ namespace MediaManager.VPN
 				case VpnManagerState.Disconnect:
 					ProcessDisconnect();
 					break;
+				case VpnManagerState.Pause:
+					ProcessPause();
+					break;
 				case VpnManagerState.Terminated:
 					break;
 				case VpnManagerState.Retrying:
@@ -133,6 +170,8 @@ namespace MediaManager.VPN
 			{
 				component.Value.Update();
 			}
+
+			UpdateExternalIp();
 		}
 
 		private void ProcessErrors()
@@ -177,7 +216,7 @@ namespace MediaManager.VPN
 				CleanVpnManager();
 			}
 
-			SetState(VpnManagerState.LoadingConfigs);
+			SetState(VpnManagerState.InitControls);
 			return true;
 		}
 
@@ -201,6 +240,7 @@ namespace MediaManager.VPN
 			}
 
 			_ownedControls = controls;
+			LogWriter.Write($"VpnManager # SetControls - Added {_ownedControls.Count} controls to manager.");
 		}
 
 		public void SetSettings(ref SettingsData settings)
@@ -212,6 +252,7 @@ namespace MediaManager.VPN
 			}
 
 			_userSettings = settings;
+			LogWriter.Write($"VpnManager # SetSettings - Added setting config.");
 		}
 
 		public bool Disconnect(bool killProcess = false)
@@ -264,6 +305,35 @@ namespace MediaManager.VPN
 			}
 			
 			return returnValue;
+		}
+
+		public bool IsConnected()
+		{
+			switch (_state)
+			{
+				case VpnManagerState.VerifyConnection:
+				case VpnManagerState.Connected:
+				case VpnManagerState.Retrying:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		public void ToggleEnabledState(bool enabled)
+		{
+			if (_ownedControls == null)
+			{
+				LogWriter.Write($"VpnManager # ToggleEnabledState - Owned controls are NULL, cannot toggle state.");
+				return;
+			}
+
+			foreach (Control item in _ownedControls.Where(item => item != null))
+			{
+				item.Enabled = enabled;
+			}
+
+			LogWriter.Write($"VpnManager # ToggleEnabledState - Enabled: {enabled}");
 		}
 
 		public void QueueCommand(VpnSocketCommand command)
@@ -404,7 +474,226 @@ namespace MediaManager.VPN
 			}
 		}
 
+		#region UI Actions / Control Processing
+
+		private void ActionVpnToggle(object sender, EventArgs e)
+		{
+			LogWriter.Write($"VpnManager # ActionVpnToggle");
+
+			switch (_state)
+			{
+				default:
+					LogWriter.Write($"VpnManager # ActionVpnToggle - VPN manager in an unsuitable state for action, waiting...");
+					break;
+
+				case VpnManagerState.Idle:
+				case VpnManagerState.Stopped:
+				case VpnManagerState.Terminated:
+					Connect();
+					break;
+
+				case VpnManagerState.Starting:
+				case VpnManagerState.LoadingProcess:
+				case VpnManagerState.LoadingSocket:
+				case VpnManagerState.VerifyConnection:
+				case VpnManagerState.Connected:
+				case VpnManagerState.Retrying:
+				case VpnManagerState.Restart:
+				case VpnManagerState.Error:
+					Disconnect(true);
+					break;
+			}
+		}
+
+		private void ActionVpnPause(object sender, EventArgs e)
+		{
+			LogWriter.Write($"VpnManager # ActionVpnPause");
+
+			switch (_state)
+			{
+				default:
+					LogWriter.Write($"VpnManager # ActionVpnToggle - VPN manager in an unsuitable state for action, waiting...");
+					break;
+
+				case VpnManagerState.Pause:
+					Connect();
+					break;
+
+				case VpnManagerState.Connected:
+					SetState(VpnManagerState.Pause);
+					break;
+			}
+		}
+
+		private void UpdateExternalIp()
+		{
+			int baseSec, rangeSec;
+
+			switch ((HeartbeatManager.OperatingMode)HeartbeatManager.Instance.State)
+			{
+				default:
+					return;
+
+				case HeartbeatManager.OperatingMode.Active:
+					baseSec = Config.MAIN_ACTIVE_LOCAL_IP_BASE;
+					rangeSec = Config.MAIN_ACTIVE_LOCAL_IP_RANGE;
+					break;
+
+				case HeartbeatManager.OperatingMode.Idle:
+					baseSec = Config.MAIN_IDLE_LOCAL_IP_BASE;
+					rangeSec = Config.MAIN_IDLE_LOCAL_IP_RANGE;
+					break;
+			}
+
+			DateTime target = _ipUpdateTime + TimeSpan.FromSeconds(baseSec + _additionalSeconds);
+			TimeSpan timeSpanNow = DateTime.Now - target;
+
+			if (_displayLabelsDictionary.TryGetValue(DisplayLabels.CountdownTimer, out Label countdownLabel))
+			{
+				countdownLabel.Text = Math.Abs(timeSpanNow.Seconds).ToString();
+			}
+
+			if (DateTime.Now <= target) return;
+
+			_additionalSeconds = new Random().Next(0, rangeSec);
+			_ipUpdateTime = DateTime.Now;
+
+			try
+			{
+				string extIp = new WebClient().DownloadString("http://icanhazip.com");
+
+				LogWriter.Write($"VpnManager # UpdateExternalIp - External IP: {extIp.Trim()}");
+
+				if (_displayBoxesDictionary.TryGetValue(DisplayBoxes.ExternalIp, out TextBox ipBox))
+				{
+					ipBox.Text = extIp;
+				}
+			}
+			catch (Exception ex)
+			{
+				LogWriter.Write($"VpnManager # UpdateExternalIp - Caught exception while getting external IP:\n{ex}");
+			}
+		}
+
+		#endregion
+
 		#region FSM Methods
+
+		#region VPN Manager - Init Controls
+
+		private Action<object, EventArgs> GetActionForButton(ControlButtons button)
+		{
+			switch (button)
+			{
+				case ControlButtons.VpnToggle: return ActionVpnToggle;
+				case ControlButtons.VpnPause: return ActionVpnPause;
+			}
+
+			LogWriter.Write($"VpnManager # GetActionForButton - Unknown / unhandled button type: {button}");
+			return null;
+		}
+
+		private bool GetControlIdFromName(string name, out ControlButtons control)
+		{
+			// Strip out the "btn" part of the control (if it exists) as the enum is more generic and doesn't use that prefix.
+			if (name.Contains("btn"))
+			{
+				name = name.Substring(name.IndexOf("btn", StringComparison.Ordinal) + 3);
+			}
+
+			try
+			{
+				control = (ControlButtons)Enum.Parse(typeof(ControlButtons), name, true);
+				return true;
+			}
+			catch
+			{
+				control = ControlButtons.Invalid;
+			}
+			return false;
+		}
+
+		private bool GetControlIdFromName(string name, out DisplayBoxes control)
+		{
+			// Strip out the "btn" part of the control (if it exists) as the enum is more generic and doesn't use that prefix.
+			if (name.Contains("tbx"))
+			{
+				name = name.Substring(name.IndexOf("tbx", StringComparison.Ordinal) + 3);
+			}
+
+			try
+			{
+				control = (DisplayBoxes)Enum.Parse(typeof(DisplayBoxes), name, true);
+				return true;
+			}
+			catch
+			{
+				control = DisplayBoxes.Invalid;
+			}
+			return false;
+		}
+
+		private bool GetControlIdFromName(string name, out DisplayLabels control)
+		{
+			// Strip out the "btn" part of the control (if it exists) as the enum is more generic and doesn't use that prefix.
+			if (name.Contains("lbl"))
+			{
+				name = name.Substring(name.IndexOf("lbl", StringComparison.Ordinal) + 3);
+			}
+
+			try
+			{
+				control = (DisplayLabels)Enum.Parse(typeof(DisplayLabels), name, true);
+				return true;
+			}
+			catch
+			{
+				control = DisplayLabels.Invalid;
+			}
+			return false;
+		}
+
+		private void ProcessInitControls()
+		{
+			if (_ownedControls == null)
+			{
+				LogWriter.Write($"VpnManager # ProcessInitControls - Waiting for controls to be assigned...");
+				return;
+			}
+
+			foreach (Control item in _ownedControls.Where(control => control != null))
+			{
+				try
+				{
+					if (GetControlIdFromName(item.Name, out ControlButtons button))
+					{ 
+						item.Click += (s, e) => GetActionForButton(button).Invoke(s, e);
+						_controlButtonsDictionary.Add(button, item as Button);
+						continue;
+					}
+
+					if (GetControlIdFromName(item.Name, out DisplayBoxes box))
+					{
+						_displayBoxesDictionary.Add(box, item as TextBox);
+						continue;
+					}
+
+					if (GetControlIdFromName(item.Name, out DisplayLabels label))
+					{
+						_displayLabelsDictionary.Add(label, item as Label);
+						continue;
+					}
+				}
+				catch (Exception e)
+				{
+					LogWriter.Write($"VpnManager # ProcessInitControls - Caught exception while processing control: {item.Name}, ex: {e}");
+				}
+			}
+
+			SetState(VpnManagerState.LoadingConfigs);
+		}
+
+		#endregion
 
 		#region VPN Manager - load Configs
 
@@ -606,6 +895,10 @@ namespace MediaManager.VPN
 
 		private void ProcessConnected()
 		{
+			// Run the status update command every tick.
+			QueueCommand(new SocketCommands.VpnManager.GetStateCommand());
+
+			// Push requested commands to the VPN software via the socket.
 			MaintainCommandQueue();
 		}
 
@@ -662,6 +955,24 @@ namespace MediaManager.VPN
 
 			LogWriter.Write($"VpnManager # Successfully destroyed VPN process.");
 			SetState(VpnManagerState.Idle);
+		}
+
+		#endregion
+
+		#region VPN Manager - pause
+
+		private void ProcessPause()
+		{
+			if (_disconnectCounter > 0) return;
+
+			_vpnComponents.TryGetValue(VpnComponentTypes.COMPONENT_SOCKET, out _currentComponent);
+
+			IVpnSocket socket = _currentComponent as VpnSocket;
+
+			if (!DisconnectSocket(ref socket)) return;
+
+			_disconnectCounter++;
+			LogWriter.Write($"VpnManager # ProcessPause - Disconnected for pause.");
 		}
 
 		#endregion

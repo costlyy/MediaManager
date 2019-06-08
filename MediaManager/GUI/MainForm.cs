@@ -26,8 +26,6 @@ namespace MediaManager.GUI
 		private SettingsForm _settingsForm;
 		private readonly Dictionary<int, List<string>> _errorMessages = new Dictionary<int, List<string>>();
 		private DriveDisplay _statusDriveDisplay;
-		private DateTime _ipUpdateTime;
-		private int _additionalSeconds;
 
 		public MainForm(string[] args)
 		{
@@ -40,6 +38,7 @@ namespace MediaManager.GUI
 			InitializeStatus();
 
 			StartVpnManager();
+			StartSabManager();
 
 #if DEBUG
 			LogWriter.Write("Application running in DEBUG mode.");
@@ -217,18 +216,40 @@ namespace MediaManager.GUI
 			_settingData.Save();
 			Settings.Default.Save();
 			VpnManager.Instance?.Destroy();
-			SabManager.Instance?.Destroy();
+			SabManager.Instance?.KillProcess();
 			LogWriter.Write($"MainForm # Finished save, program closed.");
 		}
 
+		#region Border / Main Form Controls
+
+		private void btnExit_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
+		private void btnHide_Click(object sender, EventArgs e)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnSettings_Click(object sender, EventArgs e)
+		{
+			panelShade.Location = new Point(0, 0);
+			panelShade.BackColor = Color.FromArgb(128, 128, 128, 128);
+			panelShade.Size = new Size(1920, 1080);
+			panelShade.Visible = true;
+
+			_settingsForm = new SettingsForm(ref _settingData);
+			_settingsForm.ShowDialog();
+			_settingData = _settingsForm.GetData();
+
+			panelShade.Location = new Point(1920, 1080);
+			panelShade.Visible = false;
+		}
+
+		#endregion Parent Controls
+
 		#region Actions
-
-		private Timer _streamingModeTimer;
-		private TimeSpan _streamTime;
-		private DateTime _streamEndTime;
-
-		private bool _restoreVpnAfter;
-		private bool _restoreDownloadsAfter;
 
 		private void InitActionsPanel()
 		{
@@ -248,174 +269,7 @@ namespace MediaManager.GUI
 
 			ActionsManager.Instance.SetControls(controls);
 			ActionsManager.Instance.SetSettings(ref _settingData);
-
 			ActionsManager.Instance.Start();
-
-		}
-
-		private void btnRestart_Click(object sender, EventArgs e)
-		{
-			
-		}
-
-		private void btnSettings_Click(object sender, EventArgs e)
-		{
-			panelShade.Location = new Point(0,0);
-			panelShade.BackColor = Color.FromArgb(128, 128, 128, 128);
-			panelShade.Size = new Size(1920, 1080);
-			panelShade.Visible = true;
-
-			_settingsForm = new SettingsForm(ref _settingData);
-			_settingsForm.ShowDialog();
-			_settingData = _settingsForm.GetData();
-
-			panelShade.Location = new Point(1920, 1080);
-			panelShade.Visible = false;
-		}
-
-		private bool IsStreamingModeEnabled()
-		{
-			return _streamingModeTimer != null;
-		}
-
-		private void EnableStreamingMode()
-		{
-			_streamingModeTimer = new Timer { Interval = 1000 };
-			_streamingModeTimer.Tick += StreamTimerTick;
-			_streamingModeTimer.Start();
-
-			_streamTime = TimeSpan.FromMinutes(90d);
-			_streamEndTime = DateTime.Now + _streamTime;
-
-			btnToggleStreamMode.Text = "Streaming Mode On";
-			btnToggleStreamMode.ForeColor = Color.Green;
-			lblStreamMode.Text = _streamTime.TotalMinutes + "m";
-
-			if (IsVpnConnected())
-			{
-				_restoreVpnAfter = true;
-			}
-
-			DisableVpnManager();
-
-			if (IsSabConnected())
-			{
-				_restoreDownloadsAfter = true;
-			}
-			
-			DisableSabManager();
-
-			LogWriter.Write($"MainForm # Started Streaming mode.");
-		}
-
-		private void DisableStreamingMode()
-		{
-			_streamingModeTimer.Stop();
-			_streamingModeTimer = null;
-
-			_streamTime = TimeSpan.FromMinutes(0d);
-
-			btnToggleStreamMode.Text = "Streaming Mode Off";
-			btnToggleStreamMode.ForeColor = Color.FromKnownColor(KnownColor.Control);
-			lblStreamMode.Text = "0m";
-
-			EnableVpnManager();
-
-			if (_restoreVpnAfter)
-			{
-				LogWriter.Write($"MainForm # Automatically restoring VPN state after streaming.");
-				ConnectVpn();
-			}
-
-			EnableSabManager();
-
-			if (_restoreDownloadsAfter)
-			{
-				LogWriter.Write("MainForm # Attempting to restore downloader running state.");
-
-				if (SabManager.Instance == null)
-				{
-					SabManager.Initialize();
-
-					if (SabManager.Instance == null)
-					{
-						LogWriter.Write("MainForm # Error! Failed to re-init downloader core.");
-						return;
-					}
-
-					LogWriter.Write("MainForm # Re-initialised downloader singleton.");
-				}
-
-				SabManager.Instance.SetSettings(ref _settingData);
-
-				if (!SabManager.Instance.StartProcess())
-				{
-					LogWriter.Write("MainForm # Failed to start process, attempting to process errors.");
-
-					string error = "";
-					SabManager.Instance.GetError(ref error);
-
-					if (!SabManager.Instance.StartProcess())
-					{
-						LogWriter.Write("MainForm # Critical Error! Processed errors but still could not start.", DebugPriority.High, true);
-						return;
-					}
-
-					LogWriter.Write($"MainForm # Got error: {error}");
-				}
-
-				btnDownloadToggle.Image = Resources.icon_stop_mid;
-			}
-
-			LogWriter.Write("MainForm # Manually stopped Streaming mode (re-enabled VPN etc).");
-		}
-
-		private void btnToggleStreamMode_Click(object sender, EventArgs e)
-		{
-			if (!IsStreamingModeEnabled())
-			{
-				EnableStreamingMode();
-			}
-			else
-			{
-				DisableStreamingMode();
-			}
-		}
-
-		private void StreamTimerTick(object sender, EventArgs e)
-		{
-			TimeSpan timeDiff = _streamEndTime - DateTime.Now;
-
-			// Check to see if the timer has elapsed.
-			if (timeDiff.TotalSeconds < 0)
-			{
-				btnToggleStreamMode_Click(null, null);
-				LogWriter.Write("MainForm # Streaming mode timer has elapsed, turning off streaming mode.");
-				return;
-			}
-
-			var formattedOutput = new StringBuilder();
-
-			if (timeDiff.TotalSeconds < 60)
-			{
-				formattedOutput.Append("<");
-			}
-
-			string timeSpanString = timeDiff.TotalMinutes.ToString(CultureInfo.InvariantCulture);
-
-			foreach (char c in timeSpanString)
-			{
-				if (c.Equals('.'))
-				{
-					break;
-				}
-
-				formattedOutput.Append(c);
-			}
-
-			formattedOutput.Append("m");
-
-			lblStreamMode.Text = formattedOutput.ToString();
 		}
 
 		#endregion Quick Actions
@@ -453,63 +307,27 @@ namespace MediaManager.GUI
 
 		#region SABnzbd Manager
 
-		private bool _pauseSab;
-		private PauseState _pauseState;
-
-		private enum PauseState
+		private void StartSabManager()
 		{
-			Unpaused,
-			Pausing,
-			Paused,
-			Unpausing,
-		}
+			if (SabManager.Instance != null) return;
 
-		private void SetPauseState(PauseState state)
-		{
-			LogWriter.Write($"MainForm # Setting pause state from {_pauseState} to {state}");
-			_pauseState = state;
-		}
+			List<Control> sabControls = new List<Control>();
 
-		private bool IsSabConnected()
-		{
+			foreach (Control item in panelDownloadManager.Controls)
+			{
+				sabControls.Add(item);
+			}
+
+			SabManager.Initialize();
+
 			if (SabManager.Instance == null)
 			{
-				return false;
+				LogWriter.Write($"MainForm # StartSabManager - Failed to initialise SabNZBD manager.", DebugPriority.High, true);
+				return;
 			}
 
-			switch ((SabManager.SabManagerState) SabManager.Instance.State)
-			{
-				case SabManager.SabManagerState.Running:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		private void DisableSabManager()
-		{
-			SabManager.Instance?.StopProcess();
-
-			foreach (Control item in panelDownloadManager.Controls)
-			{
-				if (item == null) continue;
-
-				item.Enabled = false;
-			}
-
-			LogWriter.Write("MainForm # Disabled SAB Downloader.");
-		}
-
-		private void EnableSabManager()
-		{
-			foreach (Control item in panelDownloadManager.Controls)
-			{
-				if (item == null) continue;
-
-				item.Enabled = true;
-			}
-
-			LogWriter.Write("MainForm # Enabled SAB Downloader.");
+			SabManager.Instance.SetSettings(ref _settingData);
+			SabManager.Instance.SetControls(sabControls);
 		}
 
 		private void MaintainSabManager()
@@ -547,8 +365,8 @@ namespace MediaManager.GUI
 
 		    if (clientData != null)
 		    {
-		        ProcessSabClientData(clientData);
-		    }
+			    lblSabUptime.Text = SabManager.Instance.GetUpTime();
+			}
 
 		    switch ((SabManager.SabManagerState)SabManager.Instance.State)
 			{
@@ -570,9 +388,9 @@ namespace MediaManager.GUI
 
 					if (clientData?.StatusData == null)
 					{
-						if (_pauseState != PauseState.Unpaused && _pauseState != PauseState.Paused)
+						if (SabManager.Instance.PauseState != SabManager.ClientPauseState.Unpaused && SabManager.Instance.PauseState != SabManager.ClientPauseState.Paused)
 						{
-							lblSabState.Text = _pauseState.ToString().ToUpper();
+							lblSabState.Text = SabManager.Instance.PauseState.ToString().ToUpper();
 							lblSabState.ForeColor = Color.Yellow;
 						}
 						else
@@ -591,9 +409,9 @@ namespace MediaManager.GUI
 
 					if (clientData.Paused)
 					{
-						if (_pauseState != PauseState.Unpaused && _pauseState != PauseState.Paused)
+						if (SabManager.Instance.PauseState != SabManager.ClientPauseState.Unpaused && SabManager.Instance.PauseState != SabManager.ClientPauseState.Paused)
 						{
-							lblSabState.Text = _pauseState.ToString().ToUpper();
+							lblSabState.Text = SabManager.Instance.PauseState.ToString().ToUpper();
 							lblSabState.ForeColor = Color.Yellow;
 						}
 						else
@@ -609,9 +427,9 @@ namespace MediaManager.GUI
 					}
 					else
 					{
-						if (_pauseState != PauseState.Unpaused && _pauseState != PauseState.Paused)
+						if (SabManager.Instance.PauseState != SabManager.ClientPauseState.Unpaused && SabManager.Instance.PauseState != SabManager.ClientPauseState.Paused)
 						{
-							lblSabState.Text = _pauseState.ToString().ToUpper();
+							lblSabState.Text = SabManager.Instance.PauseState.ToString().ToUpper();
 							lblSabState.ForeColor = Color.Yellow;
 						}
 						else
@@ -651,230 +469,12 @@ namespace MediaManager.GUI
             }
 		}
 
-		private void ProcessSabClientData(SabManager.SabHttpData data)
-		{
-			lblSabUptime.Text = SabManager.Instance.GetUpTime();
-			ProcessPauseState(data);
-		}
-
-		private void ProcessPauseState(SabManager.SabHttpData data)
-		{
-			if (data?.StatusData == null) return;
-
-			// If the manager hasn't been started yet, wait for it to happen.
-			if (SabManager.Instance == null)
-			{
-				return;
-			}
-
-			switch (_pauseState)
-			{
-				case PauseState.Unpaused:
-
-					if (!data.Paused)
-					{
-						if (_pauseSab)
-						{
-							SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetPaused());
-							LogWriter.Write("MainForm # Sent pause request to SABnzbd.");
-							SetPauseState(PauseState.Pausing);
-						}
-					}
-					else
-					{
-						LogWriter.Write("MainForm # Sent pause request to SABnzbd, but it is already paused.");
-						SetPauseState(PauseState.Paused);
-					}
-
-					break;
-
-				case PauseState.Pausing:
-
-					if (data.Paused)
-					{
-						LogWriter.Write("MainForm # Send pause cmd finished, moving to paused.");
-						SetPauseState(PauseState.Paused);
-					}
-
-					break;
-
-				case PauseState.Paused:
-
-					if (!data.Paused)
-					{
-						SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetUnPaused());
-						LogWriter.Write("MainForm # Warning! SABnzbd un-paused without direction! What happened?", DebugPriority.High);
-						SetPauseState(PauseState.Unpaused);
-					}
-
-					if (!_pauseSab)
-					{
-						SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetUnPaused());
-						LogWriter.Write("MainForm # Sent un-pause request to SABnzbd.");
-						SetPauseState(PauseState.Unpausing);
-					}	
-
-					break;
-
-				case PauseState.Unpausing:
-
-					if (!data.Paused)
-					{
-						LogWriter.Write("MainForm # Send un-pause cmd finished, moving to un-paused.");
-						SetPauseState(PauseState.Unpaused);
-					}
-
-					break;
-			}
-		}
-
-		private void btnDownloadToggle_Click(object sender, EventArgs e)
-		{
-			if (SabManager.Instance == null)
-			{
-				SabManager.Initialize();
-				SabManager.Instance?.SetSettings(ref _settingData);
-
-				if (SabManager.Instance == null || !SabManager.Instance.StartProcess())
-				{
-					LogWriter.Write("MainForm # Failed to start SABnzbd (initial).");
-					return;
-				}
-
-				btnDownloadToggle.Image = Resources.icon_stop_mid;
-				LogWriter.Write("MainForm # Started SABnzbd Manager (initial).");
-			}
-
-			string error = "";
-
-			switch ((SabManager.SabManagerState) SabManager.Instance.State)
-			{
-				case SabManager.SabManagerState.Idle:
-				case SabManager.SabManagerState.Stopped:
-
-					SabManager.Instance.SetSettings(ref _settingData);
-
-					if (!SabManager.Instance.StartProcess())
-					{
-						LogWriter.Write("MainForm # Failed to start SABnzbd.");
-						return;
-					}
-
-					btnDownloadToggle.Image = Resources.icon_stop_mid;
-
-					LogWriter.Write("MainForm # Started SABnzbd Manager.");
-
-					break;
-
-				case SabManager.SabManagerState.Running:
-
-					SabManager.Instance.SetSettings(ref _settingData);
-
-					if (!SabManager.Instance.StopProcess())
-					{
-						LogWriter.Write("MainForm # Failed to stop process, attempting to process errors.");
-
-						SabManager.Instance.GetError(ref error);
-
-						if (!SabManager.Instance.StopProcess())
-						{
-							LogWriter.Write("MainForm # Critical Error! Processed errors but still could not stop.", DebugPriority.High, true);
-							break;
-						}
-						
-						LogWriter.Write($"MainForm # Got error: {error}");
-					}
-
-					DownloadManager.Instance?.ClearAll();
-
-					btnDownloadToggle.Image = Resources.icon_play_mid;
-
-					LogWriter.Write("MainForm # Stopped SABnzbd Manager.");
-
-					break;
-
-			    case SabManager.SabManagerState.Error:
-
-			        SabManager.Instance.GetError(ref error);
-
-                    SabManager.Instance.SetSettings(ref _settingData);
-			        SabManager.Instance.StopProcess();
-
-			        DownloadManager.Instance?.ClearAll();
-
-			        btnDownloadToggle.Image = Resources.icon_play_mid;
-
-			        LogWriter.Write($"MainForm # Reset error'd SABnzbd Manager ({error}).");
-
-                    break;
-            }
-		}
-
-		private void btnDownloadPause_CheckedChanged(object sender, EventArgs e)
-		{
-			_pauseSab = !_pauseSab;
-		}
-
 		#endregion SABnzbd Manager
-
-		#region Parent Controls
-
-		private void btnExit_Click(object sender, EventArgs e)
-		{
-			Close();
-		}
-
-		private void btnHide_Click(object sender, EventArgs e)
-		{
-			WindowState = FormWindowState.Minimized;
-		}
-
-		#endregion Parent Controls
 
 		#region VPN Manager
 
-		private bool IsVpnConnected()
-		{
-			if (VpnManager.Instance == null)
-			{
-				return false;
-			}
-
-			switch ((VpnManager.VpnManagerState) VpnManager.Instance.State)
-			{
-				case VpnManager.VpnManagerState.VerifyConnection:
-				case VpnManager.VpnManagerState.Connected:
-				case VpnManager.VpnManagerState.Retrying:
-					return true;
-				default:
-					return false;
-			}
-		}
-
 		private void MaintainVpnManager()
 		{
-			if (VpnManager.Instance == null)
-			{
-				List<Process> myProcesses = new List<Process>(Process.GetProcesses());
-
-				foreach (Process item in myProcesses.Where(item => item != null))
-				{
-					if (string.Equals(item.ProcessName, "openvpn", StringComparison.InvariantCultureIgnoreCase))
-					{
-						try
-						{
-							item.Kill();
-							LogWriter.Write("MainForm # Killed unexpected OpenVPN process.");
-						}
-						catch (Exception)
-						{
-						}
-					}
-				}
-
-				return;
-			}
-
 			ProcessResponses();
 
 			VpnManager.Instance.Update();
@@ -893,61 +493,9 @@ namespace MediaManager.GUI
 					lblVpnState.Text = "INITIALISE";
 					lblVpnState.ForeColor = Color.Yellow;
 					break;
-
-				case VpnManager.VpnManagerState.Connected:
-
-					VpnManager.Instance.QueueCommand(new VPN.SocketCommands.VpnManager.GetStateCommand());
-
-					break;
-
-				case VpnManager.VpnManagerState.Error:
-					break;
 			}
 
 			UpdateVpnButton();
-			UpdateExternalIp();
-		}
-
-		private void UpdateExternalIp()
-		{
-			int baseSec, rangeSec;
-
-			switch ((HeartbeatManager.OperatingMode) HeartbeatManager.Instance.State)
-			{
-				default:
-					return;
-
-				case HeartbeatManager.OperatingMode.Active:
-					baseSec = Config.MAIN_ACTIVE_LOCAL_IP_BASE;
-					rangeSec = Config.MAIN_ACTIVE_LOCAL_IP_RANGE;
-					break;
-
-				case HeartbeatManager.OperatingMode.Idle:
-					baseSec = Config.MAIN_IDLE_LOCAL_IP_BASE;
-					rangeSec = Config.MAIN_IDLE_LOCAL_IP_RANGE;
-					break;
-			}
-
-			DateTime target = _ipUpdateTime + TimeSpan.FromSeconds(baseSec + _additionalSeconds);
-			TimeSpan timeSpanNow = DateTime.Now - target;
-
-			lblExtIpTimer.Text = Math.Abs(timeSpanNow.Seconds).ToString();
-
-			if (DateTime.Now <= target) return;
-
-			_additionalSeconds = new Random().Next(0, rangeSec);
-			_ipUpdateTime = DateTime.Now;
-
-			try
-			{
-				string extIp = new WebClient().DownloadString("http://icanhazip.com");
-				LogWriter.Write($"MainForm # External IP update: {extIp.Trim()}");
-				tbxMyIP.Text = extIp;
-			}
-			catch (Exception ex)
-			{
-				LogWriter.Write($"MainForm # Caught exception while getting external IP:\n{ex}");
-			}
 		}
 
 		private void ProcessResponses()
@@ -969,7 +517,7 @@ namespace MediaManager.GUI
 
 		private void UpdateVpnButton()
 		{
-			int.TryParse(btnToggleVpn.Tag.ToString(), out var buttonTag);
+			int.TryParse(btnVpnToggle.Tag.ToString(), out var buttonTag);
 
 			switch ((VpnManager.VpnManagerState) VpnManager.Instance.State)
 			{
@@ -977,15 +525,15 @@ namespace MediaManager.GUI
 
 					if (buttonTag != VpnManager.BUTTON_STATE_VPN_RUNNING)
 					{
-						btnToggleVpn.Tag = VpnManager.BUTTON_STATE_VPN_RUNNING;
-						btnToggleVpn.Image = Resources.icon_stop_mid;
+						btnVpnToggle.Tag = VpnManager.BUTTON_STATE_VPN_RUNNING;
+						btnVpnToggle.Image = Resources.icon_stop_mid;
 					}
 					break;
 
 				case VpnManager.VpnManagerState.LoadingProcess:
 				case VpnManager.VpnManagerState.LoadingSocket:
 
-					btnToggleVpn.Image = Resources.icon_stop_mid;					
+					btnVpnToggle.Image = Resources.icon_stop_mid;					
 					break;
 
 				case VpnManager.VpnManagerState.Disconnect:
@@ -996,8 +544,8 @@ namespace MediaManager.GUI
 
 					if (buttonTag != VpnManager.BUTTON_STATE_VPN_OFF)
 					{
-						btnToggleVpn.Tag = VpnManager.BUTTON_STATE_VPN_OFF;
-						btnToggleVpn.Image = Resources.icon_play_mid;
+						btnVpnToggle.Tag = VpnManager.BUTTON_STATE_VPN_OFF;
+						btnVpnToggle.Image = Resources.icon_play_mid;
 					}
 					break;
 
@@ -1005,8 +553,8 @@ namespace MediaManager.GUI
 
 					if (buttonTag != VpnManager.BUTTON_STATE_VPN_RETRYING)
 					{
-						btnToggleVpn.Tag = VpnManager.BUTTON_STATE_VPN_RETRYING;
-						btnToggleVpn.Image = btnToggleVpn.Image = Resources.icon_retry_mid;
+						btnVpnToggle.Tag = VpnManager.BUTTON_STATE_VPN_RETRYING;
+						btnVpnToggle.Image = btnVpnToggle.Image = Resources.icon_retry_mid;
 					}
 					break;
 			}
@@ -1016,6 +564,26 @@ namespace MediaManager.GUI
 		{
 			if (VpnManager.Instance == null)
 			{
+				if (VpnManager.Instance == null)
+				{
+					List<Process> myProcesses = new List<Process>(Process.GetProcesses());
+
+					foreach (Process item in myProcesses.Where(item => item != null))
+					{
+						if (string.Equals(item.ProcessName, "openvpn", StringComparison.InvariantCultureIgnoreCase))
+						{
+							try
+							{
+								item.Kill();
+								LogWriter.Write("MainForm # Killed unexpected OpenVPN process.");
+							}
+							catch (Exception)
+							{
+							}
+						}
+					}
+				}
+
 				List<Control> vpnControls = new List<Control>();
 
 				foreach (Control item in panelVpnManager.Controls)
@@ -1063,71 +631,7 @@ namespace MediaManager.GUI
 			VpnManager.Instance.Start();
 		}
 
-		private void DisconnectVpn()
-		{
-			VpnManager.Instance?.Disconnect(true);
-		}
-
-		private void ConnectVpn()
-		{
-			VpnManager.Instance?.Connect();
-		}
-
-		private void btnToggleVpn_Click(object sender, EventArgs e)
-		{
-			Button item = sender as Button;
-			if (item == null) return;
-
-			int.TryParse(item.Tag.ToString(), out var buttonTag);
-
-			switch (buttonTag)
-			{
-				case VpnManager.BUTTON_STATE_VPN_OFF:
-					ConnectVpn();
-					break;
-
-				case VpnManager.BUTTON_STATE_VPN_RUNNING:
-					DisconnectVpn();
-					break;
-
-				case VpnManager.BUTTON_STATE_VPN_RETRYING:
-					break;
-			}
-		}
-
-		private void EnableVpnManager()
-		{
-			foreach (Control item in panelVpnManager.Controls)
-			{
-				if (item == null) continue;
-
-				item.Enabled = true;
-			}
-
-			LogWriter.Write("MainForm # Enabled VPN Manager.");
-		}
-
-		private void DisableVpnManager()
-		{
-			VpnManager.Instance?.Disconnect();
-
-			foreach (Control item in panelVpnManager.Controls)
-			{
-				if (item == null) continue;
-
-				item.Enabled = false;
-			}
-
-			LogWriter.Write("MainForm # Disabled VPN Manager.");
-		}
-
 		#endregion VPN Manager 
-
-		private void btnKillAll_Click(object sender, EventArgs e)
-		{
-			LogWriter.Write("MainForm # User requested to kill all running processes.");
-			ForceCleanup();
-		}
 
 		public void ForceCleanup()
 		{
@@ -1137,11 +641,8 @@ namespace MediaManager.GUI
 			VpnManager.Instance?.Disconnect(true);
 		}
 
-		private void btnVpnPause_Click(object sender, EventArgs e)
-		{
 
-		}
-
+		// TODO: Move this into the sab manager class
 		private void LblTitleSab_Click(object sender, EventArgs e)
 		{
 			var sabAddress = new StringBuilder();

@@ -13,8 +13,14 @@ namespace MediaManager.SABnzbd
 
 		SabManager.SabHttpData GetClientData();
 
-		void Destroy();
+		void KillProcess();
 
 		void Restart();
+
+		bool IsConnected();
+
+		void ToggleEnabledState(bool enabled);
+
+		SabManager.ClientPauseState PauseState { get; }
 	}
 }

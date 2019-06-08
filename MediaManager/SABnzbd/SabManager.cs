@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Downloads;
 using MediaManager.Logging;
+using MediaManager.Properties;
 using MediaManager.SABnzbd.SabCommands;
 using MediaManager.VPN;
 
@@ -19,6 +23,7 @@ namespace MediaManager.SABnzbd
 
 		public enum SabManagerState
 		{
+			InitControls,
 			Idle,
 			Starting,
 			LoadingProcess,
@@ -33,6 +38,24 @@ namespace MediaManager.SABnzbd
 			Error,
 			Cleanup,
 		}
+
+		private enum ControlButtons
+		{
+			Invalid,
+			DownloadToggle,
+			DownloadPause
+		}
+
+		public enum ClientPauseState
+		{
+			Unpaused,
+			Pausing,
+			Paused,
+			Unpausing,
+		}
+
+		private bool _pauseSab;
+		public ClientPauseState PauseState { get; private set; }
 
 		private string _currentError = "";
 		private Dictionary<int, ISabComponent> _sabComponents;
@@ -50,6 +73,7 @@ namespace MediaManager.SABnzbd
 		private DateTime _connectTime;
 
 		private Dictionary<string, List<string>> _errorMessages = new Dictionary<string, List<string>>();
+		private Dictionary<ControlButtons, Button> _controlButtonsDictionary;
 
 		private SabManagerState _state;
 		public int State => (int)_state;
@@ -84,6 +108,8 @@ namespace MediaManager.SABnzbd
 			_errorHandler = new Timer { Interval = 1000 };
 			_errorHandler.Tick += (s, e) => ProcessErrors();
 			_errorHandler.Start();
+
+			SetState(SabManagerState.InitControls);
 		}
 
 		private void ProcessErrors()
@@ -152,6 +178,7 @@ namespace MediaManager.SABnzbd
 			}
 
 			_ownedControls = controls;
+			LogWriter.Write($"SabManager # SetControls - Added {_ownedControls.Count} controls to manager.");
 		}
 
 		public void SetSettings(ref SettingsData settings)
@@ -163,6 +190,7 @@ namespace MediaManager.SABnzbd
 			}
 
 			_userSettings = settings;
+			LogWriter.Write($"SabManager # SetSettings - Added setting config.");
 		}
 
 		public bool StopProcess()
@@ -224,7 +252,7 @@ namespace MediaManager.SABnzbd
 			return httpClient?.GetClientData();
 		}
 
-		public void Destroy()
+		public void KillProcess()
 		{
 			ProcessStopProcess(true);
 		}
@@ -259,12 +287,42 @@ namespace MediaManager.SABnzbd
 			SetState(SabManagerState.Restart);
 		}
 
+		public bool IsConnected()
+		{
+			switch (_state)
+			{
+				case SabManagerState.Running:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		public void ToggleEnabledState(bool enabled)
+		{
+			if (_ownedControls == null)
+			{
+				LogWriter.Write($"SabManager # ToggleEnabledState - _ownedControls are NULL, cannot toggle enabled state.");
+				return;
+			}
+
+			foreach (Control item in _ownedControls.Where(item => item != null))
+			{
+				item.Enabled = enabled;
+			}
+
+			LogWriter.Write($"SabManager # ToggleEnabledState - Enabled: {enabled}");
+		}
+
 		#endregion
 
 		public void Update()
 		{
 			switch (_state)
 			{
+				case SabManagerState.InitControls:
+					ProcessInitControls();
+					break;
 				case SabManagerState.Idle:
 					ProcessIdle();
 					break;
@@ -347,6 +405,231 @@ namespace MediaManager.SABnzbd
 	            errorCounter++;
 	        }
 	    }
+
+		#region UI Actions / Control Processing
+
+		private void SetPauseState(ClientPauseState state)
+		{
+			LogWriter.Write($"SabManager # SetPauseState - From {PauseState} to {state}");
+			PauseState = state;
+		}
+
+		private void ProcessPauseState(SabHttpData data)
+		{
+			if (data?.StatusData == null) return;
+
+			switch (PauseState)
+			{
+				case ClientPauseState.Unpaused:
+
+					if (!data.Paused)
+					{
+						if (_pauseSab)
+						{
+							QueueCommand(new SabCommands.SabManager.SetPaused());
+							LogWriter.Write("SabManager # ProcessPauseState - Sent pause request to SABnzbd.");
+							SetPauseState(ClientPauseState.Pausing);
+						}
+					}
+					else
+					{
+						LogWriter.Write("SabManager # ProcessPauseState - Sent pause request to SABnzbd, but it is already paused.");
+						SetPauseState(ClientPauseState.Paused);
+					}
+
+					break;
+
+				case ClientPauseState.Pausing:
+
+					if (data.Paused)
+					{
+						LogWriter.Write("SabManager # ProcessPauseState - Send pause cmd finished, moving to paused.");
+						SetPauseState(ClientPauseState.Paused);
+					}
+
+					break;
+
+				case ClientPauseState.Paused:
+
+					if (!data.Paused)
+					{
+						QueueCommand(new SabCommands.SabManager.SetUnPaused());
+						LogWriter.Write("SabManager # ProcessPauseState - Warning! SABnzbd un-paused without direction! What happened?", DebugPriority.High);
+						SetPauseState(ClientPauseState.Unpaused);
+					}
+
+					if (!_pauseSab)
+					{
+						QueueCommand(new SabCommands.SabManager.SetUnPaused());
+						LogWriter.Write("SabManager # ProcessPauseState - Sent un-pause request to SABnzbd.");
+						SetPauseState(ClientPauseState.Unpausing);
+					}
+
+					break;
+
+				case ClientPauseState.Unpausing:
+
+					if (!data.Paused)
+					{
+						LogWriter.Write("SabManager # ProcessPauseState - Send un-pause cmd finished, moving to un-paused.");
+						SetPauseState(ClientPauseState.Unpaused);
+					}
+
+					break;
+			}
+		}
+
+		private void ActionDownloadToggle(object sender, EventArgs e)
+		{
+			LogWriter.Write($"SabManager # ActionDownloadToggle");
+
+			if (!(sender is Button toggleButton))
+			{
+				LogWriter.Write($"SabManager # ActionDownloadToggle - Failed to cast sender to button, cannot process toggle request.", DebugPriority.High, true);
+				return;
+			}
+
+			string error = null;
+
+			switch (_state)
+			{
+				case SabManagerState.Idle:
+				case SabManagerState.Stopped:
+
+					if (!StartProcess())
+					{
+						LogWriter.Write("SabManager # ActionDownloadToggle - Failed to start SABnzbd client.");
+						return;
+					}
+
+					toggleButton.Image = Resources.icon_stop_mid;
+					LogWriter.Write("SabManager # ActionDownloadToggle - Started SabNZBD client.");
+
+					break;
+
+				case SabManagerState.Running:
+
+					if (!StopProcess())
+					{
+						LogWriter.Write(
+							"SabManager # ActionDownloadToggle - Failed to stop process, attempting to process errors.");
+
+						GetError(ref error);
+
+						if (!StopProcess())
+						{
+							LogWriter.Write(
+								"SabManager # ActionDownloadToggle - Critical Error! Processed errors but still could not stop.",
+								DebugPriority.High, true);
+							break;
+						}
+
+						LogWriter.Write($"SabManager # ActionDownloadToggle - Got error: {error}");
+					}
+
+					DownloadManager.Instance.ClearAll();
+
+					toggleButton.Image = Resources.icon_play_mid;
+
+					LogWriter.Write("SabManager # ActionDownloadToggle - Stopped SABnzbd client.");
+
+					break;
+
+				case SabManagerState.Error:
+
+					GetError(ref error);
+					StopProcess();
+					DownloadManager.Instance.ClearAll();
+
+					toggleButton.Image = Resources.icon_play_mid;
+
+					LogWriter.Write(
+						$"SabManager # ActionDownloadToggle - Reset error locked SABnzbd client ({error}).");
+
+					break;
+			}
+		}
+
+		private void ActionDownloadPause(object sender, EventArgs e)
+		{
+			_pauseSab = !_pauseSab;
+			LogWriter.Write($"SabManager # ActionDownloadPause - _pauseSab: {_pauseSab}");
+
+			if (!(sender is Button toggleButton))
+			{
+				LogWriter.Write($"SabManager # ActionDownloadPause - Failed to cast sender to button");
+				return;
+			}
+
+			toggleButton.BackColor = _pauseSab ? Color.FromArgb(64, 64, 64) : Color.FromArgb(28, 28, 28);
+		}
+
+		#endregion
+
+		#region FSM - Init Controls
+
+		private Action<object, EventArgs> GetActionForButton(ControlButtons button)
+	    {
+		    switch (button)
+		    {
+			    case ControlButtons.DownloadToggle: return ActionDownloadToggle;
+			    case ControlButtons.DownloadPause: return ActionDownloadPause;
+		    }
+
+		    LogWriter.Write($"SabManager # GetActionForButton - Unknown / unhandled button type: {button}");
+		    return null;
+	    }
+
+		private bool GetControlFromName(string buttonName, out ControlButtons button)
+		{
+			// Strip out the "btn" part of the control (if it exists) as the enum is more generic and doesn't use that prefix.
+			if (buttonName.Contains("btn"))
+			{
+				buttonName = buttonName.Substring(buttonName.IndexOf("btn", StringComparison.Ordinal) + 3);
+			}
+
+			try
+			{
+				button = (ControlButtons)Enum.Parse(typeof(ControlButtons), buttonName, true);
+				return true;
+			}
+			catch
+			{
+				button = ControlButtons.Invalid;
+			}
+			return false;
+		}
+
+		private void ProcessInitControls()
+	    {
+		    if (_ownedControls == null)
+		    {
+			    LogWriter.Write($"SabManager # ProcessInitControls - Waiting for controls to be assigned...");
+			    return;
+		    }
+
+		    _controlButtonsDictionary = new Dictionary<ControlButtons, Button>();
+
+		    foreach (Control item in _ownedControls.Where(control => control != null))
+		    {
+			    try
+			    {
+				    if (!GetControlFromName(item.Name, out ControlButtons button)) continue;
+
+					item.Click += (s, e) => GetActionForButton(button).Invoke(s, e);
+
+					_controlButtonsDictionary.Add(button, item as Button);
+				}
+			    catch (Exception e)
+			    {
+				    LogWriter.Write($"SabManager # ProcessInitControls - Caught exception while processing control: {item.Name}, ex: {e}");
+			    }
+		    }
+
+			SetState(SabManagerState.Idle);
+		}
+
+	    #endregion 
 
 		#region FSM - Idle / Wait for start listener.
 
@@ -523,6 +806,13 @@ namespace MediaManager.SABnzbd
 				return;
 			}
 
+			SabHttpData clientData = GetClientData();
+
+			if (clientData != null)
+			{
+				ProcessPauseState(clientData);
+			}
+
 			MaintainCommandQueue();
 		}
 
@@ -534,13 +824,13 @@ namespace MediaManager.SABnzbd
 
 			if (VpnManager.Instance == null)
 			{
-				LogWriter.Write($"SabManager # Failed validity check: VpnManager.Instance == null");
+				LogWriter.Write($"SabManager # CheckRunValidity - Failed validity check: VpnManager.Instance == null");
 				valid = false;
 			}
 
 			if ((VpnManager.VpnManagerState) VpnManager.Instance.State != VpnManager.VpnManagerState.Connected)
 			{
-				LogWriter.Write($"SabManager # Failed validity check: State != Connected ({(VpnManager.VpnManagerState)VpnManager.Instance.State})");
+				LogWriter.Write($"SabManager # CheckRunValidity - Failed validity check: VPN State is NOT Connected (state: {(VpnManager.VpnManagerState)VpnManager.Instance.State})", DebugPriority.High, true);
 				valid = false;
 			}
 
