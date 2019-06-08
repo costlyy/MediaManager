@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Configuration;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -142,7 +139,7 @@ namespace MediaManager.VPN
 				}
 			}
 
-			public VpnSocketResponse SendCommand(SocketCommands.VpnSocketCommand command)
+			public VpnSocketResponse SendCommand(VpnSocketCommand command)
 			{
 				if (GetState() != SocketState.WaitingForCommands)
 				{

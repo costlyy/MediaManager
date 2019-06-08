@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MediaManager.Core;
 using MediaManager.Logging;
@@ -30,6 +29,7 @@ namespace MediaManager.SABnzbd
 			StopProcess,
 			Terminated,
 			Retrying,
+			Restart,
 			Error,
 			Cleanup,
 		}
@@ -43,6 +43,7 @@ namespace MediaManager.SABnzbd
 		private Timer _errorHandler;
 
 		private DateTime _bootTimer;
+		private DateTime _restartTimer;
 		private bool _bootTimerStarted;
 
 		private TimeSpan _connectSpan;
@@ -53,9 +54,10 @@ namespace MediaManager.SABnzbd
 		private SabManagerState _state;
 		public int State => (int)_state;
 
-	    private uint errorCounter = 0;
+	    private uint errorCounter;
 
 		private const int BOOT_TIME_GRACE_SECONDS = 2;
+		private const int RESTART_TIME_SECONDS = 15;
 
 		#region CTOR & Public API
 
@@ -247,6 +249,16 @@ namespace MediaManager.SABnzbd
 			return returnValue;
 		}
 
+		public void Restart()
+		{
+			if (_state == SabManagerState.Error)
+			{
+				LogWriter.Write($"SabManager # Moving to restart from error state.");
+			}
+
+			SetState(SabManagerState.Restart);
+		}
+
 		#endregion
 
 		public void Update()
@@ -279,6 +291,9 @@ namespace MediaManager.SABnzbd
 				case SabManagerState.Terminated:
 					break;
 				case SabManagerState.Retrying:
+					break;
+				case SabManagerState.Restart:
+					ProcessRestart();
 					break;
 				case SabManagerState.Error:
 					break;
@@ -604,13 +619,34 @@ namespace MediaManager.SABnzbd
 
 		#endregion
 
+		#region FSM - Restart
+
+		private void ProcessRestart()
+		{
+			if (_bootTimerStarted)
+			{
+				ProcessStopProcess();
+				ProcessCleanSabManager();
+				_restartTimer = DateTime.Now;
+			}
+			else
+			{
+				if (DateTime.Now <= _restartTimer + TimeSpan.FromSeconds(RESTART_TIME_SECONDS)) return;
+
+				LogWriter.Write($"SabManager # ProcessRestart - Restart timer elapsed, rebooting processes.");
+				SetState(SabManagerState.Starting);
+			}
+		}
+
+		#endregion
+
 		#region FSM - Clean SAB manager
 
 		private void ProcessCleanSabManager()
 		{
 			_currentComponent = null;
 			_bootTimerStarted = false;
-			LogWriter.Write($"SabManager # Cleaned SabManager, returning to idle.");
+			LogWriter.Write($"SabManager # Cleaned SabManager.");
 			SetState(SabManagerState.Idle);
 		}
 

@@ -2,9 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
-using MediaManager.GUI;
 
 namespace MediaManager.Logging
 {
@@ -115,7 +113,7 @@ namespace MediaManager.Logging
 			_logStream.AutoFlush = true;
 
 			_logStream.WriteLine(
-				$"{GetTimestamp()} - {FormatPriority(DebugPriority.High)} - Started Media Manager ({Program.CURRENT_VERSION}).");
+				$"{GetTimestamp()} - {FormatPriority(DebugPriority.High)} - Started Media Manager ({Application.ProductVersion}).");
 
 		}
 

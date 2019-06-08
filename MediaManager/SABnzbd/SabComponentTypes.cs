@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace MediaManager.SABnzbd
+﻿namespace MediaManager.SABnzbd
 {
 	public partial class SabManager
 	{

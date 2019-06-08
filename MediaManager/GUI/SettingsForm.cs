@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -27,8 +26,8 @@ namespace MediaManager.GUI
 
 		private Size _backgroundOuterSize = new Size(909, 555);
 		private Size _formSize = new Size(933, 580);
-		private int _ignoreEventCount = 0;
-		private int _scrollPosition = 0;
+		private int _ignoreEventCount;
+		private int _scrollPosition;
 	    private static DriveLoadState _driveLoadState = DriveLoadState.Idle;
 	    private Thread _drivesThread;
 	    private static List<DriveInfo> _driveData;
@@ -180,7 +179,7 @@ namespace MediaManager.GUI
 			tbxVpnUserName.Text = _data.VpnUserName;
 			tbxVpnPassword.Text = _data.VpnPassword;
 
-			tbxSabAPI.Text = _data.SabAPI;
+			tbxSabAPI.Text = _data.SabApi;
 			tbxSabIP.Text = _data.SabIP;
 			tbxSabPort.Text = _data.SabPort.ToString();
 
@@ -364,7 +363,7 @@ namespace MediaManager.GUI
 			_data.VpnUserName = tbxVpnUserName.Text;
 			_data.VpnPassword = tbxVpnPassword.Text;
 
-			_data.SabAPI = tbxSabAPI.Text;
+			_data.SabApi = tbxSabAPI.Text;
 			_data.SabIP = tbxSabIP.Text;
 			_data.SabPort = Convert.ToInt32(tbxSabPort.Text);
 

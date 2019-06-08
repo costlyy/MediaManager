@@ -14,5 +14,7 @@ namespace MediaManager.SABnzbd
 		SabManager.SabHttpData GetClientData();
 
 		void Destroy();
+
+		void Restart();
 	}
 }

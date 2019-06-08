@@ -30,49 +30,72 @@ namespace MediaManager.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.btnRestart = new System.Windows.Forms.Button();
-			this.TitleVersion = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
+			this.btnRestartMachine = new System.Windows.Forms.Button();
+			this.lblVersion = new System.Windows.Forms.Label();
+			this.lblTitleOpenVpn = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.panelQuickActions = new System.Windows.Forms.Panel();
+			this.panel9 = new System.Windows.Forms.Panel();
+			this.btnCheckForUpdate = new System.Windows.Forms.Button();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.btnRestartVpn = new System.Windows.Forms.Button();
+			this.btnRestartSab = new System.Windows.Forms.Button();
+			this.btnFactoryReset = new System.Windows.Forms.Button();
+			this.btnClearLogins = new System.Windows.Forms.Button();
+			this.btnRestartVpnSab = new System.Windows.Forms.Button();
+			this.btnToggleStreamMode = new System.Windows.Forms.Button();
 			this.btnKillAll = new System.Windows.Forms.Button();
 			this.lblStreamMode = new System.Windows.Forms.Label();
-			this.panel11 = new System.Windows.Forms.Panel();
-			this.btnToggleStreamMode = new System.Windows.Forms.Button();
-			this.panel3 = new System.Windows.Forms.Panel();
 			this.panelDownloadManager = new System.Windows.Forms.Panel();
+			this.panel4 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.lblTitleSab = new System.Windows.Forms.Label();
 			this.lblNoneActive = new System.Windows.Forms.Label();
 			this.btnDownloadPause = new System.Windows.Forms.CheckBox();
-			this.panel12 = new System.Windows.Forms.Panel();
+			this.btnDownloadToggle = new System.Windows.Forms.Button();
 			this.panelDownloadItem = new System.Windows.Forms.Panel();
 			this.btnForce = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.lblSubTitle = new System.Windows.Forms.Label();
 			this.lblTitle = new System.Windows.Forms.Label();
-			this.btnDownloadToggle = new System.Windows.Forms.Button();
-			this.btnShowDownloads = new System.Windows.Forms.Button();
-			this.lblHeadingDownload = new System.Windows.Forms.Label();
-			this.panel4 = new System.Windows.Forms.Panel();
 			this.panelVpnManager = new System.Windows.Forms.Panel();
-			this.panel13 = new System.Windows.Forms.Panel();
-			this.label8 = new System.Windows.Forms.Label();
 			this.tbxMyIP = new System.Windows.Forms.TextBox();
+			this.textBox4 = new System.Windows.Forms.TextBox();
+			this.btnConfigPriority5 = new System.Windows.Forms.Button();
+			this.btnAddConfig5 = new System.Windows.Forms.Button();
+			this.textBox3 = new System.Windows.Forms.TextBox();
+			this.btnConfigPriority4 = new System.Windows.Forms.Button();
+			this.btnAddConfig4 = new System.Windows.Forms.Button();
+			this.textBox2 = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.btnConfigPriority3 = new System.Windows.Forms.Button();
+			this.btnAddConfig3 = new System.Windows.Forms.Button();
+			this.panel13 = new System.Windows.Forms.Panel();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.lblExtIpTimer = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
 			this.btnVpnPause = new System.Windows.Forms.Button();
 			this.btnToggleVpn = new System.Windows.Forms.Button();
 			this.tbxConfig1 = new System.Windows.Forms.TextBox();
 			this.tbxConfig2 = new System.Windows.Forms.TextBox();
 			this.tbxConfig0 = new System.Windows.Forms.TextBox();
-			this.panel10 = new System.Windows.Forms.Panel();
-			this.label1 = new System.Windows.Forms.Label();
 			this.btnConfigPriority2 = new System.Windows.Forms.Button();
 			this.btnAddConfig2 = new System.Windows.Forms.Button();
 			this.btnConfigPriority1 = new System.Windows.Forms.Button();
 			this.btnAddConfig1 = new System.Windows.Forms.Button();
 			this.btnConfigPriority0 = new System.Windows.Forms.Button();
 			this.btnAddConfig0 = new System.Windows.Forms.Button();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.panel9 = new System.Windows.Forms.Panel();
 			this.panelStatus = new System.Windows.Forms.Panel();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.label7 = new System.Windows.Forms.Label();
+			this.label10 = new System.Windows.Forms.Label();
+			this.label9 = new System.Windows.Forms.Label();
+			this.lblSabUptime = new System.Windows.Forms.Label();
+			this.label12 = new System.Windows.Forms.Label();
+			this.lblSabState = new System.Windows.Forms.Label();
+			this.lblVpnState = new System.Windows.Forms.Label();
+			this.lblVpnUptime = new System.Windows.Forms.Label();
 			this.statusTableDisk = new System.Windows.Forms.TableLayoutPanel();
 			this.lblDisk2 = new System.Windows.Forms.Label();
 			this.lblDisk1 = new System.Windows.Forms.Label();
@@ -80,113 +103,211 @@ namespace MediaManager.GUI
 			this.lblStorage0 = new System.Windows.Forms.Label();
 			this.lblStorage1 = new System.Windows.Forms.Label();
 			this.lblStorage2 = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.lblStorageTitle0 = new System.Windows.Forms.Label();
-			this.lblSabUptime = new System.Windows.Forms.Label();
-			this.label12 = new System.Windows.Forms.Label();
-			this.lblSabState = new System.Windows.Forms.Label();
-			this.label9 = new System.Windows.Forms.Label();
-			this.lblVpnUptime = new System.Windows.Forms.Label();
-			this.label10 = new System.Windows.Forms.Label();
-			this.lblVpnState = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
 			this.panelStatusBg = new System.Windows.Forms.Panel();
 			this.btnExit = new System.Windows.Forms.Button();
 			this.panel5 = new System.Windows.Forms.Panel();
-			this.lblDebugMode = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
 			this.btnHide = new System.Windows.Forms.Button();
 			this.btnSettings = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
+			this.lblDebugMode = new System.Windows.Forms.Label();
 			this.panel6 = new System.Windows.Forms.Panel();
 			this.panel7 = new System.Windows.Forms.Panel();
 			this.panel8 = new System.Windows.Forms.Panel();
 			this.panelShade = new System.Windows.Forms.Panel();
-			this.lblExtIpTimer = new System.Windows.Forms.Label();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panelQuickActions.SuspendLayout();
+			this.panel9.SuspendLayout();
 			this.panelDownloadManager.SuspendLayout();
+			this.panel2.SuspendLayout();
 			this.panelDownloadItem.SuspendLayout();
 			this.panelVpnManager.SuspendLayout();
-			this.panel2.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.panelStatus.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.statusTableDisk.SuspendLayout();
 			this.panelStatusBg.SuspendLayout();
 			this.panel5.SuspendLayout();
 			this.panel6.SuspendLayout();
 			this.panel7.SuspendLayout();
 			this.panel8.SuspendLayout();
-			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// btnRestart
+			// btnRestartMachine
 			// 
-			this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnRestart.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnRestart.ForeColor = System.Drawing.Color.White;
-			this.btnRestart.Location = new System.Drawing.Point(95, 186);
-			this.btnRestart.Name = "btnRestart";
-			this.btnRestart.Size = new System.Drawing.Size(250, 45);
-			this.btnRestart.TabIndex = 0;
-			this.btnRestart.Text = "Restart Machine";
-			this.btnRestart.UseVisualStyleBackColor = true;
-			this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+			this.btnRestartMachine.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnRestartMachine.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnRestartMachine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnRestartMachine.Location = new System.Drawing.Point(190, 70);
+			this.btnRestartMachine.Name = "btnRestartMachine";
+			this.btnRestartMachine.Size = new System.Drawing.Size(260, 50);
+			this.btnRestartMachine.TabIndex = 0;
+			this.btnRestartMachine.Text = "Restart Machine";
+			this.btnRestartMachine.UseVisualStyleBackColor = true;
+			this.btnRestartMachine.Click += new System.EventHandler(this.btnRestart_Click);
 			// 
-			// TitleVersion
+			// lblVersion
 			// 
-			this.TitleVersion.AutoSize = true;
-			this.TitleVersion.Font = new System.Drawing.Font("Liberation Sans", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.TitleVersion.Location = new System.Drawing.Point(15, 59);
-			this.TitleVersion.Name = "TitleVersion";
-			this.TitleVersion.Size = new System.Drawing.Size(34, 30);
-			this.TitleVersion.TabIndex = 3;
-			this.TitleVersion.Text = "v.";
+			this.lblVersion.AutoSize = true;
+			this.lblVersion.Font = new System.Drawing.Font("Rubik", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+			this.lblVersion.Location = new System.Drawing.Point(15, 71);
+			this.lblVersion.Name = "lblVersion";
+			this.lblVersion.Size = new System.Drawing.Size(25, 23);
+			this.lblVersion.TabIndex = 3;
+			this.lblVersion.Text = "v.";
 			// 
-			// label3
+			// lblTitleOpenVpn
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Font = new System.Drawing.Font("Liberation Sans", 24F, System.Drawing.FontStyle.Bold);
-			this.label3.ForeColor = System.Drawing.Color.White;
-			this.label3.Location = new System.Drawing.Point(117, 11);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(219, 36);
-			this.label3.TabIndex = 11;
-			this.label3.Text = "VPN Manager";
+			this.lblTitleOpenVpn.AutoSize = true;
+			this.lblTitleOpenVpn.Font = new System.Drawing.Font("Rubik", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblTitleOpenVpn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblTitleOpenVpn.Location = new System.Drawing.Point(3, 25);
+			this.lblTitleOpenVpn.Name = "lblTitleOpenVpn";
+			this.lblTitleOpenVpn.Size = new System.Drawing.Size(173, 38);
+			this.lblTitleOpenVpn.TabIndex = 11;
+			this.lblTitleOpenVpn.Text = "Open VPN";
 			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Font = new System.Drawing.Font("Liberation Sans", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label5.ForeColor = System.Drawing.Color.White;
-			this.label5.Location = new System.Drawing.Point(106, 11);
+			this.label5.Font = new System.Drawing.Font("Rubik", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label5.Location = new System.Drawing.Point(13, 23);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(230, 36);
+			this.label5.Size = new System.Drawing.Size(156, 42);
 			this.label5.TabIndex = 12;
-			this.label5.Text = "Quick Actions";
+			this.label5.Text = "Actions";
 			// 
 			// panelQuickActions
 			// 
-			this.panelQuickActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.panelQuickActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.panelQuickActions.Controls.Add(this.panel9);
+			this.panelQuickActions.Controls.Add(this.btnCheckForUpdate);
+			this.panelQuickActions.Controls.Add(this.panel3);
+			this.panelQuickActions.Controls.Add(this.btnRestartVpn);
+			this.panelQuickActions.Controls.Add(this.btnRestartSab);
+			this.panelQuickActions.Controls.Add(this.btnFactoryReset);
+			this.panelQuickActions.Controls.Add(this.btnClearLogins);
+			this.panelQuickActions.Controls.Add(this.btnRestartVpnSab);
+			this.panelQuickActions.Controls.Add(this.btnToggleStreamMode);
 			this.panelQuickActions.Controls.Add(this.btnKillAll);
 			this.panelQuickActions.Controls.Add(this.lblStreamMode);
-			this.panelQuickActions.Controls.Add(this.panel11);
-			this.panelQuickActions.Controls.Add(this.btnToggleStreamMode);
-			this.panelQuickActions.Controls.Add(this.panel3);
-			this.panelQuickActions.Controls.Add(this.btnRestart);
-			this.panelQuickActions.Controls.Add(this.label5);
-			this.panelQuickActions.Location = new System.Drawing.Point(20, 20);
+			this.panelQuickActions.Controls.Add(this.btnRestartMachine);
+			this.panelQuickActions.Location = new System.Drawing.Point(10, 10);
 			this.panelQuickActions.Name = "panelQuickActions";
-			this.panelQuickActions.Size = new System.Drawing.Size(440, 410);
+			this.panelQuickActions.Size = new System.Drawing.Size(461, 430);
 			this.panelQuickActions.TabIndex = 15;
+			// 
+			// panel9
+			// 
+			this.panel9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel9.Controls.Add(this.label5);
+			this.panel9.Location = new System.Drawing.Point(0, 0);
+			this.panel9.Name = "panel9";
+			this.panel9.Size = new System.Drawing.Size(180, 63);
+			this.panel9.TabIndex = 45;
+			// 
+			// btnCheckForUpdate
+			// 
+			this.btnCheckForUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnCheckForUpdate.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnCheckForUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnCheckForUpdate.Location = new System.Drawing.Point(9, 309);
+			this.btnCheckForUpdate.Name = "btnCheckForUpdate";
+			this.btnCheckForUpdate.Size = new System.Drawing.Size(171, 111);
+			this.btnCheckForUpdate.TabIndex = 37;
+			this.btnCheckForUpdate.Text = "Check For Updates";
+			this.btnCheckForUpdate.UseVisualStyleBackColor = true;
+			// 
+			// panel3
+			// 
+			this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.panel3.Location = new System.Drawing.Point(0, 62);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(180, 3);
+			this.panel3.TabIndex = 19;
+			// 
+			// btnRestartVpn
+			// 
+			this.btnRestartVpn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnRestartVpn.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnRestartVpn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnRestartVpn.Location = new System.Drawing.Point(190, 190);
+			this.btnRestartVpn.Name = "btnRestartVpn";
+			this.btnRestartVpn.Size = new System.Drawing.Size(260, 50);
+			this.btnRestartVpn.TabIndex = 36;
+			this.btnRestartVpn.Text = "Restart Open VPN";
+			this.btnRestartVpn.UseVisualStyleBackColor = true;
+			// 
+			// btnRestartSab
+			// 
+			this.btnRestartSab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnRestartSab.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnRestartSab.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnRestartSab.Location = new System.Drawing.Point(190, 130);
+			this.btnRestartSab.Name = "btnRestartSab";
+			this.btnRestartSab.Size = new System.Drawing.Size(260, 50);
+			this.btnRestartSab.TabIndex = 35;
+			this.btnRestartSab.Text = "Restart SabNZBD";
+			this.btnRestartSab.UseVisualStyleBackColor = true;
+			// 
+			// btnFactoryReset
+			// 
+			this.btnFactoryReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnFactoryReset.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnFactoryReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnFactoryReset.Location = new System.Drawing.Point(190, 370);
+			this.btnFactoryReset.Name = "btnFactoryReset";
+			this.btnFactoryReset.Size = new System.Drawing.Size(260, 50);
+			this.btnFactoryReset.TabIndex = 34;
+			this.btnFactoryReset.Text = "Reset All Settings";
+			this.btnFactoryReset.UseVisualStyleBackColor = true;
+			// 
+			// btnClearLogins
+			// 
+			this.btnClearLogins.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnClearLogins.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnClearLogins.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnClearLogins.Location = new System.Drawing.Point(190, 310);
+			this.btnClearLogins.Name = "btnClearLogins";
+			this.btnClearLogins.Size = new System.Drawing.Size(260, 50);
+			this.btnClearLogins.TabIndex = 33;
+			this.btnClearLogins.Text = "Clear Logins";
+			this.btnClearLogins.UseVisualStyleBackColor = true;
+			// 
+			// btnRestartVpnSab
+			// 
+			this.btnRestartVpnSab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnRestartVpnSab.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnRestartVpnSab.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnRestartVpnSab.Location = new System.Drawing.Point(190, 250);
+			this.btnRestartVpnSab.Name = "btnRestartVpnSab";
+			this.btnRestartVpnSab.Size = new System.Drawing.Size(260, 50);
+			this.btnRestartVpnSab.TabIndex = 32;
+			this.btnRestartVpnSab.Text = "Restart VPN + SabNZBD";
+			this.btnRestartVpnSab.UseVisualStyleBackColor = true;
+			// 
+			// btnToggleStreamMode
+			// 
+			this.btnToggleStreamMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnToggleStreamMode.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnToggleStreamMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnToggleStreamMode.Location = new System.Drawing.Point(9, 190);
+			this.btnToggleStreamMode.Name = "btnToggleStreamMode";
+			this.btnToggleStreamMode.Size = new System.Drawing.Size(171, 110);
+			this.btnToggleStreamMode.TabIndex = 20;
+			this.btnToggleStreamMode.Text = "Streaming Mode Off";
+			this.btnToggleStreamMode.UseVisualStyleBackColor = true;
+			this.btnToggleStreamMode.Click += new System.EventHandler(this.btnToggleStreamMode_Click);
 			// 
 			// btnKillAll
 			// 
 			this.btnKillAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnKillAll.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnKillAll.ForeColor = System.Drawing.Color.White;
-			this.btnKillAll.Location = new System.Drawing.Point(95, 254);
+			this.btnKillAll.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnKillAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnKillAll.Location = new System.Drawing.Point(190, 10);
 			this.btnKillAll.Name = "btnKillAll";
-			this.btnKillAll.Size = new System.Drawing.Size(250, 45);
+			this.btnKillAll.Size = new System.Drawing.Size(260, 50);
 			this.btnKillAll.TabIndex = 31;
 			this.btnKillAll.Text = "Kill Everything";
 			this.btnKillAll.UseVisualStyleBackColor = true;
@@ -195,67 +316,66 @@ namespace MediaManager.GUI
 			// lblStreamMode
 			// 
 			this.lblStreamMode.AutoSize = true;
-			this.lblStreamMode.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblStreamMode.Font = new System.Drawing.Font("Rubik", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lblStreamMode.ForeColor = System.Drawing.Color.White;
-			this.lblStreamMode.Location = new System.Drawing.Point(198, 123);
+			this.lblStreamMode.Location = new System.Drawing.Point(72, 150);
 			this.lblStreamMode.Name = "lblStreamMode";
-			this.lblStreamMode.Size = new System.Drawing.Size(45, 27);
+			this.lblStreamMode.Size = new System.Drawing.Size(48, 28);
 			this.lblStreamMode.TabIndex = 30;
 			this.lblStreamMode.Text = "0m";
 			// 
-			// panel11
-			// 
-			this.panel11.BackColor = System.Drawing.Color.White;
-			this.panel11.Location = new System.Drawing.Point(0, 160);
-			this.panel11.Name = "panel11";
-			this.panel11.Size = new System.Drawing.Size(939, 3);
-			this.panel11.TabIndex = 20;
-			// 
-			// btnToggleStreamMode
-			// 
-			this.btnToggleStreamMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnToggleStreamMode.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnToggleStreamMode.ForeColor = System.Drawing.Color.White;
-			this.btnToggleStreamMode.Location = new System.Drawing.Point(95, 66);
-			this.btnToggleStreamMode.Name = "btnToggleStreamMode";
-			this.btnToggleStreamMode.Size = new System.Drawing.Size(250, 45);
-			this.btnToggleStreamMode.TabIndex = 20;
-			this.btnToggleStreamMode.Text = "Streaming Mode Off";
-			this.btnToggleStreamMode.UseVisualStyleBackColor = true;
-			this.btnToggleStreamMode.Click += new System.EventHandler(this.btnToggleStreamMode_Click);
-			// 
-			// panel3
-			// 
-			this.panel3.BackColor = System.Drawing.Color.White;
-			this.panel3.Location = new System.Drawing.Point(0, 50);
-			this.panel3.Name = "panel3";
-			this.panel3.Size = new System.Drawing.Size(939, 3);
-			this.panel3.TabIndex = 19;
-			// 
 			// panelDownloadManager
 			// 
-			this.panelDownloadManager.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.panelDownloadManager.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.panelDownloadManager.Controls.Add(this.panel4);
+			this.panelDownloadManager.Controls.Add(this.panel2);
 			this.panelDownloadManager.Controls.Add(this.lblNoneActive);
 			this.panelDownloadManager.Controls.Add(this.btnDownloadPause);
-			this.panelDownloadManager.Controls.Add(this.panel12);
-			this.panelDownloadManager.Controls.Add(this.panelDownloadItem);
 			this.panelDownloadManager.Controls.Add(this.btnDownloadToggle);
-			this.panelDownloadManager.Controls.Add(this.btnShowDownloads);
-			this.panelDownloadManager.Controls.Add(this.lblHeadingDownload);
-			this.panelDownloadManager.Controls.Add(this.panel4);
-			this.panelDownloadManager.Location = new System.Drawing.Point(20, 20);
+			this.panelDownloadManager.Controls.Add(this.panelDownloadItem);
+			this.panelDownloadManager.Location = new System.Drawing.Point(10, 10);
 			this.panelDownloadManager.Name = "panelDownloadManager";
-			this.panelDownloadManager.Size = new System.Drawing.Size(440, 410);
+			this.panelDownloadManager.Size = new System.Drawing.Size(461, 430);
 			this.panelDownloadManager.TabIndex = 16;
+			// 
+			// panel4
+			// 
+			this.panel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.panel4.Location = new System.Drawing.Point(0, 62);
+			this.panel4.Name = "panel4";
+			this.panel4.Size = new System.Drawing.Size(180, 3);
+			this.panel4.TabIndex = 20;
+			// 
+			// panel2
+			// 
+			this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel2.Controls.Add(this.lblTitleSab);
+			this.panel2.Location = new System.Drawing.Point(0, 0);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(180, 62);
+			this.panel2.TabIndex = 45;
+			// 
+			// lblTitleSab
+			// 
+			this.lblTitleSab.AutoSize = true;
+			this.lblTitleSab.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.lblTitleSab.Font = new System.Drawing.Font("Rubik", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblTitleSab.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblTitleSab.Location = new System.Drawing.Point(6, 25);
+			this.lblTitleSab.Name = "lblTitleSab";
+			this.lblTitleSab.Size = new System.Drawing.Size(168, 38);
+			this.lblTitleSab.TabIndex = 11;
+			this.lblTitleSab.Text = "SabNZBD";
+			this.lblTitleSab.Click += new System.EventHandler(this.LblTitleSab_Click);
 			// 
 			// lblNoneActive
 			// 
 			this.lblNoneActive.AutoSize = true;
-			this.lblNoneActive.Font = new System.Drawing.Font("Liberation Sans", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblNoneActive.ForeColor = System.Drawing.Color.DarkGray;
-			this.lblNoneActive.Location = new System.Drawing.Point(81, 244);
+			this.lblNoneActive.Font = new System.Drawing.Font("Rubik", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblNoneActive.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblNoneActive.Location = new System.Drawing.Point(81, 168);
 			this.lblNoneActive.Name = "lblNoneActive";
-			this.lblNoneActive.Size = new System.Drawing.Size(280, 53);
+			this.lblNoneActive.Size = new System.Drawing.Size(299, 57);
 			this.lblNoneActive.TabIndex = 38;
 			this.lblNoneActive.Tag = "warning";
 			this.lblNoneActive.Text = "None Active";
@@ -264,25 +384,32 @@ namespace MediaManager.GUI
 			// btnDownloadPause
 			// 
 			this.btnDownloadPause.Appearance = System.Windows.Forms.Appearance.Button;
+			this.btnDownloadPause.FlatAppearance.BorderSize = 2;
 			this.btnDownloadPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnDownloadPause.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnDownloadPause.ForeColor = System.Drawing.Color.White;
+			this.btnDownloadPause.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.btnDownloadPause.Image = global::MediaManager.Properties.Resources.icon_pause;
-			this.btnDownloadPause.Location = new System.Drawing.Point(318, 69);
+			this.btnDownloadPause.Location = new System.Drawing.Point(324, 8);
 			this.btnDownloadPause.Name = "btnDownloadPause";
-			this.btnDownloadPause.Size = new System.Drawing.Size(97, 45);
+			this.btnDownloadPause.Size = new System.Drawing.Size(127, 57);
 			this.btnDownloadPause.TabIndex = 37;
 			this.btnDownloadPause.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.btnDownloadPause.UseVisualStyleBackColor = true;
 			this.btnDownloadPause.CheckedChanged += new System.EventHandler(this.btnDownloadPause_CheckedChanged);
 			// 
-			// panel12
+			// btnDownloadToggle
 			// 
-			this.panel12.BackColor = System.Drawing.Color.White;
-			this.panel12.Location = new System.Drawing.Point(0, 133);
-			this.panel12.Name = "panel12";
-			this.panel12.Size = new System.Drawing.Size(939, 3);
-			this.panel12.TabIndex = 31;
+			this.btnDownloadToggle.FlatAppearance.BorderSize = 2;
+			this.btnDownloadToggle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnDownloadToggle.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnDownloadToggle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnDownloadToggle.Image = global::MediaManager.Properties.Resources.icon_play_mid;
+			this.btnDownloadToggle.Location = new System.Drawing.Point(188, 8);
+			this.btnDownloadToggle.Name = "btnDownloadToggle";
+			this.btnDownloadToggle.Size = new System.Drawing.Size(127, 57);
+			this.btnDownloadToggle.TabIndex = 33;
+			this.btnDownloadToggle.UseVisualStyleBackColor = true;
+			this.btnDownloadToggle.Click += new System.EventHandler(this.btnDownloadToggle_Click);
 			// 
 			// panelDownloadItem
 			// 
@@ -291,9 +418,9 @@ namespace MediaManager.GUI
 			this.panelDownloadItem.Controls.Add(this.btnCancel);
 			this.panelDownloadItem.Controls.Add(this.lblSubTitle);
 			this.panelDownloadItem.Controls.Add(this.lblTitle);
-			this.panelDownloadItem.Location = new System.Drawing.Point(15, 153);
+			this.panelDownloadItem.Location = new System.Drawing.Point(10, 77);
 			this.panelDownloadItem.Name = "panelDownloadItem";
-			this.panelDownloadItem.Size = new System.Drawing.Size(410, 64);
+			this.panelDownloadItem.Size = new System.Drawing.Size(440, 64);
 			this.panelDownloadItem.TabIndex = 35;
 			this.panelDownloadItem.Visible = false;
 			// 
@@ -302,7 +429,7 @@ namespace MediaManager.GUI
 			this.btnForce.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnForce.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnForce.ForeColor = System.Drawing.SystemColors.Control;
-			this.btnForce.Location = new System.Drawing.Point(321, 3);
+			this.btnForce.Location = new System.Drawing.Point(349, 3);
 			this.btnForce.Name = "btnForce";
 			this.btnForce.Size = new System.Drawing.Size(42, 58);
 			this.btnForce.TabIndex = 37;
@@ -314,7 +441,7 @@ namespace MediaManager.GUI
 			this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnCancel.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnCancel.ForeColor = System.Drawing.SystemColors.Control;
-			this.btnCancel.Location = new System.Drawing.Point(366, 3);
+			this.btnCancel.Location = new System.Drawing.Point(394, 3);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(42, 58);
 			this.btnCancel.TabIndex = 35;
@@ -343,121 +470,257 @@ namespace MediaManager.GUI
 			this.lblTitle.TabIndex = 30;
 			this.lblTitle.Text = "$TitleGoesHere";
 			// 
-			// btnDownloadToggle
-			// 
-			this.btnDownloadToggle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnDownloadToggle.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnDownloadToggle.ForeColor = System.Drawing.Color.White;
-			this.btnDownloadToggle.Image = global::MediaManager.Properties.Resources.icon_play_mid;
-			this.btnDownloadToggle.Location = new System.Drawing.Point(208, 69);
-			this.btnDownloadToggle.Name = "btnDownloadToggle";
-			this.btnDownloadToggle.Size = new System.Drawing.Size(99, 45);
-			this.btnDownloadToggle.TabIndex = 33;
-			this.btnDownloadToggle.UseVisualStyleBackColor = true;
-			this.btnDownloadToggle.Click += new System.EventHandler(this.btnDownloadToggle_Click);
-			// 
-			// btnShowDownloads
-			// 
-			this.btnShowDownloads.Enabled = false;
-			this.btnShowDownloads.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnShowDownloads.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnShowDownloads.ForeColor = System.Drawing.Color.White;
-			this.btnShowDownloads.Location = new System.Drawing.Point(22, 69);
-			this.btnShowDownloads.Name = "btnShowDownloads";
-			this.btnShowDownloads.Size = new System.Drawing.Size(174, 45);
-			this.btnShowDownloads.TabIndex = 32;
-			this.btnShowDownloads.Text = "View Full";
-			this.btnShowDownloads.UseVisualStyleBackColor = true;
-			this.btnShowDownloads.Click += new System.EventHandler(this.btnShowDownloads_Click);
-			// 
-			// lblHeadingDownload
-			// 
-			this.lblHeadingDownload.AutoSize = true;
-			this.lblHeadingDownload.Font = new System.Drawing.Font("Liberation Sans", 24F, System.Drawing.FontStyle.Bold);
-			this.lblHeadingDownload.ForeColor = System.Drawing.Color.White;
-			this.lblHeadingDownload.Location = new System.Drawing.Point(70, 10);
-			this.lblHeadingDownload.Name = "lblHeadingDownload";
-			this.lblHeadingDownload.Size = new System.Drawing.Size(308, 36);
-			this.lblHeadingDownload.TabIndex = 21;
-			this.lblHeadingDownload.Text = "Download Manager";
-			// 
-			// panel4
-			// 
-			this.panel4.BackColor = System.Drawing.Color.White;
-			this.panel4.Location = new System.Drawing.Point(0, 50);
-			this.panel4.Name = "panel4";
-			this.panel4.Size = new System.Drawing.Size(939, 3);
-			this.panel4.TabIndex = 20;
-			// 
 			// panelVpnManager
 			// 
-			this.panelVpnManager.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.panelVpnManager.Controls.Add(this.lblExtIpTimer);
-			this.panelVpnManager.Controls.Add(this.panel13);
-			this.panelVpnManager.Controls.Add(this.label8);
+			this.panelVpnManager.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
 			this.panelVpnManager.Controls.Add(this.tbxMyIP);
+			this.panelVpnManager.Controls.Add(this.textBox4);
+			this.panelVpnManager.Controls.Add(this.btnConfigPriority5);
+			this.panelVpnManager.Controls.Add(this.btnAddConfig5);
+			this.panelVpnManager.Controls.Add(this.textBox3);
+			this.panelVpnManager.Controls.Add(this.btnConfigPriority4);
+			this.panelVpnManager.Controls.Add(this.btnAddConfig4);
+			this.panelVpnManager.Controls.Add(this.textBox2);
+			this.panelVpnManager.Controls.Add(this.label1);
+			this.panelVpnManager.Controls.Add(this.textBox1);
+			this.panelVpnManager.Controls.Add(this.btnConfigPriority3);
+			this.panelVpnManager.Controls.Add(this.btnAddConfig3);
+			this.panelVpnManager.Controls.Add(this.panel13);
+			this.panelVpnManager.Controls.Add(this.panel1);
+			this.panelVpnManager.Controls.Add(this.lblExtIpTimer);
+			this.panelVpnManager.Controls.Add(this.label8);
 			this.panelVpnManager.Controls.Add(this.btnVpnPause);
 			this.panelVpnManager.Controls.Add(this.btnToggleVpn);
 			this.panelVpnManager.Controls.Add(this.tbxConfig1);
 			this.panelVpnManager.Controls.Add(this.tbxConfig2);
 			this.panelVpnManager.Controls.Add(this.tbxConfig0);
-			this.panelVpnManager.Controls.Add(this.panel10);
-			this.panelVpnManager.Controls.Add(this.label1);
 			this.panelVpnManager.Controls.Add(this.btnConfigPriority2);
 			this.panelVpnManager.Controls.Add(this.btnAddConfig2);
 			this.panelVpnManager.Controls.Add(this.btnConfigPriority1);
 			this.panelVpnManager.Controls.Add(this.btnAddConfig1);
 			this.panelVpnManager.Controls.Add(this.btnConfigPriority0);
 			this.panelVpnManager.Controls.Add(this.btnAddConfig0);
-			this.panelVpnManager.Controls.Add(this.panel2);
-			this.panelVpnManager.Controls.Add(this.label3);
-			this.panelVpnManager.Location = new System.Drawing.Point(20, 20);
+			this.panelVpnManager.Location = new System.Drawing.Point(10, 10);
 			this.panelVpnManager.Name = "panelVpnManager";
-			this.panelVpnManager.Size = new System.Drawing.Size(440, 410);
+			this.panelVpnManager.Size = new System.Drawing.Size(461, 430);
 			this.panelVpnManager.TabIndex = 16;
-			// 
-			// panel13
-			// 
-			this.panel13.BackColor = System.Drawing.Color.White;
-			this.panel13.Location = new System.Drawing.Point(0, 133);
-			this.panel13.Name = "panel13";
-			this.panel13.Size = new System.Drawing.Size(939, 3);
-			this.panel13.TabIndex = 22;
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label8.ForeColor = System.Drawing.Color.White;
-			this.label8.Location = new System.Drawing.Point(8, 369);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(82, 27);
-			this.label8.TabIndex = 42;
-			this.label8.Text = "Ext. IP";
 			// 
 			// tbxMyIP
 			// 
-			this.tbxMyIP.BackColor = System.Drawing.SystemColors.Info;
+			this.tbxMyIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
 			this.tbxMyIP.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbxMyIP.Location = new System.Drawing.Point(90, 369);
+			this.tbxMyIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.tbxMyIP.Location = new System.Drawing.Point(84, 391);
 			this.tbxMyIP.Multiline = true;
 			this.tbxMyIP.Name = "tbxMyIP";
 			this.tbxMyIP.ReadOnly = true;
-			this.tbxMyIP.Size = new System.Drawing.Size(299, 27);
+			this.tbxMyIP.Size = new System.Drawing.Size(311, 30);
 			this.tbxMyIP.TabIndex = 41;
 			this.tbxMyIP.TabStop = false;
 			this.tbxMyIP.Tag = "99";
 			this.tbxMyIP.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
+			// textBox4
+			// 
+			this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.textBox4.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.textBox4.Location = new System.Drawing.Point(10, 300);
+			this.textBox4.Multiline = true;
+			this.textBox4.Name = "textBox4";
+			this.textBox4.ReadOnly = true;
+			this.textBox4.Size = new System.Drawing.Size(329, 35);
+			this.textBox4.TabIndex = 53;
+			this.textBox4.TabStop = false;
+			this.textBox4.Tag = "15";
+			this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// btnConfigPriority5
+			// 
+			this.btnConfigPriority5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnConfigPriority5.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority5.Location = new System.Drawing.Point(401, 300);
+			this.btnConfigPriority5.Name = "btnConfigPriority5";
+			this.btnConfigPriority5.Size = new System.Drawing.Size(49, 35);
+			this.btnConfigPriority5.TabIndex = 55;
+			this.btnConfigPriority5.Tag = "35";
+			this.btnConfigPriority5.Text = "6";
+			this.btnConfigPriority5.UseVisualStyleBackColor = true;
+			// 
+			// btnAddConfig5
+			// 
+			this.btnAddConfig5.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btnAddConfig5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnAddConfig5.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnAddConfig5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig5.Location = new System.Drawing.Point(346, 300);
+			this.btnAddConfig5.Name = "btnAddConfig5";
+			this.btnAddConfig5.Size = new System.Drawing.Size(49, 35);
+			this.btnAddConfig5.TabIndex = 54;
+			this.btnAddConfig5.Tag = "25";
+			this.btnAddConfig5.UseVisualStyleBackColor = true;
+			// 
+			// textBox3
+			// 
+			this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.textBox3.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.textBox3.Location = new System.Drawing.Point(10, 255);
+			this.textBox3.Multiline = true;
+			this.textBox3.Name = "textBox3";
+			this.textBox3.ReadOnly = true;
+			this.textBox3.Size = new System.Drawing.Size(329, 35);
+			this.textBox3.TabIndex = 50;
+			this.textBox3.TabStop = false;
+			this.textBox3.Tag = "14";
+			this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// btnConfigPriority4
+			// 
+			this.btnConfigPriority4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnConfigPriority4.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority4.Location = new System.Drawing.Point(401, 255);
+			this.btnConfigPriority4.Name = "btnConfigPriority4";
+			this.btnConfigPriority4.Size = new System.Drawing.Size(49, 35);
+			this.btnConfigPriority4.TabIndex = 52;
+			this.btnConfigPriority4.Tag = "34";
+			this.btnConfigPriority4.Text = "5";
+			this.btnConfigPriority4.UseVisualStyleBackColor = true;
+			// 
+			// btnAddConfig4
+			// 
+			this.btnAddConfig4.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btnAddConfig4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnAddConfig4.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnAddConfig4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig4.Location = new System.Drawing.Point(346, 255);
+			this.btnAddConfig4.Name = "btnAddConfig4";
+			this.btnAddConfig4.Size = new System.Drawing.Size(49, 35);
+			this.btnAddConfig4.TabIndex = 51;
+			this.btnAddConfig4.Tag = "24";
+			this.btnAddConfig4.UseVisualStyleBackColor = true;
+			// 
+			// textBox2
+			// 
+			this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.textBox2.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.textBox2.Location = new System.Drawing.Point(84, 348);
+			this.textBox2.Multiline = true;
+			this.textBox2.Name = "textBox2";
+			this.textBox2.ReadOnly = true;
+			this.textBox2.Size = new System.Drawing.Size(366, 30);
+			this.textBox2.TabIndex = 49;
+			this.textBox2.TabStop = false;
+			this.textBox2.Tag = "99";
+			this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label1.Location = new System.Drawing.Point(4, 350);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(75, 25);
+			this.label1.TabIndex = 48;
+			this.label1.Text = "Active";
+			// 
+			// textBox1
+			// 
+			this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.textBox1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.textBox1.Location = new System.Drawing.Point(10, 210);
+			this.textBox1.Multiline = true;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(329, 35);
+			this.textBox1.TabIndex = 45;
+			this.textBox1.TabStop = false;
+			this.textBox1.Tag = "13";
+			this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// btnConfigPriority3
+			// 
+			this.btnConfigPriority3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnConfigPriority3.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority3.Location = new System.Drawing.Point(401, 210);
+			this.btnConfigPriority3.Name = "btnConfigPriority3";
+			this.btnConfigPriority3.Size = new System.Drawing.Size(49, 35);
+			this.btnConfigPriority3.TabIndex = 47;
+			this.btnConfigPriority3.Tag = "33";
+			this.btnConfigPriority3.Text = "4";
+			this.btnConfigPriority3.UseVisualStyleBackColor = true;
+			// 
+			// btnAddConfig3
+			// 
+			this.btnAddConfig3.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btnAddConfig3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnAddConfig3.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnAddConfig3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig3.Location = new System.Drawing.Point(346, 210);
+			this.btnAddConfig3.Name = "btnAddConfig3";
+			this.btnAddConfig3.Size = new System.Drawing.Size(49, 35);
+			this.btnAddConfig3.TabIndex = 46;
+			this.btnAddConfig3.Tag = "23";
+			this.btnAddConfig3.UseVisualStyleBackColor = true;
+			// 
+			// panel13
+			// 
+			this.panel13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.panel13.Location = new System.Drawing.Point(0, 62);
+			this.panel13.Name = "panel13";
+			this.panel13.Size = new System.Drawing.Size(180, 3);
+			this.panel13.TabIndex = 22;
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel1.Controls.Add(this.lblTitleOpenVpn);
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(180, 62);
+			this.panel1.TabIndex = 44;
+			// 
+			// lblExtIpTimer
+			// 
+			this.lblExtIpTimer.AutoSize = true;
+			this.lblExtIpTimer.Font = new System.Drawing.Font("Rubik", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblExtIpTimer.ForeColor = System.Drawing.Color.Gray;
+			this.lblExtIpTimer.Location = new System.Drawing.Point(406, 392);
+			this.lblExtIpTimer.Name = "lblExtIpTimer";
+			this.lblExtIpTimer.Size = new System.Drawing.Size(37, 28);
+			this.lblExtIpTimer.TabIndex = 43;
+			this.lblExtIpTimer.Text = "10";
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label8.Location = new System.Drawing.Point(4, 394);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(73, 25);
+			this.label8.TabIndex = 42;
+			this.label8.Text = "Ext. IP";
+			// 
 			// btnVpnPause
 			// 
+			this.btnVpnPause.FlatAppearance.BorderSize = 2;
 			this.btnVpnPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnVpnPause.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnVpnPause.ForeColor = System.Drawing.Color.White;
+			this.btnVpnPause.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.btnVpnPause.Image = global::MediaManager.Properties.Resources.icon_pause;
-			this.btnVpnPause.Location = new System.Drawing.Point(227, 69);
+			this.btnVpnPause.Location = new System.Drawing.Point(324, 8);
 			this.btnVpnPause.Name = "btnVpnPause";
-			this.btnVpnPause.Size = new System.Drawing.Size(87, 45);
+			this.btnVpnPause.Size = new System.Drawing.Size(127, 57);
 			this.btnVpnPause.TabIndex = 40;
 			this.btnVpnPause.Tag = "1";
 			this.btnVpnPause.UseVisualStyleBackColor = true;
@@ -465,13 +728,14 @@ namespace MediaManager.GUI
 			// 
 			// btnToggleVpn
 			// 
+			this.btnToggleVpn.FlatAppearance.BorderSize = 2;
 			this.btnToggleVpn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnToggleVpn.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnToggleVpn.ForeColor = System.Drawing.Color.White;
+			this.btnToggleVpn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.btnToggleVpn.Image = global::MediaManager.Properties.Resources.icon_play_mid;
-			this.btnToggleVpn.Location = new System.Drawing.Point(128, 69);
+			this.btnToggleVpn.Location = new System.Drawing.Point(188, 8);
 			this.btnToggleVpn.Name = "btnToggleVpn";
-			this.btnToggleVpn.Size = new System.Drawing.Size(87, 45);
+			this.btnToggleVpn.Size = new System.Drawing.Size(127, 57);
 			this.btnToggleVpn.TabIndex = 20;
 			this.btnToggleVpn.Tag = "1";
 			this.btnToggleVpn.UseVisualStyleBackColor = true;
@@ -479,68 +743,56 @@ namespace MediaManager.GUI
 			// 
 			// tbxConfig1
 			// 
-			this.tbxConfig1.BackColor = System.Drawing.SystemColors.Info;
-			this.tbxConfig1.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbxConfig1.Location = new System.Drawing.Point(13, 262);
+			this.tbxConfig1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.tbxConfig1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxConfig1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.tbxConfig1.Location = new System.Drawing.Point(10, 120);
 			this.tbxConfig1.Multiline = true;
 			this.tbxConfig1.Name = "tbxConfig1";
 			this.tbxConfig1.ReadOnly = true;
-			this.tbxConfig1.Size = new System.Drawing.Size(301, 35);
+			this.tbxConfig1.Size = new System.Drawing.Size(329, 35);
 			this.tbxConfig1.TabIndex = 33;
 			this.tbxConfig1.TabStop = false;
 			this.tbxConfig1.Tag = "11";
+			this.tbxConfig1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// tbxConfig2
 			// 
-			this.tbxConfig2.BackColor = System.Drawing.SystemColors.Info;
-			this.tbxConfig2.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbxConfig2.Location = new System.Drawing.Point(13, 320);
+			this.tbxConfig2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.tbxConfig2.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxConfig2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.tbxConfig2.Location = new System.Drawing.Point(10, 165);
 			this.tbxConfig2.Multiline = true;
 			this.tbxConfig2.Name = "tbxConfig2";
 			this.tbxConfig2.ReadOnly = true;
-			this.tbxConfig2.Size = new System.Drawing.Size(301, 35);
+			this.tbxConfig2.Size = new System.Drawing.Size(329, 35);
 			this.tbxConfig2.TabIndex = 36;
 			this.tbxConfig2.TabStop = false;
 			this.tbxConfig2.Tag = "12";
+			this.tbxConfig2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// tbxConfig0
 			// 
-			this.tbxConfig0.BackColor = System.Drawing.SystemColors.Info;
-			this.tbxConfig0.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbxConfig0.Location = new System.Drawing.Point(13, 203);
+			this.tbxConfig0.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+			this.tbxConfig0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxConfig0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.tbxConfig0.Location = new System.Drawing.Point(10, 75);
 			this.tbxConfig0.Multiline = true;
 			this.tbxConfig0.Name = "tbxConfig0";
 			this.tbxConfig0.ReadOnly = true;
-			this.tbxConfig0.Size = new System.Drawing.Size(301, 35);
+			this.tbxConfig0.Size = new System.Drawing.Size(329, 35);
 			this.tbxConfig0.TabIndex = 30;
 			this.tbxConfig0.TabStop = false;
 			this.tbxConfig0.Tag = "10";
-			// 
-			// panel10
-			// 
-			this.panel10.BackColor = System.Drawing.Color.White;
-			this.panel10.Location = new System.Drawing.Point(0, 184);
-			this.panel10.Name = "panel10";
-			this.panel10.Size = new System.Drawing.Size(939, 3);
-			this.panel10.TabIndex = 21;
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Liberation Sans", 24F, System.Drawing.FontStyle.Bold);
-			this.label1.ForeColor = System.Drawing.Color.White;
-			this.label1.Location = new System.Drawing.Point(122, 142);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(206, 36);
-			this.label1.TabIndex = 39;
-			this.label1.Text = "VPN Configs";
+			this.tbxConfig0.Text = "Config Name Here";
+			this.tbxConfig0.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// btnConfigPriority2
 			// 
 			this.btnConfigPriority2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnConfigPriority2.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnConfigPriority2.ForeColor = System.Drawing.Color.White;
-			this.btnConfigPriority2.Location = new System.Drawing.Point(376, 320);
+			this.btnConfigPriority2.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority2.Location = new System.Drawing.Point(401, 165);
 			this.btnConfigPriority2.Name = "btnConfigPriority2";
 			this.btnConfigPriority2.Size = new System.Drawing.Size(49, 35);
 			this.btnConfigPriority2.TabIndex = 38;
@@ -550,23 +802,24 @@ namespace MediaManager.GUI
 			// 
 			// btnAddConfig2
 			// 
+			this.btnAddConfig2.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.btnAddConfig2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnAddConfig2.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnAddConfig2.ForeColor = System.Drawing.Color.White;
-			this.btnAddConfig2.Location = new System.Drawing.Point(321, 320);
+			this.btnAddConfig2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig2.Location = new System.Drawing.Point(346, 165);
 			this.btnAddConfig2.Name = "btnAddConfig2";
 			this.btnAddConfig2.Size = new System.Drawing.Size(49, 35);
 			this.btnAddConfig2.TabIndex = 37;
 			this.btnAddConfig2.Tag = "22";
-			this.btnAddConfig2.Text = "+";
 			this.btnAddConfig2.UseVisualStyleBackColor = true;
 			// 
 			// btnConfigPriority1
 			// 
 			this.btnConfigPriority1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnConfigPriority1.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnConfigPriority1.ForeColor = System.Drawing.Color.White;
-			this.btnConfigPriority1.Location = new System.Drawing.Point(376, 262);
+			this.btnConfigPriority1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority1.Location = new System.Drawing.Point(401, 120);
 			this.btnConfigPriority1.Name = "btnConfigPriority1";
 			this.btnConfigPriority1.Size = new System.Drawing.Size(49, 35);
 			this.btnConfigPriority1.TabIndex = 35;
@@ -576,23 +829,24 @@ namespace MediaManager.GUI
 			// 
 			// btnAddConfig1
 			// 
+			this.btnAddConfig1.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.btnAddConfig1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnAddConfig1.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnAddConfig1.ForeColor = System.Drawing.Color.White;
-			this.btnAddConfig1.Location = new System.Drawing.Point(321, 262);
+			this.btnAddConfig1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig1.Location = new System.Drawing.Point(346, 120);
 			this.btnAddConfig1.Name = "btnAddConfig1";
 			this.btnAddConfig1.Size = new System.Drawing.Size(49, 35);
 			this.btnAddConfig1.TabIndex = 34;
 			this.btnAddConfig1.Tag = "21";
-			this.btnAddConfig1.Text = "+";
 			this.btnAddConfig1.UseVisualStyleBackColor = true;
 			// 
 			// btnConfigPriority0
 			// 
 			this.btnConfigPriority0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnConfigPriority0.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnConfigPriority0.ForeColor = System.Drawing.Color.White;
-			this.btnConfigPriority0.Location = new System.Drawing.Point(376, 203);
+			this.btnConfigPriority0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnConfigPriority0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnConfigPriority0.Location = new System.Drawing.Point(401, 75);
 			this.btnConfigPriority0.Name = "btnConfigPriority0";
 			this.btnConfigPriority0.Size = new System.Drawing.Size(49, 35);
 			this.btnConfigPriority0.TabIndex = 32;
@@ -602,400 +856,28 @@ namespace MediaManager.GUI
 			// 
 			// btnAddConfig0
 			// 
+			this.btnAddConfig0.BackgroundImage = global::MediaManager.Properties.Resources.cog_white;
+			this.btnAddConfig0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.btnAddConfig0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnAddConfig0.Font = new System.Drawing.Font("Liberation Sans", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnAddConfig0.ForeColor = System.Drawing.Color.White;
-			this.btnAddConfig0.Location = new System.Drawing.Point(321, 203);
+			this.btnAddConfig0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.btnAddConfig0.Location = new System.Drawing.Point(346, 75);
 			this.btnAddConfig0.Name = "btnAddConfig0";
 			this.btnAddConfig0.Size = new System.Drawing.Size(49, 35);
 			this.btnAddConfig0.TabIndex = 31;
 			this.btnAddConfig0.Tag = "20";
-			this.btnAddConfig0.Text = "+";
 			this.btnAddConfig0.UseVisualStyleBackColor = true;
-			// 
-			// panel2
-			// 
-			this.panel2.BackColor = System.Drawing.Color.White;
-			this.panel2.Controls.Add(this.panel9);
-			this.panel2.Location = new System.Drawing.Point(0, 50);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(939, 3);
-			this.panel2.TabIndex = 19;
-			// 
-			// panel9
-			// 
-			this.panel9.BackColor = System.Drawing.Color.White;
-			this.panel9.Location = new System.Drawing.Point(0, 0);
-			this.panel9.Name = "panel9";
-			this.panel9.Size = new System.Drawing.Size(939, 3);
-			this.panel9.TabIndex = 20;
 			// 
 			// panelStatus
 			// 
-			this.panelStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.panelStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
 			this.panelStatus.Controls.Add(this.tableLayoutPanel1);
 			this.panelStatus.Controls.Add(this.statusTableDisk);
-			this.panelStatus.Controls.Add(this.panel1);
 			this.panelStatus.Controls.Add(this.lblStorageTitle0);
-			this.panelStatus.Controls.Add(this.label6);
-			this.panelStatus.Location = new System.Drawing.Point(20, 20);
+			this.panelStatus.Location = new System.Drawing.Point(10, 10);
 			this.panelStatus.Name = "panelStatus";
-			this.panelStatus.Size = new System.Drawing.Size(440, 410);
+			this.panelStatus.Size = new System.Drawing.Size(461, 430);
 			this.panelStatus.TabIndex = 17;
-			// 
-			// statusTableDisk
-			// 
-			this.statusTableDisk.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-			this.statusTableDisk.ColumnCount = 3;
-			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-			this.statusTableDisk.Controls.Add(this.lblDisk2, 2, 0);
-			this.statusTableDisk.Controls.Add(this.lblDisk1, 1, 0);
-			this.statusTableDisk.Controls.Add(this.lblDisk0, 0, 0);
-			this.statusTableDisk.Controls.Add(this.lblStorage0, 0, 1);
-			this.statusTableDisk.Controls.Add(this.lblStorage1, 1, 1);
-			this.statusTableDisk.Controls.Add(this.lblStorage2, 2, 1);
-			this.statusTableDisk.Location = new System.Drawing.Point(15, 322);
-			this.statusTableDisk.Name = "statusTableDisk";
-			this.statusTableDisk.RowCount = 2;
-			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.statusTableDisk.Size = new System.Drawing.Size(408, 75);
-			this.statusTableDisk.TabIndex = 30;
-			// 
-			// lblDisk2
-			// 
-			this.lblDisk2.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblDisk2.AutoSize = true;
-			this.lblDisk2.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblDisk2.ForeColor = System.Drawing.SystemColors.Control;
-			this.lblDisk2.Location = new System.Drawing.Point(299, 2);
-			this.lblDisk2.Name = "lblDisk2";
-			this.lblDisk2.Size = new System.Drawing.Size(80, 27);
-			this.lblDisk2.TabIndex = 33;
-			this.lblDisk2.Text = "DISK2";
-			// 
-			// lblDisk1
-			// 
-			this.lblDisk1.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblDisk1.AutoSize = true;
-			this.lblDisk1.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblDisk1.ForeColor = System.Drawing.SystemColors.Control;
-			this.lblDisk1.Location = new System.Drawing.Point(163, 2);
-			this.lblDisk1.Name = "lblDisk1";
-			this.lblDisk1.Size = new System.Drawing.Size(80, 27);
-			this.lblDisk1.TabIndex = 32;
-			this.lblDisk1.Text = "DISK1";
-			// 
-			// lblDisk0
-			// 
-			this.lblDisk0.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblDisk0.AutoSize = true;
-			this.lblDisk0.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblDisk0.ForeColor = System.Drawing.SystemColors.Control;
-			this.lblDisk0.Location = new System.Drawing.Point(28, 2);
-			this.lblDisk0.Name = "lblDisk0";
-			this.lblDisk0.Size = new System.Drawing.Size(80, 27);
-			this.lblDisk0.TabIndex = 31;
-			this.lblDisk0.Text = "DISK0";
-			// 
-			// lblStorage0
-			// 
-			this.lblStorage0.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblStorage0.AutoSize = true;
-			this.lblStorage0.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblStorage0.ForeColor = System.Drawing.Color.White;
-			this.lblStorage0.Location = new System.Drawing.Point(18, 39);
-			this.lblStorage0.Name = "lblStorage0";
-			this.lblStorage0.Size = new System.Drawing.Size(99, 27);
-			this.lblStorage0.TabIndex = 27;
-			this.lblStorage0.Text = "9999GB";
-			// 
-			// lblStorage1
-			// 
-			this.lblStorage1.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblStorage1.AutoSize = true;
-			this.lblStorage1.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblStorage1.ForeColor = System.Drawing.Color.White;
-			this.lblStorage1.Location = new System.Drawing.Point(153, 39);
-			this.lblStorage1.Name = "lblStorage1";
-			this.lblStorage1.Size = new System.Drawing.Size(99, 27);
-			this.lblStorage1.TabIndex = 29;
-			this.lblStorage1.Text = "9999GB";
-			// 
-			// lblStorage2
-			// 
-			this.lblStorage2.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblStorage2.AutoSize = true;
-			this.lblStorage2.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblStorage2.ForeColor = System.Drawing.Color.White;
-			this.lblStorage2.Location = new System.Drawing.Point(289, 39);
-			this.lblStorage2.Name = "lblStorage2";
-			this.lblStorage2.Size = new System.Drawing.Size(99, 27);
-			this.lblStorage2.TabIndex = 30;
-			this.lblStorage2.Text = "9999GB";
-			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.Color.White;
-			this.panel1.Location = new System.Drawing.Point(0, 50);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(939, 3);
-			this.panel1.TabIndex = 18;
-			// 
-			// lblStorageTitle0
-			// 
-			this.lblStorageTitle0.AutoSize = true;
-			this.lblStorageTitle0.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblStorageTitle0.ForeColor = System.Drawing.SystemColors.Control;
-			this.lblStorageTitle0.Location = new System.Drawing.Point(103, 281);
-			this.lblStorageTitle0.Name = "lblStorageTitle0";
-			this.lblStorageTitle0.Size = new System.Drawing.Size(230, 27);
-			this.lblStorageTitle0.TabIndex = 26;
-			this.lblStorageTitle0.Text = "Storage Totals (GB):";
-			// 
-			// lblSabUptime
-			// 
-			this.lblSabUptime.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblSabUptime.AutoSize = true;
-			this.lblSabUptime.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblSabUptime.ForeColor = System.Drawing.Color.White;
-			this.lblSabUptime.Location = new System.Drawing.Point(241, 160);
-			this.lblSabUptime.Name = "lblSabUptime";
-			this.lblSabUptime.Size = new System.Drawing.Size(137, 27);
-			this.lblSabUptime.TabIndex = 25;
-			this.lblSabUptime.Text = "00:00:00:00";
-			// 
-			// label12
-			// 
-			this.label12.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label12.AutoSize = true;
-			this.label12.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label12.ForeColor = System.Drawing.SystemColors.Control;
-			this.label12.Location = new System.Drawing.Point(5, 160);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(203, 27);
-			this.label12.TabIndex = 24;
-			this.label12.Text = "SABnzbd Uptime:";
-			// 
-			// lblSabState
-			// 
-			this.lblSabState.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblSabState.AutoSize = true;
-			this.lblSabState.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblSabState.ForeColor = System.Drawing.Color.Red;
-			this.lblSabState.Location = new System.Drawing.Point(247, 109);
-			this.lblSabState.Name = "lblSabState";
-			this.lblSabState.Size = new System.Drawing.Size(126, 27);
-			this.lblSabState.TabIndex = 23;
-			this.lblSabState.Text = "STOPPED";
-			// 
-			// label9
-			// 
-			this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label9.AutoSize = true;
-			this.label9.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label9.ForeColor = System.Drawing.SystemColors.Control;
-			this.label9.Location = new System.Drawing.Point(15, 109);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(183, 27);
-			this.label9.TabIndex = 22;
-			this.label9.Text = "SABnzbd State:";
-			// 
-			// lblVpnUptime
-			// 
-			this.lblVpnUptime.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblVpnUptime.AutoSize = true;
-			this.lblVpnUptime.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblVpnUptime.ForeColor = System.Drawing.Color.White;
-			this.lblVpnUptime.Location = new System.Drawing.Point(241, 60);
-			this.lblVpnUptime.Name = "lblVpnUptime";
-			this.lblVpnUptime.Size = new System.Drawing.Size(137, 27);
-			this.lblVpnUptime.TabIndex = 21;
-			this.lblVpnUptime.Text = "00:00:00:00";
-			// 
-			// label10
-			// 
-			this.label10.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label10.AutoSize = true;
-			this.label10.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label10.ForeColor = System.Drawing.SystemColors.Control;
-			this.label10.Location = new System.Drawing.Point(31, 60);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(150, 27);
-			this.label10.TabIndex = 20;
-			this.label10.Text = "VPN Uptime:";
-			// 
-			// lblVpnState
-			// 
-			this.lblVpnState.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblVpnState.AutoSize = true;
-			this.lblVpnState.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblVpnState.ForeColor = System.Drawing.Color.Red;
-			this.lblVpnState.Location = new System.Drawing.Point(247, 11);
-			this.lblVpnState.Name = "lblVpnState";
-			this.lblVpnState.Size = new System.Drawing.Size(126, 27);
-			this.lblVpnState.TabIndex = 19;
-			this.lblVpnState.Text = "STOPPED";
-			// 
-			// label7
-			// 
-			this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label7.AutoSize = true;
-			this.label7.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label7.ForeColor = System.Drawing.SystemColors.Control;
-			this.label7.Location = new System.Drawing.Point(41, 11);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(130, 27);
-			this.label7.TabIndex = 18;
-			this.label7.Text = "VPN State:";
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Font = new System.Drawing.Font("Liberation Sans", 24F, System.Drawing.FontStyle.Bold);
-			this.label6.ForeColor = System.Drawing.Color.White;
-			this.label6.Location = new System.Drawing.Point(166, 11);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(113, 36);
-			this.label6.TabIndex = 12;
-			this.label6.Text = "Status";
-			// 
-			// panelStatusBg
-			// 
-			this.panelStatusBg.BackColor = System.Drawing.Color.Gray;
-			this.panelStatusBg.Controls.Add(this.panelStatus);
-			this.panelStatusBg.Location = new System.Drawing.Point(499, 123);
-			this.panelStatusBg.Name = "panelStatusBg";
-			this.panelStatusBg.Size = new System.Drawing.Size(481, 450);
-			this.panelStatusBg.TabIndex = 17;
-			// 
-			// btnExit
-			// 
-			this.btnExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnExit.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnExit.ForeColor = System.Drawing.Color.White;
-			this.btnExit.Location = new System.Drawing.Point(829, 18);
-			this.btnExit.Name = "btnExit";
-			this.btnExit.Size = new System.Drawing.Size(116, 71);
-			this.btnExit.TabIndex = 18;
-			this.btnExit.Text = "EXIT";
-			this.btnExit.UseVisualStyleBackColor = false;
-			this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
-			// 
-			// panel5
-			// 
-			this.panel5.BackColor = System.Drawing.Color.Gray;
-			this.panel5.Controls.Add(this.lblDebugMode);
-			this.panel5.Controls.Add(this.TitleVersion);
-			this.panel5.Controls.Add(this.btnHide);
-			this.panel5.Controls.Add(this.btnSettings);
-			this.panel5.Controls.Add(this.label2);
-			this.panel5.Controls.Add(this.btnExit);
-			this.panel5.Location = new System.Drawing.Point(12, 12);
-			this.panel5.Name = "panel5";
-			this.panel5.Size = new System.Drawing.Size(968, 105);
-			this.panel5.TabIndex = 19;
-			// 
-			// lblDebugMode
-			// 
-			this.lblDebugMode.AutoSize = true;
-			this.lblDebugMode.Font = new System.Drawing.Font("Liberation Sans", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblDebugMode.ForeColor = System.Drawing.Color.Firebrick;
-			this.lblDebugMode.Location = new System.Drawing.Point(281, 72);
-			this.lblDebugMode.Name = "lblDebugMode";
-			this.lblDebugMode.Size = new System.Drawing.Size(200, 30);
-			this.lblDebugMode.TabIndex = 21;
-			this.lblDebugMode.Text = "DEBUG MODE";
-			this.lblDebugMode.Visible = false;
-			// 
-			// btnHide
-			// 
-			this.btnHide.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.btnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnHide.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnHide.ForeColor = System.Drawing.Color.White;
-			this.btnHide.Location = new System.Drawing.Point(706, 18);
-			this.btnHide.Name = "btnHide";
-			this.btnHide.Size = new System.Drawing.Size(116, 71);
-			this.btnHide.TabIndex = 20;
-			this.btnHide.Text = "Hide";
-			this.btnHide.UseVisualStyleBackColor = false;
-			this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
-			// 
-			// btnSettings
-			// 
-			this.btnSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSettings.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnSettings.ForeColor = System.Drawing.Color.White;
-			this.btnSettings.Image = global::MediaManager.Properties.Resources.WrenchIconsmall1;
-			this.btnSettings.Location = new System.Drawing.Point(584, 18);
-			this.btnSettings.Name = "btnSettings";
-			this.btnSettings.Size = new System.Drawing.Size(116, 71);
-			this.btnSettings.TabIndex = 14;
-			this.btnSettings.UseVisualStyleBackColor = false;
-			this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("Liberation Sans", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(0, 0);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(494, 72);
-			this.label2.TabIndex = 19;
-			this.label2.Text = "Media Manager";
-			// 
-			// panel6
-			// 
-			this.panel6.BackColor = System.Drawing.Color.Gray;
-			this.panel6.Controls.Add(this.panelDownloadManager);
-			this.panel6.Location = new System.Drawing.Point(499, 579);
-			this.panel6.Name = "panel6";
-			this.panel6.Size = new System.Drawing.Size(481, 450);
-			this.panel6.TabIndex = 20;
-			// 
-			// panel7
-			// 
-			this.panel7.BackColor = System.Drawing.Color.Gray;
-			this.panel7.Controls.Add(this.panelVpnManager);
-			this.panel7.Location = new System.Drawing.Point(12, 579);
-			this.panel7.Name = "panel7";
-			this.panel7.Size = new System.Drawing.Size(481, 450);
-			this.panel7.TabIndex = 21;
-			// 
-			// panel8
-			// 
-			this.panel8.BackColor = System.Drawing.Color.Gray;
-			this.panel8.Controls.Add(this.panelQuickActions);
-			this.panel8.Location = new System.Drawing.Point(12, 123);
-			this.panel8.Name = "panel8";
-			this.panel8.Size = new System.Drawing.Size(481, 450);
-			this.panel8.TabIndex = 22;
-			// 
-			// panelShade
-			// 
-			this.panelShade.BackColor = System.Drawing.Color.Silver;
-			this.panelShade.Location = new System.Drawing.Point(982, 1030);
-			this.panelShade.Name = "panelShade";
-			this.panelShade.Size = new System.Drawing.Size(200, 100);
-			this.panelShade.TabIndex = 23;
-			this.panelShade.Visible = false;
-			// 
-			// lblExtIpTimer
-			// 
-			this.lblExtIpTimer.AutoSize = true;
-			this.lblExtIpTimer.Font = new System.Drawing.Font("Liberation Sans", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblExtIpTimer.ForeColor = System.Drawing.Color.Gray;
-			this.lblExtIpTimer.Location = new System.Drawing.Point(395, 369);
-			this.lblExtIpTimer.Name = "lblExtIpTimer";
-			this.lblExtIpTimer.Size = new System.Drawing.Size(38, 27);
-			this.lblExtIpTimer.TabIndex = 43;
-			this.lblExtIpTimer.Text = "10";
 			// 
 			// tableLayoutPanel1
 			// 
@@ -1011,21 +893,350 @@ namespace MediaManager.GUI
 			this.tableLayoutPanel1.Controls.Add(this.lblSabState, 1, 2);
 			this.tableLayoutPanel1.Controls.Add(this.lblVpnState, 1, 0);
 			this.tableLayoutPanel1.Controls.Add(this.lblVpnUptime, 1, 1);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(15, 66);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(10, 10);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 4;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(408, 200);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(441, 170);
 			this.tableLayoutPanel1.TabIndex = 31;
+			// 
+			// label7
+			// 
+			this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label7.AutoSize = true;
+			this.label7.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label7.Location = new System.Drawing.Point(60, 9);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(111, 25);
+			this.label7.TabIndex = 18;
+			this.label7.Text = "VPN State";
+			// 
+			// label10
+			// 
+			this.label10.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label10.AutoSize = true;
+			this.label10.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label10.Location = new System.Drawing.Point(50, 51);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(131, 25);
+			this.label10.TabIndex = 20;
+			this.label10.Text = "VPN Uptime";
+			// 
+			// label9
+			// 
+			this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label9.AutoSize = true;
+			this.label9.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label9.Location = new System.Drawing.Point(35, 93);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(160, 25);
+			this.label9.TabIndex = 22;
+			this.label9.Text = "SABnzbd State";
+			// 
+			// lblSabUptime
+			// 
+			this.lblSabUptime.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblSabUptime.AutoSize = true;
+			this.lblSabUptime.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblSabUptime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblSabUptime.Location = new System.Drawing.Point(270, 135);
+			this.lblSabUptime.Name = "lblSabUptime";
+			this.lblSabUptime.Size = new System.Drawing.Size(131, 25);
+			this.lblSabUptime.TabIndex = 25;
+			this.lblSabUptime.Text = "00:00:00:00";
+			// 
+			// label12
+			// 
+			this.label12.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label12.AutoSize = true;
+			this.label12.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label12.Location = new System.Drawing.Point(25, 135);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(180, 25);
+			this.label12.TabIndex = 24;
+			this.label12.Text = "SABnzbd Uptime";
+			// 
+			// lblSabState
+			// 
+			this.lblSabState.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblSabState.AutoSize = true;
+			this.lblSabState.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblSabState.ForeColor = System.Drawing.Color.Red;
+			this.lblSabState.Location = new System.Drawing.Point(284, 93);
+			this.lblSabState.Name = "lblSabState";
+			this.lblSabState.Size = new System.Drawing.Size(103, 25);
+			this.lblSabState.TabIndex = 23;
+			this.lblSabState.Text = "STOPPED";
+			// 
+			// lblVpnState
+			// 
+			this.lblVpnState.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblVpnState.AutoSize = true;
+			this.lblVpnState.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblVpnState.ForeColor = System.Drawing.Color.Red;
+			this.lblVpnState.Location = new System.Drawing.Point(284, 9);
+			this.lblVpnState.Name = "lblVpnState";
+			this.lblVpnState.Size = new System.Drawing.Size(103, 25);
+			this.lblVpnState.TabIndex = 19;
+			this.lblVpnState.Text = "STOPPED";
+			// 
+			// lblVpnUptime
+			// 
+			this.lblVpnUptime.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblVpnUptime.AutoSize = true;
+			this.lblVpnUptime.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblVpnUptime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblVpnUptime.Location = new System.Drawing.Point(270, 51);
+			this.lblVpnUptime.Name = "lblVpnUptime";
+			this.lblVpnUptime.Size = new System.Drawing.Size(131, 25);
+			this.lblVpnUptime.TabIndex = 21;
+			this.lblVpnUptime.Text = "00:00:00:00";
+			// 
+			// statusTableDisk
+			// 
+			this.statusTableDisk.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+			this.statusTableDisk.ColumnCount = 3;
+			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+			this.statusTableDisk.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+			this.statusTableDisk.Controls.Add(this.lblDisk2, 2, 0);
+			this.statusTableDisk.Controls.Add(this.lblDisk1, 1, 0);
+			this.statusTableDisk.Controls.Add(this.lblDisk0, 0, 0);
+			this.statusTableDisk.Controls.Add(this.lblStorage0, 0, 1);
+			this.statusTableDisk.Controls.Add(this.lblStorage1, 1, 1);
+			this.statusTableDisk.Controls.Add(this.lblStorage2, 2, 1);
+			this.statusTableDisk.Location = new System.Drawing.Point(10, 351);
+			this.statusTableDisk.Name = "statusTableDisk";
+			this.statusTableDisk.RowCount = 2;
+			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.statusTableDisk.Size = new System.Drawing.Size(441, 69);
+			this.statusTableDisk.TabIndex = 30;
+			// 
+			// lblDisk2
+			// 
+			this.lblDisk2.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblDisk2.AutoSize = true;
+			this.lblDisk2.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblDisk2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblDisk2.Location = new System.Drawing.Point(331, 5);
+			this.lblDisk2.Name = "lblDisk2";
+			this.lblDisk2.Size = new System.Drawing.Size(70, 25);
+			this.lblDisk2.TabIndex = 33;
+			this.lblDisk2.Text = "DISK2";
+			// 
+			// lblDisk1
+			// 
+			this.lblDisk1.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblDisk1.AutoSize = true;
+			this.lblDisk1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblDisk1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblDisk1.Location = new System.Drawing.Point(186, 5);
+			this.lblDisk1.Name = "lblDisk1";
+			this.lblDisk1.Size = new System.Drawing.Size(67, 25);
+			this.lblDisk1.TabIndex = 32;
+			this.lblDisk1.Text = "DISK1";
+			// 
+			// lblDisk0
+			// 
+			this.lblDisk0.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblDisk0.AutoSize = true;
+			this.lblDisk0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblDisk0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblDisk0.Location = new System.Drawing.Point(38, 5);
+			this.lblDisk0.Name = "lblDisk0";
+			this.lblDisk0.Size = new System.Drawing.Size(71, 25);
+			this.lblDisk0.TabIndex = 31;
+			this.lblDisk0.Text = "DISK0";
+			// 
+			// lblStorage0
+			// 
+			this.lblStorage0.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblStorage0.AutoSize = true;
+			this.lblStorage0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblStorage0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblStorage0.Location = new System.Drawing.Point(29, 39);
+			this.lblStorage0.Name = "lblStorage0";
+			this.lblStorage0.Size = new System.Drawing.Size(88, 25);
+			this.lblStorage0.TabIndex = 27;
+			this.lblStorage0.Text = "9999GB";
+			// 
+			// lblStorage1
+			// 
+			this.lblStorage1.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblStorage1.AutoSize = true;
+			this.lblStorage1.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblStorage1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblStorage1.Location = new System.Drawing.Point(175, 39);
+			this.lblStorage1.Name = "lblStorage1";
+			this.lblStorage1.Size = new System.Drawing.Size(88, 25);
+			this.lblStorage1.TabIndex = 29;
+			this.lblStorage1.Text = "9999GB";
+			// 
+			// lblStorage2
+			// 
+			this.lblStorage2.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.lblStorage2.AutoSize = true;
+			this.lblStorage2.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblStorage2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblStorage2.Location = new System.Drawing.Point(322, 39);
+			this.lblStorage2.Name = "lblStorage2";
+			this.lblStorage2.Size = new System.Drawing.Size(88, 25);
+			this.lblStorage2.TabIndex = 30;
+			this.lblStorage2.Text = "9999GB";
+			// 
+			// lblStorageTitle0
+			// 
+			this.lblStorageTitle0.AutoSize = true;
+			this.lblStorageTitle0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblStorageTitle0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.lblStorageTitle0.Location = new System.Drawing.Point(124, 320);
+			this.lblStorageTitle0.Name = "lblStorageTitle0";
+			this.lblStorageTitle0.Size = new System.Drawing.Size(205, 25);
+			this.lblStorageTitle0.TabIndex = 26;
+			this.lblStorageTitle0.Text = "Storage Totals (GB):";
+			// 
+			// panelStatusBg
+			// 
+			this.panelStatusBg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panelStatusBg.Controls.Add(this.panelStatus);
+			this.panelStatusBg.Location = new System.Drawing.Point(499, 123);
+			this.panelStatusBg.Name = "panelStatusBg";
+			this.panelStatusBg.Size = new System.Drawing.Size(481, 450);
+			this.panelStatusBg.TabIndex = 17;
+			// 
+			// btnExit
+			// 
+			this.btnExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.btnExit.FlatAppearance.BorderSize = 0;
+			this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnExit.Font = new System.Drawing.Font("Rubik", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnExit.ForeColor = System.Drawing.Color.White;
+			this.btnExit.Location = new System.Drawing.Point(914, 0);
+			this.btnExit.Name = "btnExit";
+			this.btnExit.Size = new System.Drawing.Size(54, 51);
+			this.btnExit.TabIndex = 18;
+			this.btnExit.Text = "X";
+			this.btnExit.UseVisualStyleBackColor = false;
+			this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+			// 
+			// panel5
+			// 
+			this.panel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel5.Controls.Add(this.label2);
+			this.panel5.Controls.Add(this.btnExit);
+			this.panel5.Controls.Add(this.lblVersion);
+			this.panel5.Controls.Add(this.btnHide);
+			this.panel5.Controls.Add(this.btnSettings);
+			this.panel5.Controls.Add(this.lblDebugMode);
+			this.panel5.Location = new System.Drawing.Point(12, 12);
+			this.panel5.Name = "panel5";
+			this.panel5.Size = new System.Drawing.Size(968, 105);
+			this.panel5.TabIndex = 19;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Font = new System.Drawing.Font("Rubik", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+			this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
+			this.label2.Location = new System.Drawing.Point(0, 0);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(518, 76);
+			this.label2.TabIndex = 19;
+			this.label2.Text = "Media Manager";
+			// 
+			// btnHide
+			// 
+			this.btnHide.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.btnHide.FlatAppearance.BorderSize = 0;
+			this.btnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnHide.Font = new System.Drawing.Font("Rubik", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnHide.ForeColor = System.Drawing.Color.White;
+			this.btnHide.Location = new System.Drawing.Point(856, -1);
+			this.btnHide.Name = "btnHide";
+			this.btnHide.Size = new System.Drawing.Size(54, 51);
+			this.btnHide.TabIndex = 20;
+			this.btnHide.Text = "-";
+			this.btnHide.UseVisualStyleBackColor = false;
+			this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
+			// 
+			// btnSettings
+			// 
+			this.btnSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.btnSettings.BackgroundImage = global::MediaManager.Properties.Resources.WrenchIconsmall1;
+			this.btnSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btnSettings.FlatAppearance.BorderSize = 0;
+			this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnSettings.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnSettings.ForeColor = System.Drawing.Color.White;
+			this.btnSettings.Location = new System.Drawing.Point(782, 0);
+			this.btnSettings.Name = "btnSettings";
+			this.btnSettings.Size = new System.Drawing.Size(68, 50);
+			this.btnSettings.TabIndex = 14;
+			this.btnSettings.UseVisualStyleBackColor = false;
+			this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+			// 
+			// lblDebugMode
+			// 
+			this.lblDebugMode.AutoSize = true;
+			this.lblDebugMode.Font = new System.Drawing.Font("Rubik", 20.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblDebugMode.ForeColor = System.Drawing.Color.Maroon;
+			this.lblDebugMode.Location = new System.Drawing.Point(311, 71);
+			this.lblDebugMode.Name = "lblDebugMode";
+			this.lblDebugMode.Size = new System.Drawing.Size(186, 32);
+			this.lblDebugMode.TabIndex = 21;
+			this.lblDebugMode.Text = "DEBUG MODE";
+			this.lblDebugMode.Visible = false;
+			// 
+			// panel6
+			// 
+			this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel6.Controls.Add(this.panelDownloadManager);
+			this.panel6.Location = new System.Drawing.Point(499, 579);
+			this.panel6.Name = "panel6";
+			this.panel6.Size = new System.Drawing.Size(481, 450);
+			this.panel6.TabIndex = 20;
+			// 
+			// panel7
+			// 
+			this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel7.Controls.Add(this.panelVpnManager);
+			this.panel7.Location = new System.Drawing.Point(12, 579);
+			this.panel7.Name = "panel7";
+			this.panel7.Size = new System.Drawing.Size(481, 450);
+			this.panel7.TabIndex = 21;
+			// 
+			// panel8
+			// 
+			this.panel8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.panel8.Controls.Add(this.panelQuickActions);
+			this.panel8.Location = new System.Drawing.Point(12, 123);
+			this.panel8.Name = "panel8";
+			this.panel8.Size = new System.Drawing.Size(481, 450);
+			this.panel8.TabIndex = 22;
+			// 
+			// panelShade
+			// 
+			this.panelShade.BackColor = System.Drawing.Color.Silver;
+			this.panelShade.Location = new System.Drawing.Point(994, 1042);
+			this.panelShade.Name = "panelShade";
+			this.panelShade.Size = new System.Drawing.Size(200, 100);
+			this.panelShade.TabIndex = 23;
+			this.panelShade.Visible = false;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
 			this.ClientSize = new System.Drawing.Size(993, 1040);
 			this.Controls.Add(this.panelShade);
 			this.Controls.Add(this.panel8);
@@ -1041,15 +1252,22 @@ namespace MediaManager.GUI
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.panelQuickActions.ResumeLayout(false);
 			this.panelQuickActions.PerformLayout();
+			this.panel9.ResumeLayout(false);
+			this.panel9.PerformLayout();
 			this.panelDownloadManager.ResumeLayout(false);
 			this.panelDownloadManager.PerformLayout();
+			this.panel2.ResumeLayout(false);
+			this.panel2.PerformLayout();
 			this.panelDownloadItem.ResumeLayout(false);
 			this.panelDownloadItem.PerformLayout();
 			this.panelVpnManager.ResumeLayout(false);
 			this.panelVpnManager.PerformLayout();
-			this.panel2.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.panelStatus.ResumeLayout(false);
 			this.panelStatus.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.statusTableDisk.ResumeLayout(false);
 			this.statusTableDisk.PerformLayout();
 			this.panelStatusBg.ResumeLayout(false);
@@ -1058,17 +1276,15 @@ namespace MediaManager.GUI
 			this.panel6.ResumeLayout(false);
 			this.panel7.ResumeLayout(false);
 			this.panel8.ResumeLayout(false);
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Button btnRestart;
-		private System.Windows.Forms.Label TitleVersion;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Button btnRestartMachine;
+		private System.Windows.Forms.Label lblVersion;
+		private System.Windows.Forms.Label lblTitleOpenVpn;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Button btnSettings;
 		private System.Windows.Forms.Panel panelQuickActions;
@@ -1077,7 +1293,6 @@ namespace MediaManager.GUI
 		private System.Windows.Forms.Panel panelStatus;
 		private System.Windows.Forms.Label lblVpnState;
 		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label lblVpnUptime;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label lblSabState;
@@ -1088,8 +1303,6 @@ namespace MediaManager.GUI
 		private System.Windows.Forms.Label lblStorageTitle0;
 		private System.Windows.Forms.Label lblStorage1;
 		private System.Windows.Forms.Panel panel3;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Panel panelStatusBg;
 		private System.Windows.Forms.Panel panel4;
 		private System.Windows.Forms.Button btnExit;
@@ -1099,7 +1312,6 @@ namespace MediaManager.GUI
 		private System.Windows.Forms.Panel panel7;
 		private System.Windows.Forms.Panel panel8;
 		private System.Windows.Forms.Button btnHide;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button btnConfigPriority2;
 		private System.Windows.Forms.Button btnAddConfig2;
 		private System.Windows.Forms.TextBox tbxConfig2;
@@ -1109,17 +1321,11 @@ namespace MediaManager.GUI
 		private System.Windows.Forms.Button btnConfigPriority0;
 		private System.Windows.Forms.Button btnAddConfig0;
 		private System.Windows.Forms.TextBox tbxConfig0;
-		private System.Windows.Forms.Panel panel9;
-		private System.Windows.Forms.Panel panel10;
 		private System.Windows.Forms.Button btnToggleVpn;
-		private System.Windows.Forms.Panel panel11;
 		private System.Windows.Forms.Button btnToggleStreamMode;
 		private System.Windows.Forms.Label lblStreamMode;
 		private System.Windows.Forms.Panel panelShade;
 		private System.Windows.Forms.Button btnDownloadToggle;
-		private System.Windows.Forms.Button btnShowDownloads;
-		private System.Windows.Forms.Label lblHeadingDownload;
-		private System.Windows.Forms.Panel panel12;
 		private System.Windows.Forms.Panel panelDownloadItem;
 		private System.Windows.Forms.Label lblSubTitle;
 		private System.Windows.Forms.Label lblTitle;
@@ -1140,6 +1346,27 @@ namespace MediaManager.GUI
 		private Label lblStorage2;
 		private Label lblExtIpTimer;
 		private TableLayoutPanel tableLayoutPanel1;
+		private Panel panel1;
+		private TextBox textBox3;
+		private Button btnConfigPriority4;
+		private Button btnAddConfig4;
+		private TextBox textBox2;
+		private Label label1;
+		private TextBox textBox1;
+		private Button btnConfigPriority3;
+		private Button btnAddConfig3;
+		private Panel panel2;
+		private Label lblTitleSab;
+		private Panel panel9;
+		private Button btnRestartVpnSab;
+		private Button btnFactoryReset;
+		private Button btnClearLogins;
+		private Button btnRestartVpn;
+		private Button btnRestartSab;
+		private Button btnCheckForUpdate;
+		private TextBox textBox4;
+		private Button btnConfigPriority5;
+		private Button btnAddConfig5;
 	}
 }
 

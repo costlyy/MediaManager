@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MediaManager
+﻿namespace MediaManager
 {
 	public class Config
 	{
@@ -22,7 +16,7 @@ namespace MediaManager
 		public const int MAIN_IDLE_LOCAL_IP_BASE = 20;
 		public const int MAIN_IDLE_LOCAL_IP_RANGE = 42;
 
-		public const bool CORE_LEAK_EXCEPTIONS = false;
+		public const bool CORE_LEAK_EXCEPTIONS = true;
 		public const bool CORE_DOWNLOADER_REQUIRES_VPN = true;
 	}
 }

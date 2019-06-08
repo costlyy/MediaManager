@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using MediaManager.Core;
 using MediaManager.Logging;
@@ -35,13 +30,14 @@ namespace MediaManager.VPN
 			DisconnectAndKill,
 			Terminated,
 			Retrying,
+			Restart,
 			Error,
 			Cleanup,
 		}
 
 		private string _currentError = "";
-		private int _disconnectCounter = 0;
-		private int _destroyCounter = 0;
+		private int _disconnectCounter;
+		private int _destroyCounter;
 		private Dictionary<int, IVpnComponent> _vpnComponents;
 		private IVpnComponent _currentComponent;
 		private IManager _configManager;
@@ -122,6 +118,9 @@ namespace MediaManager.VPN
 				case VpnManagerState.Terminated:
 					break;
 				case VpnManagerState.Retrying:
+					break;
+				case VpnManagerState.Restart:
+					ProcessRestart();
 					break;
 				case VpnManagerState.Error:
 					break;
@@ -234,6 +233,16 @@ namespace MediaManager.VPN
 
 			SetState(VpnManagerState.Starting);
 			return true;
+		}
+
+		public void Restart()
+		{
+			if (_state == VpnManagerState.Error)
+			{
+				LogWriter.Write($"VpnManager # Moving to restart from error state.");
+			}
+
+			SetState(VpnManagerState.Restart);
 		}
 
 		public string GetUpTime()
@@ -397,7 +406,7 @@ namespace MediaManager.VPN
 
 		#region FSM Methods
 
-		#region VPN Manager load Configs
+		#region VPN Manager - load Configs
 
 		private void ProcessLoadConfigs()
 		{
@@ -420,7 +429,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager idle / wait for start listener.
+		#region VPN Manager - idle / wait for start listener.
 
 		private void ProcessIdle()
 		{
@@ -429,7 +438,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager process initial trigger (start)
+		#region VPN Manager - process initial trigger (start)
 
 		private void ProcessStartManager()
 		{
@@ -439,7 +448,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager load process
+		#region VPN Manager - load process
 
 		private void ProcessLoadProcess()
 		{
@@ -494,7 +503,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager load socket
+		#region VPN Manager - load socket
 
 		private void ProcessLoadSocket()
 		{
@@ -545,7 +554,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager verify connection state
+		#region VPN Manager - verify connection state
 
 		private void ProcessVerifyConnection()
 		{
@@ -593,7 +602,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager process connected / main update
+		#region VPN Manager - process connected / main update
 
 		private void ProcessConnected()
 		{
@@ -602,7 +611,7 @@ namespace MediaManager.VPN
 
 		#endregion
 
-		#region VPN Manager stop existing process
+		#region VPN Manager - stop existing process
 
 		private void ProcessDisconnect(bool killProcess = false)
 		{
@@ -653,6 +662,15 @@ namespace MediaManager.VPN
 
 			LogWriter.Write($"VpnManager # Successfully destroyed VPN process.");
 			SetState(VpnManagerState.Idle);
+		}
+
+		#endregion
+
+		#region VPN Manager - Restart
+
+		private void ProcessRestart()
+		{
+			
 		}
 
 		#endregion

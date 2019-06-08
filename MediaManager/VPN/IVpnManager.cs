@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MediaManager.Core;
 using MediaManager.VPN.SocketCommands;
 
@@ -15,6 +11,8 @@ namespace MediaManager.VPN
 		void Destroy();
 
 		bool Connect();
+
+		void Restart();
 
 		void QueueCommand(VpnSocketCommand command);
 

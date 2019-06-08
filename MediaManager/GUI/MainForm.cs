@@ -3,24 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Authentication.ExtendedProtection.Configuration;
 using System.Text;
 using System.Windows.Forms;
+using MediaManager.Actions;
 using MediaManager.Core;
 using MediaManager.Downloads;
 using MediaManager.GUI.Status;
 using MediaManager.Logging;
 using MediaManager.Properties;
 using MediaManager.SABnzbd;
-using MediaManager.SABnzbd.JsonObjects;
-using MediaManager.VPN;
 using MediaManager.VPN.SocketCommands;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using VpnManager = MediaManager.VPN.VpnManager;
 
 namespace MediaManager.GUI
@@ -30,18 +24,16 @@ namespace MediaManager.GUI
 		
 		private SettingsData _settingData;
 		private SettingsForm _settingsForm;
-		private Dictionary<int, List<string>> _errorMessages = new Dictionary<int, List<string>>();
+		private readonly Dictionary<int, List<string>> _errorMessages = new Dictionary<int, List<string>>();
 		private DriveDisplay _statusDriveDisplay;
 		private DateTime _ipUpdateTime;
-		private int _additionalSeconds = 0;
-
-		private int _debugCount = 0;
+		private int _additionalSeconds;
 
 		public MainForm(string[] args)
 		{
 			LogWriter.Write("Constructed MainForm.");
 
-			_settingData = new SettingsData(Properties.Settings.Default);
+			_settingData = new SettingsData(Settings.Default);
 
 			InitializeComponent();
 			InitializeKeepAlive();
@@ -59,12 +51,14 @@ namespace MediaManager.GUI
 				//ConnectVpn();
 			}
 
-			TitleVersion.Text = Program.CURRENT_VERSION;
+			lblVersion.Text = Application.ProductVersion;
 			StartPosition = FormStartPosition.Manual;
 			Location = new Point(0, 0);
 
 			DownloadManager.Initialize();
 			DownloadManager.Instance.AddParentPanel(panelDownloadManager);
+
+			InitActionsPanel();
 
 #if DEBUG
 			//// TODO: Remove this.
@@ -221,36 +215,47 @@ namespace MediaManager.GUI
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			_settingData.Save();
-			Properties.Settings.Default.Save();
+			Settings.Default.Save();
 			VpnManager.Instance?.Destroy();
 			SabManager.Instance?.Destroy();
 			LogWriter.Write($"MainForm # Finished save, program closed.");
 		}
 
-		#region Quick Actions
+		#region Actions
 
-		private Timer _streamingModeTimer = null;
+		private Timer _streamingModeTimer;
 		private TimeSpan _streamTime;
 		private DateTime _streamEndTime;
 
-		private bool _restoreVpnAfter = false;
-		private bool _restoreDownloadsAfter = false;
+		private bool _restoreVpnAfter;
+		private bool _restoreDownloadsAfter;
+
+		private void InitActionsPanel()
+		{
+			ActionsManager.Initialize();
+
+			List<Control> controls = new List<Control>();
+
+			foreach (Control item in panelQuickActions.Controls)
+			{
+				if (item == null)
+				{
+					continue;
+				}
+
+				controls.Add(item);
+			}
+
+			ActionsManager.Instance.SetControls(controls);
+			ActionsManager.Instance.SetSettings(ref _settingData);
+
+			ActionsManager.Instance.Start();
+
+		}
 
 		private void btnRestart_Click(object sender, EventArgs e)
 		{
-			DialogResult result = MessageBox.Show("Shutdown whole system? This will cancel any running processes and downloads.", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-			switch (result)
-			{
-				default:
-					goto case DialogResult.No;
-
-				case DialogResult.Yes:
-					Helpers.ExitWindows(Helpers.EWX_REBOOT | Helpers.EWX_FORCE);
-					return;
-				case DialogResult.No:
-					return;
-			}
+			
 		}
 
 		private void btnSettings_Click(object sender, EventArgs e)
@@ -326,7 +331,7 @@ namespace MediaManager.GUI
 
 			if (_restoreDownloadsAfter)
 			{
-				LogWriter.Write($"MainForm # Attempting to restore downloader running state.");
+				LogWriter.Write("MainForm # Attempting to restore downloader running state.");
 
 				if (SabManager.Instance == null)
 				{
@@ -334,25 +339,25 @@ namespace MediaManager.GUI
 
 					if (SabManager.Instance == null)
 					{
-						LogWriter.Write($"MainForm # Error! Failed to re-init downloader core.");
+						LogWriter.Write("MainForm # Error! Failed to re-init downloader core.");
 						return;
 					}
 
-					LogWriter.Write($"MainForm # Re-initialised downloader singleton.");
+					LogWriter.Write("MainForm # Re-initialised downloader singleton.");
 				}
 
 				SabManager.Instance.SetSettings(ref _settingData);
 
 				if (!SabManager.Instance.StartProcess())
 				{
-					LogWriter.Write($"MainForm # Failed to start process, attempting to process errors.");
+					LogWriter.Write("MainForm # Failed to start process, attempting to process errors.");
 
 					string error = "";
 					SabManager.Instance.GetError(ref error);
 
 					if (!SabManager.Instance.StartProcess())
 					{
-						LogWriter.Write($"MainForm # Critical Error! Processed errors but still could not start.", DebugPriority.High, true);
+						LogWriter.Write("MainForm # Critical Error! Processed errors but still could not start.", DebugPriority.High, true);
 						return;
 					}
 
@@ -362,7 +367,7 @@ namespace MediaManager.GUI
 				btnDownloadToggle.Image = Resources.icon_stop_mid;
 			}
 
-			LogWriter.Write($"MainForm # Manually stopped Streaming mode (re-enabled VPN etc).");
+			LogWriter.Write("MainForm # Manually stopped Streaming mode (re-enabled VPN etc).");
 		}
 
 		private void btnToggleStreamMode_Click(object sender, EventArgs e)
@@ -385,7 +390,7 @@ namespace MediaManager.GUI
 			if (timeDiff.TotalSeconds < 0)
 			{
 				btnToggleStreamMode_Click(null, null);
-				LogWriter.Write($"MainForm # Streaming mode timer has elapsed, turning off streaming mode.");
+				LogWriter.Write("MainForm # Streaming mode timer has elapsed, turning off streaming mode.");
 				return;
 			}
 
@@ -419,16 +424,7 @@ namespace MediaManager.GUI
 
 		public void MainUpdate()
 		{
-			//_debugCount++;
-
-			//if (_debugCount > 150)
-			//{
-			//	LogWriter.Write("MainForm # DEBUG - Firing clear all.");
-
-			//	DownloadManager.Instance.ClearAll();
-			//	_debugCount = -9999;
-			//}
-
+			ActionsManager.Instance?.Update();
 			MaintainVpnManager();
 			UpdateStorageStatus();
 			MaintainSabManager();
@@ -451,57 +447,13 @@ namespace MediaManager.GUI
 		private void UpdateStorageStatus()
 		{
 			_statusDriveDisplay?.Update();
-
-			//try
-			//{
-			//	var localDrives = DriveInfo.GetDrives();
-			
-			//	foreach (DriveInfo drive in localDrives.Where(drive => drive != null))
-			//	{
-			//		var sapceInGb = 0.0f;
-			//		string[] stringSpace = new string[2];
-
-   //                 // First drive storage display, specifically only for the first drive.
-			//		if (!string.IsNullOrWhiteSpace(_settingData.Storage0))
-			//		{
-			//			if (drive.Name.ToUpper().Contains(_settingData.Storage0))
-			//			{
-			//				lblStorageTitle0.Text = $"Free Space {drive.Name}";
-
-			//				sapceInGb = drive.TotalFreeSpace / 1024f / 1024f / 1024f;
-
-			//			    lblStorage0.ForeColor = GetDriveDisplayColour(sapceInGb);
-
-   //                         stringSpace = sapceInGb.ToString(CultureInfo.InvariantCulture).Split('.');
-			//				lblStorage0.Text = $"{stringSpace[0]}.{stringSpace[1].Substring(0, 2)} GB";
-			//			}
-			//		}
-
-   //                 // Second drive display specifics.
-			//		if (string.IsNullOrWhiteSpace(_settingData.Storage1)) continue;
-
-			//		if (!drive.Name.ToUpper().Contains(_settingData.Storage1)) continue;
-
-			//		lblStorageTitle1.Text = $"Free Space {drive.Name}";
-
-			//		sapceInGb = drive.TotalFreeSpace / 1024f / 1024f / 1024f;
-
-			//		lblStorage1.ForeColor = GetDriveDisplayColour(sapceInGb);
-					
-			//		stringSpace = sapceInGb.ToString(CultureInfo.InvariantCulture).Split('.');
-			//		lblStorage1.Text = $"{stringSpace[0]}.{stringSpace[1].Substring(0, 2)} GB";
-			//	}
-			//}
-			//catch (Exception)
-			//{
-			//}
 		}
 
 		#endregion Status Display
 
 		#region SABnzbd Manager
 
-		private bool _pauseSab = false;
+		private bool _pauseSab;
 		private PauseState _pauseState;
 
 		private enum PauseState
@@ -545,7 +497,7 @@ namespace MediaManager.GUI
 				item.Enabled = false;
 			}
 
-			LogWriter.Write($"MainForm # Disabled SAB Downloader.");
+			LogWriter.Write("MainForm # Disabled SAB Downloader.");
 		}
 
 		private void EnableSabManager()
@@ -557,7 +509,7 @@ namespace MediaManager.GUI
 				item.Enabled = true;
 			}
 
-			LogWriter.Write($"MainForm # Enabled SAB Downloader.");
+			LogWriter.Write("MainForm # Enabled SAB Downloader.");
 		}
 
 		private void MaintainSabManager()
@@ -573,7 +525,7 @@ namespace MediaManager.GUI
 						try
 						{
 							item.Kill();
-							LogWriter.Write($"MainForm # Killed unexpected SABnzbd process.");
+							LogWriter.Write("MainForm # Killed unexpected SABnzbd process.");
 						}
 						catch (Exception)
 						{
@@ -607,11 +559,6 @@ namespace MediaManager.GUI
 					lblSabState.Text = "STOPPED";
 					lblSabState.ForeColor = Color.Red;
 
-					if (btnShowDownloads.Enabled)
-					{
-						btnShowDownloads.Enabled = false;
-					}
-
 					if (btnDownloadToggle.Image != Resources.icon_play_mid)
 					{
 						btnDownloadToggle.Image = Resources.icon_play_mid;
@@ -620,11 +567,6 @@ namespace MediaManager.GUI
 					break;
 
 				case SabManager.SabManagerState.Running:
-
-					if (!btnShowDownloads.Enabled)
-					{
-						btnShowDownloads.Enabled = true;
-					}
 
 					if (clientData?.StatusData == null)
 					{
@@ -690,11 +632,6 @@ namespace MediaManager.GUI
 				case SabManager.SabManagerState.LoadingProcess:
 				case SabManager.SabManagerState.VerifyHttpConnection:
 
-					if (btnShowDownloads.Enabled)
-					{
-						btnShowDownloads.Enabled = false;
-					}
-
 					lblSabState.Text = "STARTING";
 					lblSabState.ForeColor = Color.Yellow;
 
@@ -702,12 +639,7 @@ namespace MediaManager.GUI
 
 			    case SabManager.SabManagerState.Error:
 
-				    if (btnShowDownloads.Enabled)
-				    {
-					    btnShowDownloads.Enabled = false;
-				    }
-
-					lblSabState.Text = "ERROR";
+				    lblSabState.Text = "ERROR";
 			        lblSabState.ForeColor = Color.Red;
 
 			        if (btnDownloadToggle.Image != Resources.icon_stop_mid)
@@ -744,13 +676,13 @@ namespace MediaManager.GUI
 						if (_pauseSab)
 						{
 							SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetPaused());
-							LogWriter.Write($"MainForm # Sent pause request to SABnzbd.");
+							LogWriter.Write("MainForm # Sent pause request to SABnzbd.");
 							SetPauseState(PauseState.Pausing);
 						}
 					}
 					else
 					{
-						LogWriter.Write($"MainForm # Sent pause request to SABnzbd, but it is already paused.");
+						LogWriter.Write("MainForm # Sent pause request to SABnzbd, but it is already paused.");
 						SetPauseState(PauseState.Paused);
 					}
 
@@ -760,7 +692,7 @@ namespace MediaManager.GUI
 
 					if (data.Paused)
 					{
-						LogWriter.Write($"MainForm # Send pause cmd finished, moving to paused.");
+						LogWriter.Write("MainForm # Send pause cmd finished, moving to paused.");
 						SetPauseState(PauseState.Paused);
 					}
 
@@ -771,14 +703,14 @@ namespace MediaManager.GUI
 					if (!data.Paused)
 					{
 						SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetUnPaused());
-						LogWriter.Write($"MainForm # Warning! SABnzbd un-paused without direction! What happened?", DebugPriority.High);
+						LogWriter.Write("MainForm # Warning! SABnzbd un-paused without direction! What happened?", DebugPriority.High);
 						SetPauseState(PauseState.Unpaused);
 					}
 
 					if (!_pauseSab)
 					{
 						SabManager.Instance.QueueCommand(new SABnzbd.SabCommands.SabManager.SetUnPaused());
-						LogWriter.Write($"MainForm # Sent un-pause request to SABnzbd.");
+						LogWriter.Write("MainForm # Sent un-pause request to SABnzbd.");
 						SetPauseState(PauseState.Unpausing);
 					}	
 
@@ -788,7 +720,7 @@ namespace MediaManager.GUI
 
 					if (!data.Paused)
 					{
-						LogWriter.Write($"MainForm # Send un-pause cmd finished, moving to un-paused.");
+						LogWriter.Write("MainForm # Send un-pause cmd finished, moving to un-paused.");
 						SetPauseState(PauseState.Unpaused);
 					}
 
@@ -805,12 +737,12 @@ namespace MediaManager.GUI
 
 				if (SabManager.Instance == null || !SabManager.Instance.StartProcess())
 				{
-					LogWriter.Write($"MainForm # Failed to start SABnzbd (initial).");
+					LogWriter.Write("MainForm # Failed to start SABnzbd (initial).");
 					return;
 				}
 
 				btnDownloadToggle.Image = Resources.icon_stop_mid;
-				LogWriter.Write($"MainForm # Started SABnzbd Manager (initial).");
+				LogWriter.Write("MainForm # Started SABnzbd Manager (initial).");
 			}
 
 			string error = "";
@@ -824,13 +756,13 @@ namespace MediaManager.GUI
 
 					if (!SabManager.Instance.StartProcess())
 					{
-						LogWriter.Write($"MainForm # Failed to start SABnzbd.");
+						LogWriter.Write("MainForm # Failed to start SABnzbd.");
 						return;
 					}
 
 					btnDownloadToggle.Image = Resources.icon_stop_mid;
 
-					LogWriter.Write($"MainForm # Started SABnzbd Manager.");
+					LogWriter.Write("MainForm # Started SABnzbd Manager.");
 
 					break;
 
@@ -840,13 +772,13 @@ namespace MediaManager.GUI
 
 					if (!SabManager.Instance.StopProcess())
 					{
-						LogWriter.Write($"MainForm # Failed to stop process, attempting to process errors.");
+						LogWriter.Write("MainForm # Failed to stop process, attempting to process errors.");
 
 						SabManager.Instance.GetError(ref error);
 
 						if (!SabManager.Instance.StopProcess())
 						{
-							LogWriter.Write($"MainForm # Critical Error! Processed errors but still could not stop.", DebugPriority.High, true);
+							LogWriter.Write("MainForm # Critical Error! Processed errors but still could not stop.", DebugPriority.High, true);
 							break;
 						}
 						
@@ -857,7 +789,7 @@ namespace MediaManager.GUI
 
 					btnDownloadToggle.Image = Resources.icon_play_mid;
 
-					LogWriter.Write($"MainForm # Stopped SABnzbd Manager.");
+					LogWriter.Write("MainForm # Stopped SABnzbd Manager.");
 
 					break;
 
@@ -932,7 +864,7 @@ namespace MediaManager.GUI
 						try
 						{
 							item.Kill();
-							LogWriter.Write($"MainForm # Killed unexpected OpenVPN process.");
+							LogWriter.Write("MainForm # Killed unexpected OpenVPN process.");
 						}
 						catch (Exception)
 						{
@@ -973,10 +905,10 @@ namespace MediaManager.GUI
 			}
 
 			UpdateVpnButton();
-			UpdateExternalIP();
+			UpdateExternalIp();
 		}
 
-		private void UpdateExternalIP()
+		private void UpdateExternalIp()
 		{
 			int baseSec, rangeSec;
 
@@ -1037,8 +969,7 @@ namespace MediaManager.GUI
 
 		private void UpdateVpnButton()
 		{
-			int buttonTag;
-			int.TryParse(btnToggleVpn.Tag.ToString(), out buttonTag);
+			int.TryParse(btnToggleVpn.Tag.ToString(), out var buttonTag);
 
 			switch ((VpnManager.VpnManagerState) VpnManager.Instance.State)
 			{
@@ -1105,15 +1036,15 @@ namespace MediaManager.GUI
 
 				if (VpnManager.Instance.Start())
 				{
-					LogWriter.Write($"MainForm # Started a new VPN Manager.");
+					LogWriter.Write("MainForm # Started a new VPN Manager.");
 				}
 				else
 				{
 					List<string> errorMessages = new List<string>();
 
-					string errorMsg = "", errorMegDetailed = "";
+					string errorMegDetailed = "";
 
-					errorMsg = VpnManager.Instance.GetError(ref errorMegDetailed);
+					var errorMsg = VpnManager.Instance.GetError(ref errorMegDetailed);
 
 					if (errorMsg.Length > 0)
 					{
@@ -1147,8 +1078,7 @@ namespace MediaManager.GUI
 			Button item = sender as Button;
 			if (item == null) return;
 
-			int buttonTag;
-			int.TryParse(item.Tag.ToString(), out buttonTag);
+			int.TryParse(item.Tag.ToString(), out var buttonTag);
 
 			switch (buttonTag)
 			{
@@ -1174,7 +1104,7 @@ namespace MediaManager.GUI
 				item.Enabled = true;
 			}
 
-			LogWriter.Write($"MainForm # Enabled VPN Manager.");
+			LogWriter.Write("MainForm # Enabled VPN Manager.");
 		}
 
 		private void DisableVpnManager()
@@ -1188,26 +1118,31 @@ namespace MediaManager.GUI
 				item.Enabled = false;
 			}
 
-			LogWriter.Write($"MainForm # Disabled VPN Manager.");
+			LogWriter.Write("MainForm # Disabled VPN Manager.");
 		}
 
 		#endregion VPN Manager 
 
 		private void btnKillAll_Click(object sender, EventArgs e)
 		{
-			LogWriter.Write($"MainForm # User requested to kill all running processes.");
+			LogWriter.Write("MainForm # User requested to kill all running processes.");
 			ForceCleanup();
 		}
 
 		public void ForceCleanup()
 		{
-			LogWriter.Write($"MainForm # Performing force cleanup....");
+			LogWriter.Write("MainForm # Performing force cleanup....");
 
 			SabManager.Instance?.StopProcess();
 			VpnManager.Instance?.Disconnect(true);
 		}
 
-		private void btnShowDownloads_Click(object sender, EventArgs e)
+		private void btnVpnPause_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void LblTitleSab_Click(object sender, EventArgs e)
 		{
 			var sabAddress = new StringBuilder();
 			sabAddress.Append("http://");
@@ -1220,9 +1155,5 @@ namespace MediaManager.GUI
 			Process.Start(sabAddress.ToString());
 		}
 
-		private void btnVpnPause_Click(object sender, EventArgs e)
-		{
-
-		}
 	}
 }

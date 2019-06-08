@@ -3,7 +3,6 @@ using MediaManager.Logging;
 using MediaManager.SABnzbd.JsonObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 
 namespace MediaManager.SABnzbd.SabCommands
 {
@@ -72,7 +71,7 @@ namespace MediaManager.SABnzbd.SabCommands
 				{
 					var value = JsonConvert.DeserializeObject<JsonQueue>(rawJSON, new JsonSerializerSettings
 					{
-						TraceWriter = base.TraceWriter,
+						TraceWriter = TraceWriter,
 						Converters = {
 							new JavaScriptDateTimeConverter()
 						}
@@ -103,7 +102,7 @@ namespace MediaManager.SABnzbd.SabCommands
 				{
 					var value = JsonConvert.DeserializeObject<JsonStatus>(rawJSON, new JsonSerializerSettings
 					{
-						TraceWriter = base.TraceWriter,
+						TraceWriter = TraceWriter,
 						Converters = {
 							new JavaScriptDateTimeConverter()
 						}
@@ -134,7 +133,7 @@ namespace MediaManager.SABnzbd.SabCommands
 				{
 					var value = JsonConvert.DeserializeObject<JsonVersion>(rawJSON, new JsonSerializerSettings
 					{
-						TraceWriter = base.TraceWriter,
+						TraceWriter = TraceWriter,
 						Converters = {
 						new JavaScriptDateTimeConverter()
 						}

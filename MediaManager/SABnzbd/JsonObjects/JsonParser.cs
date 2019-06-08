@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-
-namespace MediaManager.SABnzbd.JsonObjects
+﻿namespace MediaManager.SABnzbd.JsonObjects
 {
 	static class JsonParser
 	{

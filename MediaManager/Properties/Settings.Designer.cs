@@ -12,7 +12,7 @@ namespace MediaManager.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.1.0.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -296,6 +296,78 @@ namespace MediaManager.Properties {
             }
             set {
                 this["vpnGlobalLogin"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string vpnConfig3 {
+            get {
+                return ((string)(this["vpnConfig3"]));
+            }
+            set {
+                this["vpnConfig3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int vpnConfigPriority3 {
+            get {
+                return ((int)(this["vpnConfigPriority3"]));
+            }
+            set {
+                this["vpnConfigPriority3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string vpnConfig4 {
+            get {
+                return ((string)(this["vpnConfig4"]));
+            }
+            set {
+                this["vpnConfig4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int vpnConfigPriority4 {
+            get {
+                return ((int)(this["vpnConfigPriority4"]));
+            }
+            set {
+                this["vpnConfigPriority4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string vpnConfig5 {
+            get {
+                return ((string)(this["vpnConfig5"]));
+            }
+            set {
+                this["vpnConfig5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int vpnConfigPriority5 {
+            get {
+                return ((int)(this["vpnConfigPriority5"]));
+            }
+            set {
+                this["vpnConfigPriority5"] = value;
             }
         }
     }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using MediaManager.Core;
 using MediaManager.Logging;
-using MediaManager.VPN;
 
 namespace MediaManager.SABnzbd
 {
@@ -35,8 +34,8 @@ namespace MediaManager.SABnzbd
 			private TimeSpan _processFreezeTotal;
 			private DateTime _processFreezeStart;
 
-			private int processStopFailCounter = 0;
-			private int _unresponsiveCounter = 0;
+			private int processStopFailCounter;
+			private int _unresponsiveCounter;
 
 			private string _activeError;
 			private string _activeErrorDetail;

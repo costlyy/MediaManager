@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using MediaManager.Logging;
 using MediaManager.SABnzbd;
 using MediaManager.SABnzbd.JsonObjects;
-using Newtonsoft.Json;
 
 namespace MediaManager.Downloads
 {
@@ -43,7 +42,7 @@ namespace MediaManager.Downloads
 
 		private Dictionary<int, IDownloadItem> _downloadItems;
 		private Panel _parentPanel;
-		private int _totalDownloads = 0;
+		private int _totalDownloads;
 
 		public const int DOWNLOAD_ITEM_Y_SPACING = 89;
 		public const int DOWNLOAD_ITEM_Y_DEFAULT = 152;

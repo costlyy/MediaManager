@@ -1,6 +1,4 @@
 ﻿using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using MediaManager.SABnzbd.JsonObjects;
 
 namespace MediaManager.Downloads
 {

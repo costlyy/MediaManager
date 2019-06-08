@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using MediaManager.Logging;
@@ -13,37 +10,43 @@ namespace MediaManager.Core
 {
 	public class SettingsData
 	{
-		private Settings _settings;
+		private readonly Settings _settings;
 
 		public SettingsData(Settings savedSettings)
 		{
 			_settings = savedSettings;
 
-			_sabBinaryPath = savedSettings.SabBinaryPath;
-			_vpnConfigPath = savedSettings.ovpnConfigDir;
-			_vpnBinaryPath = savedSettings.ovpnBinaryDir;
-			_vpnUserName = savedSettings.vpnUserName;
-			_vpnPassword = savedSettings.vpnPassword;
-			_vpnAutoKill = savedSettings.vpnAutoKill;
-			_vpnAutoReconnect = savedSettings.vpnAutoReconnect;
-			_vpnConnectOnBoot = savedSettings.vpnConnectOnBoot;
+			SabBinaryPath = savedSettings.SabBinaryPath;
+			VpnConfigPath = savedSettings.ovpnConfigDir;
+			VpnBinaryPath = savedSettings.ovpnBinaryDir;
+			VpnUserName = savedSettings.vpnUserName;
+			VpnPassword = savedSettings.vpnPassword;
+			VpnAutoKill = savedSettings.vpnAutoKill;
+			VpnAutoReconnect = savedSettings.vpnAutoReconnect;
+			VpnConnectOnBoot = savedSettings.vpnConnectOnBoot;
 
-			_vpnConfig0 = savedSettings.vpnConfig0;
-			_vpnConfigPriority0 = savedSettings.vpnConfigPriority0;
-			_vpnConfig1 = savedSettings.vpnConfig1;
-			_vpnConfigPriority1 = savedSettings.vpnConfigPriority1;
-			_vpnConfig2 = savedSettings.vpnConfig2;
-			_vpnConfigPriority2 = savedSettings.vpnConfigPriority2;
+			VpnConfig0 = savedSettings.vpnConfig0;
+			VpnConfigPriority0 = savedSettings.vpnConfigPriority0;
+			VpnConfig1 = savedSettings.vpnConfig1;
+			VpnConfigPriority1 = savedSettings.vpnConfigPriority1;
+			VpnConfig2 = savedSettings.vpnConfig2;
+			VpnConfigPriority2 = savedSettings.vpnConfigPriority2;
+			VpnConfig3 = savedSettings.vpnConfig3;
+			VpnConfigPriority3 = savedSettings.vpnConfigPriority3;
+			VpnConfig4 = savedSettings.vpnConfig4;
+			VpnConfigPriority4 = savedSettings.vpnConfigPriority4;
+			VpnConfig5 = savedSettings.vpnConfig5;
+			VpnConfigPriority5 = savedSettings.vpnConfigPriority5;
 
-			_storage0 = savedSettings.storage0;
-			_storage1 = savedSettings.storage1;
-			_storage2 = savedSettings.storage2;
+			Storage0 = savedSettings.storage0;
+			Storage1 = savedSettings.storage1;
+			Storage2 = savedSettings.storage2;
 
-			_sabAPI = savedSettings.sabAPI;
-			_sabIP = _settings.sabIP;
-			_sabPort = _settings.sabPort;
+			SabApi = savedSettings.sabAPI;
+			SabIP = _settings.sabIP;
+			SabPort = _settings.sabPort;
 
-		    _vpnGlobalLogin = _settings.vpnGlobalLogin;
+		    VpnGlobalLogin = _settings.vpnGlobalLogin;
 
             try
 			{
@@ -57,19 +60,14 @@ namespace MediaManager.Core
 
 				RegistryKey rootKey = loadKey.OpenSubKey("MediaManager", true);
 
-				if (rootKey == null)
-				{
-					return;
-				}
-				
 				// Registry key values are saved as strings in Windows by default.
-				string rawValue = rootKey.GetValue("LoadWithSystem") as string;
+				string rawValue = rootKey?.GetValue("LoadWithSystem") as string;
 
 				if (rawValue == null) return;
 
 				bool doLoadWithWindows = rawValue.Equals("true", StringComparison.InvariantCultureIgnoreCase);
 
-				_loadWithWindows = doLoadWithWindows;
+				LoadWithWindows = doLoadWithWindows;
 				LogWriter.Write($"Loaded registry entry for LoadWithSystem, value: {doLoadWithWindows}");
 				rootKey.Close();
 				loadKey.Close();
@@ -87,38 +85,44 @@ namespace MediaManager.Core
 
 		public void Save()
 		{
-			_settings.SabBinaryPath = _sabBinaryPath;
-			_settings.ovpnConfigDir= _vpnConfigPath; 
-			_settings.ovpnBinaryDir = _vpnBinaryPath;
+			_settings.SabBinaryPath = SabBinaryPath;
+			_settings.ovpnConfigDir= VpnConfigPath; 
+			_settings.ovpnBinaryDir = VpnBinaryPath;
 
-			_settings.vpnUserName = _vpnUserName;
-			_settings.vpnPassword = _vpnPassword;
-			_settings.vpnAutoKill = _vpnAutoKill;
+			_settings.vpnUserName = VpnUserName;
+			_settings.vpnPassword = VpnPassword;
+			_settings.vpnAutoKill = VpnAutoKill;
 
-			_settings.vpnAutoReconnect = _vpnAutoReconnect;
-			_settings.vpnConnectOnBoot = _vpnConnectOnBoot;
+			_settings.vpnAutoReconnect = VpnAutoReconnect;
+			_settings.vpnConnectOnBoot = VpnConnectOnBoot;
 
-			_settings.vpnConfig0 = _vpnConfig0;
-			_settings.vpnConfig1 = _vpnConfig1;
-			_settings.vpnConfig2 = _vpnConfig2;
+			_settings.vpnConfig0 = VpnConfig0;
+			_settings.vpnConfig1 = VpnConfig1;
+			_settings.vpnConfig2 = VpnConfig2;
+			_settings.vpnConfig3 = VpnConfig3;
+			_settings.vpnConfig4 = VpnConfig4;
+			_settings.vpnConfig5 = VpnConfig5;
 
-			_settings.vpnConfigPriority0 = _vpnConfigPriority0;
-			_settings.vpnConfigPriority1 = _vpnConfigPriority1;
-			_settings.vpnConfigPriority2 = _vpnConfigPriority2;
+			_settings.vpnConfigPriority0 = VpnConfigPriority0;
+			_settings.vpnConfigPriority1 = VpnConfigPriority1;
+			_settings.vpnConfigPriority2 = VpnConfigPriority2;
+			_settings.vpnConfigPriority3 = VpnConfigPriority3;
+			_settings.vpnConfigPriority4 = VpnConfigPriority4;
+			_settings.vpnConfigPriority5 = VpnConfigPriority5;
 
-			_settings.storage0 = _storage0;
-			_settings.storage1 = _storage1;
-			_settings.storage2 = _storage2;
+			_settings.storage0 = Storage0;
+			_settings.storage1 = Storage1;
+			_settings.storage2 = Storage2;
 
-			_settings.sabAPI = _sabAPI;
-			_settings.sabIP = _sabIP;
-			_settings.sabPort = _sabPort;
+			_settings.sabAPI = SabApi;
+			_settings.sabIP = SabIP;
+			_settings.sabPort = SabPort;
 
-		    _settings.vpnGlobalLogin = _vpnGlobalLogin;
+		    _settings.vpnGlobalLogin = VpnGlobalLogin;
 
 			_settings.Save();
 
-		    LogWriter.Write($"SettingsForm # Saved data settings.");
+		    LogWriter.Write("SettingsForm # Saved data settings.");
 
             // Below this point is registry entry for load with system only.
             try
@@ -139,9 +143,14 @@ namespace MediaManager.Core
 				}
 
 				rootKey = loadKey.OpenSubKey("MediaManager", true);
-				rootKey.SetValue("LoadWithSystem", _loadWithWindows);
-				LogWriter.Write($"Set registry entry for _loadWithWindows to {_loadWithWindows} in {rootKey}");
-				rootKey.Close();
+
+				if (rootKey != null)
+				{
+					rootKey.SetValue("LoadWithSystem", LoadWithWindows);
+					LogWriter.Write($"Set registry entry for _loadWithWindows to {LoadWithWindows} in {rootKey}");
+					rootKey.Close();
+				}
+
 				loadKey.Close();
 			}
 			catch (Exception ex)
@@ -159,13 +168,13 @@ namespace MediaManager.Core
             //foreach (SettingsProperty item in _settings.Properties)
 	        foreach (PropertyInfo item in typeof(Settings).GetProperties())
             {
-	            if (item == null || item.Name.Length <= 0) continue;
+	            if (item.Name.Length <= 0) continue;
 
                 try
                 {
                     sb.Append($"[{item.Name}:{item.GetValue(_settings, null)}], ");
                 }
-                catch (TargetParameterCountException e)
+                catch (TargetParameterCountException)
                 {
                 }
             }
@@ -176,169 +185,66 @@ namespace MediaManager.Core
 
 	    #region Properties
 
-        private string _sabBinaryPath;
-		public string SabBinaryPath
-		{
-			get { return _sabBinaryPath; }
-			set { _sabBinaryPath = value; }
-		}
+	    public string SabBinaryPath { get; set; }
 
-		private string _vpnConfigPath;
-		public string VpnConfigPath
-		{
-			get { return _vpnConfigPath; }
-			set { _vpnConfigPath = value; }
-		}
+	    public string VpnConfigPath { get; set; }
 
-		private string _vpnBinaryPath;
-		public string VpnBinaryPath
-		{
-			get { return _vpnBinaryPath; }
-			set { _vpnBinaryPath = value; }
-		}
+	    public string VpnBinaryPath { get; set; }
 
-		private string _vpnUserName;
-		public string VpnUserName
-		{
-			get { return _vpnUserName; }
-			set { _vpnUserName = value; }
-		}
+	    public string VpnUserName { get; set; }
 
-		private string _vpnPassword;
-		public string VpnPassword
-		{
-			get { return _vpnPassword; }
-			set { _vpnPassword = value; }
-		}
+		public string VpnPassword { get; set; }
 
-		private string _activeVpnConfg;
-		public string ActiveVpnConfg
-		{
-			get { return _activeVpnConfg; }
-			set { _activeVpnConfg = value; }
-		}
+		public string ActiveVpnConfg { get; set; }
 
-		public string ActiveVpnRootConfg => Path.Combine(_vpnConfigPath, _activeVpnConfg);
+		public string ActiveVpnRootConfg => Path.Combine(VpnConfigPath, ActiveVpnConfg);
 
-		private bool _vpnAutoKill;
-		public bool VpnAutoKill
-		{
-			get { return _vpnAutoKill; }
-			set { _vpnAutoKill = value; }
-		}
+		public bool VpnAutoKill { get; set; }
 
-		private bool _vpnAutoReconnect;
-		public bool VpnAutoReconnect
-		{
-			get { return _vpnAutoReconnect; }
-			set { _vpnAutoReconnect = value; }
-		}
+		public bool VpnAutoReconnect { get; set; }
 
-		private bool _vpnConnectOnBoot;
-		public bool VpnConnectOnBoot
-		{
-			get { return _vpnConnectOnBoot; }
-			set { _vpnConnectOnBoot = value; }
-		}
+		public bool VpnConnectOnBoot { get; set; }
 
-        private bool _loadWithWindows;
-        public bool LoadWithWindows
-        {
-            get { return _loadWithWindows; }
-            set { _loadWithWindows = value; }
-        }
+		public bool LoadWithWindows { get; set; }
 
-        private string _vpnConfig0;
-		public string VpnConfig0
-		{
-			get { return _vpnConfig0; }
-			set { _vpnConfig0 = value; }
-		}
+		public string VpnConfig0 { get; set; }
 
-		private int _vpnConfigPriority0;
-		public int VpnConfigPriority0
-		{
-			get { return _vpnConfigPriority0; }
-			set { _vpnConfigPriority0 = value; }
-		}
+		public int VpnConfigPriority0 { get; set; }
 
-		private string _vpnConfig1;
-		public string VpnConfig1
-		{
-			get { return _vpnConfig1; }
-			set { _vpnConfig1 = value; }
-		}
+		public string VpnConfig1 { get; set; }
 
-		private int _vpnConfigPriority1;
-		public int VpnConfigPriority1
-		{
-			get { return _vpnConfigPriority1; }
-			set { _vpnConfigPriority1 = value; }
-		}
+		public int VpnConfigPriority1 { get; set; }
 
-		private string _vpnConfig2;
-		public string VpnConfig2
-		{
-			get { return _vpnConfig2; }
-			set { _vpnConfig2 = value; }
-		}
+		public string VpnConfig2 { get; set; }
 
-		private int _vpnConfigPriority2;
-		public int VpnConfigPriority2
-		{
-			get { return _vpnConfigPriority2; }
-			set { _vpnConfigPriority2 = value; }
-		}
+		public int VpnConfigPriority2 { get; set; }
 
-		private string _storage0;
-		public string Storage0
-		{
-			get { return _storage0; }
-			set { _storage0 = value; }
-		}
+		public string VpnConfig3 { get; set; }
 
-		private string _storage1;
-		public string Storage1
-		{
-			get { return _storage1; }
-			set { _storage1 = value; }
-		}
+		public int VpnConfigPriority3 { get; set; }
 
-		private string _storage2;
-		public string Storage2
-		{
-			get { return _storage2; }
-			set { _storage2 = value; }
-		}
+		public string VpnConfig4 { get; set; }
 
-		private string _sabAPI;
-		public string SabAPI
-		{
-			get { return _sabAPI; }
-			set { _sabAPI = value; }
-		}
+		public int VpnConfigPriority4 { get; set; }
 
-		private string _sabIP;
-		public string SabIP
-		{
-			get { return _sabIP; }
-			set { _sabIP = value; }
-		}
+		public string VpnConfig5 { get; set; }
 
-		private int _sabPort;
-		public int SabPort
-		{
-			get { return _sabPort; }
-			set { _sabPort = value; }
-		}
+		public int VpnConfigPriority5 { get; set; }
 
-	    private bool _vpnGlobalLogin;
-	    public bool VpnGlobalLogin
-        {
-	        get { return _vpnGlobalLogin; }
-	        set { _vpnGlobalLogin = value; }
-	    }
+		public string Storage0 { get; set; }
 
-        #endregion
+		public string Storage1 { get; set; }
+
+		public string Storage2 { get; set; }
+
+		public string SabApi { get; set; }
+
+		public string SabIP { get; set; }
+
+		public int SabPort { get; set; }
+
+		public bool VpnGlobalLogin { get; set; }
+
+	    #endregion
     }
 }
