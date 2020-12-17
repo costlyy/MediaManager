@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Downloads;
 using MediaManager.Logging;
 using MediaManager.Properties;
@@ -24,6 +25,7 @@ namespace MediaManager.SABnzbd
 		public enum SabManagerState
 		{
 			InitControls,
+			LoadingProfile,
 			Idle,
 			Starting,
 			LoadingProcess,
@@ -61,13 +63,16 @@ namespace MediaManager.SABnzbd
 		private Dictionary<int, ISabComponent> _sabComponents;
 		private ISabComponent _currentComponent;
 	    private List<Control> _ownedControls;
-		private SettingsData _userSettings;
-		private List<SabClientCommand> _sabCommandQueue;
+	    private List<SabClientCommand> _sabCommandQueue;
 		private Timer _errorHandler;
 
 		private DateTime _bootTimer;
 		private DateTime _restartTimer;
 		private bool _bootTimerStarted;
+
+		private ProfileData<SabProfileData> _profileData;
+
+		public DateTime StartTime { get; }
 
 		private TimeSpan _connectSpan;
 		private DateTime _connectTime;
@@ -108,6 +113,12 @@ namespace MediaManager.SABnzbd
 			_errorHandler = new Timer { Interval = 1000 };
 			_errorHandler.Tick += (s, e) => ProcessErrors();
 			_errorHandler.Start();
+
+			StartTime = DateTime.Now;
+
+			//_profileData = ProfileManager.Instance.ImportData<SabProfileData>();
+			_profileData = new SabProfileData(ProfileManager.Instance.GetProfilePath());
+			_profileData.Import();
 
 			SetState(SabManagerState.InitControls);
 		}
@@ -158,15 +169,16 @@ namespace MediaManager.SABnzbd
 			return true;
 		}
 
-		public string GetError(ref string errorDetail)
+		public bool GetError(ref string errorDetail)
 		{
-			if (_state != SabManagerState.Error) return "";
+			if (_state != SabManagerState.Error) return false;
 
 			LogWriter.Write($"SabManager # Returning active error to caller: {_currentError}.");
 
 			SetState(SabManagerState.Idle);
 
-			return _currentError;
+			errorDetail = _currentError;
+			return true;
 		}
 
 		public void SetControls(List<Control> controls)
@@ -179,18 +191,6 @@ namespace MediaManager.SABnzbd
 
 			_ownedControls = controls;
 			LogWriter.Write($"SabManager # SetControls - Added {_ownedControls.Count} controls to manager.");
-		}
-
-		public void SetSettings(ref SettingsData settings)
-		{
-			if (settings == null)
-			{
-				// TODO: Add error case.
-				return;
-			}
-
-			_userSettings = settings;
-			LogWriter.Write($"SabManager # SetSettings - Added setting config.");
 		}
 
 		public bool StopProcess()
@@ -298,6 +298,12 @@ namespace MediaManager.SABnzbd
 			}
 		}
 
+		public void SaveData()
+		{
+			LogWriter.Write($"SabManager # Saving data");
+			_profileData.Export();
+		}
+
 		public void ToggleEnabledState(bool enabled)
 		{
 			if (_ownedControls == null)
@@ -322,6 +328,9 @@ namespace MediaManager.SABnzbd
 			{
 				case SabManagerState.InitControls:
 					ProcessInitControls();
+					break;
+				case SabManagerState.LoadingProfile:
+					ProcessLoadProfile();
 					break;
 				case SabManagerState.Idle:
 					ProcessIdle();
@@ -626,10 +635,32 @@ namespace MediaManager.SABnzbd
 			    }
 		    }
 
+			SetState(SabManagerState.LoadingProfile);
+		}
+
+		#endregion
+
+		#region FSM - Load Profile Data
+
+		private void ProcessLoadProfile()
+		{
+			var data = _profileData.Import();
+
+			if (data != null)
+			{
+				LogWriter.Write($"SabManager # Processed all profile data.");
+			}
+			else
+			{
+				LogWriter.Write($"SabManager # Could not load SAB data, creating new XML skeletons.");
+				_profileData.Export();
+			}
+
+			_profileData = data;
 			SetState(SabManagerState.Idle);
 		}
 
-	    #endregion 
+		#endregion
 
 		#region FSM - Idle / Wait for start listener.
 
@@ -655,7 +686,7 @@ namespace MediaManager.SABnzbd
 			if (_currentComponent == null)
 			{
 				LogWriter.Write($"SabManager # Starting the SABnzbd process (initial).");
-				_currentComponent = new SabProcess(_userSettings);
+				_currentComponent = new SabProcess((SabProfileData) _profileData);
 				_currentComponent.Start();
 
 				_sabComponents.Add(SabComponentTypes.COMPONENT_PROCESS, _currentComponent);
@@ -732,7 +763,7 @@ namespace MediaManager.SABnzbd
 			if (_currentComponent == null)
 			{
 				LogWriter.Write($"SabManager # Creating new HttpClient.");
-				_currentComponent = new SabHttpClient(SabComponentTypes.COMPONENT_HTTP_CLIENT, _userSettings);
+				_currentComponent = new SabHttpClient(SabComponentTypes.COMPONENT_HTTP_CLIENT, (SabProfileData) _profileData);
 				_currentComponent.Start();
 
 				_sabComponents.Add(SabComponentTypes.COMPONENT_HTTP_CLIENT, _currentComponent);

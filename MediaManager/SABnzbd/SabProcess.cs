@@ -30,7 +30,7 @@ namespace MediaManager.SABnzbd
 			public int Id { get; }
 
 			private Process _sabProcess;
-			private readonly SettingsData _userSettings;
+			private readonly SabProfileData _profileData;
 			private TimeSpan _processFreezeTotal;
 			private DateTime _processFreezeStart;
 
@@ -46,9 +46,9 @@ namespace MediaManager.SABnzbd
 
 			#region CTOR & Public API
 
-			public SabProcess(SettingsData data, int componentId = -1)
+			public SabProcess(SabProfileData data, int componentId = -1)
 			{
-				_userSettings = data;
+				_profileData = data;
 				Id = componentId;
 			}
 
@@ -147,12 +147,12 @@ namespace MediaManager.SABnzbd
 
 			private void LoadSabProcess()
 			{
-				var binaryPath = _userSettings.SabBinaryPath;
+				var binaryPath = _profileData.BinaryPath;
 				var error = "";
 
 				if (!Helpers.SanitisePath(Helpers.PathTypes.Executable, ref binaryPath, ref error))
 				{
-					LogWriter.Write($"SabProcess # LoadSabProcess - Error! Failed to validate/sanitise SABnzbd binary path: {_userSettings.SabBinaryPath} (error: {error}).");
+					LogWriter.Write($"SabProcess # LoadSabProcess - Error! Failed to validate/sanitise SABnzbd binary path: {_profileData.BinaryPath} (error: {error}).");
 					SetState(ProcessState.Error);
 					_activeError = error;
 					return;
@@ -165,7 +165,7 @@ namespace MediaManager.SABnzbd
 					_sabProcess.StartInfo.CreateNoWindow = false;
 					_sabProcess.EnableRaisingEvents = true;
 					_sabProcess.StartInfo.Arguments = $"--browser 0";
-					_sabProcess.StartInfo.FileName = _userSettings.SabBinaryPath;
+					_sabProcess.StartInfo.FileName = _profileData.BinaryPath;
 					_sabProcess.Start();
 
 					if (_sabProcess.Responding)

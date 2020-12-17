@@ -4,7 +4,7 @@ using MediaManager.VPN.SocketCommands;
 
 namespace MediaManager.VPN
 {
-	public interface IVpnManager : IManager
+	public interface IVpnManager : IManagerAdvanced
 	{
 		bool Disconnect(bool killProcess = false);
 

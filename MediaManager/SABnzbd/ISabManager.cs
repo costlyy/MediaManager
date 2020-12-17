@@ -3,7 +3,7 @@ using MediaManager.SABnzbd.SabCommands;
 
 namespace MediaManager.SABnzbd
 {
-	public interface ISabManager : IManager
+	public interface ISabManager : IManagerAdvanced
 	{
 		bool StopProcess();
 

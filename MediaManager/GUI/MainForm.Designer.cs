@@ -150,7 +150,7 @@ namespace MediaManager.GUI
 			this.lblVersion.AutoSize = true;
 			this.lblVersion.Font = new System.Drawing.Font("Rubik", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-			this.lblVersion.Location = new System.Drawing.Point(15, 71);
+			this.lblVersion.Location = new System.Drawing.Point(533, 42);
 			this.lblVersion.Name = "lblVersion";
 			this.lblVersion.Size = new System.Drawing.Size(25, 23);
 			this.lblVersion.TabIndex = 3;
@@ -333,7 +333,7 @@ namespace MediaManager.GUI
 			this.panelDownloadManager.Controls.Add(this.panelDownloadItem);
 			this.panelDownloadManager.Location = new System.Drawing.Point(10, 10);
 			this.panelDownloadManager.Name = "panelDownloadManager";
-			this.panelDownloadManager.Size = new System.Drawing.Size(461, 430);
+			this.panelDownloadManager.Size = new System.Drawing.Size(461, 559);
 			this.panelDownloadManager.TabIndex = 16;
 			// 
 			// btnDownloadPause
@@ -883,7 +883,7 @@ namespace MediaManager.GUI
 			this.panelStatus.Controls.Add(this.lblStorageTitle0);
 			this.panelStatus.Location = new System.Drawing.Point(10, 10);
 			this.panelStatus.Name = "panelStatus";
-			this.panelStatus.Size = new System.Drawing.Size(461, 430);
+			this.panelStatus.Size = new System.Drawing.Size(461, 300);
 			this.panelStatus.TabIndex = 17;
 			// 
 			// tableLayoutPanel1
@@ -1019,7 +1019,7 @@ namespace MediaManager.GUI
 			this.statusTableDisk.Controls.Add(this.lblStorage0, 0, 1);
 			this.statusTableDisk.Controls.Add(this.lblStorage1, 1, 1);
 			this.statusTableDisk.Controls.Add(this.lblStorage2, 2, 1);
-			this.statusTableDisk.Location = new System.Drawing.Point(10, 351);
+			this.statusTableDisk.Location = new System.Drawing.Point(10, 220);
 			this.statusTableDisk.Name = "statusTableDisk";
 			this.statusTableDisk.RowCount = 2;
 			this.statusTableDisk.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -1105,7 +1105,7 @@ namespace MediaManager.GUI
 			this.lblStorageTitle0.AutoSize = true;
 			this.lblStorageTitle0.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lblStorageTitle0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
-			this.lblStorageTitle0.Location = new System.Drawing.Point(124, 320);
+			this.lblStorageTitle0.Location = new System.Drawing.Point(124, 189);
 			this.lblStorageTitle0.Name = "lblStorageTitle0";
 			this.lblStorageTitle0.Size = new System.Drawing.Size(205, 25);
 			this.lblStorageTitle0.TabIndex = 26;
@@ -1115,9 +1115,9 @@ namespace MediaManager.GUI
 			// 
 			this.panelStatusBg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.panelStatusBg.Controls.Add(this.panelStatus);
-			this.panelStatusBg.Location = new System.Drawing.Point(499, 123);
+			this.panelStatusBg.Location = new System.Drawing.Point(499, 101);
 			this.panelStatusBg.Name = "panelStatusBg";
-			this.panelStatusBg.Size = new System.Drawing.Size(481, 450);
+			this.panelStatusBg.Size = new System.Drawing.Size(481, 321);
 			this.panelStatusBg.TabIndex = 17;
 			// 
 			// btnExit
@@ -1146,7 +1146,7 @@ namespace MediaManager.GUI
 			this.panel5.Controls.Add(this.lblDebugMode);
 			this.panel5.Location = new System.Drawing.Point(12, 12);
 			this.panel5.Name = "panel5";
-			this.panel5.Size = new System.Drawing.Size(968, 105);
+			this.panel5.Size = new System.Drawing.Size(968, 83);
 			this.panel5.TabIndex = 19;
 			// 
 			// label2
@@ -1165,9 +1165,9 @@ namespace MediaManager.GUI
 			this.btnHide.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.btnHide.FlatAppearance.BorderSize = 0;
 			this.btnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnHide.Font = new System.Drawing.Font("Rubik", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnHide.Font = new System.Drawing.Font("Rubik", 29.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnHide.ForeColor = System.Drawing.Color.White;
-			this.btnHide.Location = new System.Drawing.Point(856, -1);
+			this.btnHide.Location = new System.Drawing.Point(863, 6);
 			this.btnHide.Name = "btnHide";
 			this.btnHide.Size = new System.Drawing.Size(54, 51);
 			this.btnHide.TabIndex = 20;
@@ -1184,9 +1184,9 @@ namespace MediaManager.GUI
 			this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSettings.Font = new System.Drawing.Font("Liberation Sans", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnSettings.ForeColor = System.Drawing.Color.White;
-			this.btnSettings.Location = new System.Drawing.Point(782, 0);
+			this.btnSettings.Location = new System.Drawing.Point(811, 6);
 			this.btnSettings.Name = "btnSettings";
-			this.btnSettings.Size = new System.Drawing.Size(68, 50);
+			this.btnSettings.Size = new System.Drawing.Size(39, 32);
 			this.btnSettings.TabIndex = 14;
 			this.btnSettings.UseVisualStyleBackColor = false;
 			this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
@@ -1196,7 +1196,7 @@ namespace MediaManager.GUI
 			this.lblDebugMode.AutoSize = true;
 			this.lblDebugMode.Font = new System.Drawing.Font("Rubik", 20.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lblDebugMode.ForeColor = System.Drawing.Color.Maroon;
-			this.lblDebugMode.Location = new System.Drawing.Point(311, 71);
+			this.lblDebugMode.Location = new System.Drawing.Point(526, 10);
 			this.lblDebugMode.Name = "lblDebugMode";
 			this.lblDebugMode.Size = new System.Drawing.Size(186, 32);
 			this.lblDebugMode.TabIndex = 21;
@@ -1207,16 +1207,16 @@ namespace MediaManager.GUI
 			// 
 			this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.panel6.Controls.Add(this.panelDownloadManager);
-			this.panel6.Location = new System.Drawing.Point(499, 579);
+			this.panel6.Location = new System.Drawing.Point(499, 428);
 			this.panel6.Name = "panel6";
-			this.panel6.Size = new System.Drawing.Size(481, 450);
+			this.panel6.Size = new System.Drawing.Size(481, 579);
 			this.panel6.TabIndex = 20;
 			// 
 			// panel7
 			// 
 			this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.panel7.Controls.Add(this.panelVpnManager);
-			this.panel7.Location = new System.Drawing.Point(12, 579);
+			this.panel7.Location = new System.Drawing.Point(12, 557);
 			this.panel7.Name = "panel7";
 			this.panel7.Size = new System.Drawing.Size(481, 450);
 			this.panel7.TabIndex = 21;
@@ -1225,7 +1225,7 @@ namespace MediaManager.GUI
 			// 
 			this.panel8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.panel8.Controls.Add(this.panelQuickActions);
-			this.panel8.Location = new System.Drawing.Point(12, 123);
+			this.panel8.Location = new System.Drawing.Point(12, 101);
 			this.panel8.Name = "panel8";
 			this.panel8.Size = new System.Drawing.Size(481, 450);
 			this.panel8.TabIndex = 22;
@@ -1244,7 +1244,7 @@ namespace MediaManager.GUI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-			this.ClientSize = new System.Drawing.Size(993, 1040);
+			this.ClientSize = new System.Drawing.Size(993, 1018);
 			this.Controls.Add(this.panelShade);
 			this.Controls.Add(this.panel8);
 			this.Controls.Add(this.panel7);

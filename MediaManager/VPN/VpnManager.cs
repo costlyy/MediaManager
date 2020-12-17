@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Logging;
 using MediaManager.VPN.SocketCommands;
 
@@ -21,6 +22,7 @@ namespace MediaManager.VPN
 		public enum VpnManagerState
 		{
 			InitControls = 0,
+			LoadingProfile,
 			LoadingConfigs,
 			Idle,
 			Starting,
@@ -65,12 +67,12 @@ namespace MediaManager.VPN
 		private int _destroyCounter;
 		private Dictionary<int, IVpnComponent> _vpnComponents;
 		private IVpnComponent _currentComponent;
-		private IManager _configManager;
+		private IManagerAdvanced _configManager;
 		private List<Control> _ownedControls;
-		private SettingsData _userSettings;
 		private List<VpnSocketCommand> _vpnCommandQueue;
 		private List<VpnSocketResponse> _vpnResponseQueue;
 		private Timer _errorHandler;
+		private ProfileData<VpnProfileData> _profileData;
 
 		private TimeSpan _connectSpan;
 		private DateTime _connectTime;
@@ -85,6 +87,8 @@ namespace MediaManager.VPN
 
 		private VpnManagerState _state;
 		public int State => (int)_state;
+
+		public DateTime StartTime { get; }
 
 		#region CTOR & Public API
 
@@ -111,6 +115,17 @@ namespace MediaManager.VPN
 			_errorHandler = new Timer { Interval = 1000 };
 			_errorHandler.Tick += (s, e) => ProcessErrors();
 			_errorHandler.Start();
+
+			//_profileData = ProfileManager.Instance.ImportData<VpnProfileData>();
+			_profileData = new VpnProfileData(ProfileManager.Instance.GetProfilePath());
+			var tempData = _profileData.Import();
+
+			if (tempData == null)
+			{
+				_profileData.Export();
+			}
+
+			StartTime = DateTime.Now;
 		}
 
 		public void Update()
@@ -119,6 +134,9 @@ namespace MediaManager.VPN
 			{
 				case VpnManagerState.InitControls:
 					ProcessInitControls();
+					break;
+				case VpnManagerState.LoadingProfile:
+					ProcessLoadProfile();
 					break;
 				case VpnManagerState.LoadingConfigs:
 					ProcessLoadConfigs();
@@ -211,24 +229,25 @@ namespace MediaManager.VPN
 				LogWriter.Write($"VpnManager # Moving to start from error state.");
 			}
 
-			if (_state != VpnManagerState.LoadingConfigs)
-			{
-				CleanVpnManager();
-			}
+			//if (_state != VpnManagerState.LoadingConfigs)
+			//{
+			//	CleanVpnManager();
+			//}
 
 			SetState(VpnManagerState.InitControls);
 			return true;
 		}
 
-		public string GetError(ref string errorDetail)
+		public bool GetError(ref string errorDetail)
 		{
-			if (_state != VpnManagerState.Error) return "";
+			if (_state != VpnManagerState.Error) return false;
 
 			LogWriter.Write($"VpnManager # Returning active error to caller: {_currentError}.");
 
 			SetState(VpnManagerState.LoadingConfigs);
 
-			return _currentError;
+			errorDetail = _currentError;
+			return true;
 		}
 
 		public void SetControls(List<Control> controls)
@@ -241,18 +260,6 @@ namespace MediaManager.VPN
 
 			_ownedControls = controls;
 			LogWriter.Write($"VpnManager # SetControls - Added {_ownedControls.Count} controls to manager.");
-		}
-
-		public void SetSettings(ref SettingsData settings)
-		{
-			if (settings == null)
-			{
-				// TODO: Add error case.
-				return;
-			}
-
-			_userSettings = settings;
-			LogWriter.Write($"VpnManager # SetSettings - Added setting config.");
 		}
 
 		public bool Disconnect(bool killProcess = false)
@@ -318,6 +325,12 @@ namespace MediaManager.VPN
 				default:
 					return false;
 			}
+		}
+
+		public void SaveData()
+		{
+			LogWriter.Write($"VpnManager # Saving data");
+			_profileData.Export();
 		}
 
 		public void ToggleEnabledState(bool enabled)
@@ -527,52 +540,60 @@ namespace MediaManager.VPN
 
 		private void UpdateExternalIp()
 		{
-			int baseSec, rangeSec;
+			//TODO: Fix this as it causes massive UI lag
 
-			switch ((HeartbeatManager.OperatingMode)HeartbeatManager.Instance.State)
-			{
-				default:
-					return;
+			//int baseSec, rangeSec;
 
-				case HeartbeatManager.OperatingMode.Active:
-					baseSec = Config.MAIN_ACTIVE_LOCAL_IP_BASE;
-					rangeSec = Config.MAIN_ACTIVE_LOCAL_IP_RANGE;
-					break;
+			//switch ((HeartbeatManager.OperatingMode)HeartbeatManager.Instance.State)
+			//{
+			//	default:
+			//		return;
 
-				case HeartbeatManager.OperatingMode.Idle:
-					baseSec = Config.MAIN_IDLE_LOCAL_IP_BASE;
-					rangeSec = Config.MAIN_IDLE_LOCAL_IP_RANGE;
-					break;
-			}
+			//	case HeartbeatManager.OperatingMode.Active:
+			//		baseSec = Config.MAIN_ACTIVE_LOCAL_IP_BASE;
+			//		rangeSec = Config.MAIN_ACTIVE_LOCAL_IP_RANGE;
+			//		break;
 
-			DateTime target = _ipUpdateTime + TimeSpan.FromSeconds(baseSec + _additionalSeconds);
-			TimeSpan timeSpanNow = DateTime.Now - target;
+			//	case HeartbeatManager.OperatingMode.Idle:
+			//		baseSec = Config.MAIN_IDLE_LOCAL_IP_BASE;
+			//		rangeSec = Config.MAIN_IDLE_LOCAL_IP_RANGE;
+			//		break;
+			//}
 
-			if (_displayLabelsDictionary.TryGetValue(DisplayLabels.CountdownTimer, out Label countdownLabel))
-			{
-				countdownLabel.Text = Math.Abs(timeSpanNow.Seconds).ToString();
-			}
+			//DateTime target = _ipUpdateTime + TimeSpan.FromSeconds(baseSec + _additionalSeconds);
+			//TimeSpan timeSpanNow = DateTime.Now - target;
 
-			if (DateTime.Now <= target) return;
+			//if (_displayLabelsDictionary.TryGetValue(DisplayLabels.CountdownTimer, out Label countdownLabel))
+			//{
+			//	countdownLabel.Text = Math.Abs(timeSpanNow.Seconds).ToString();
+			//}
 
-			_additionalSeconds = new Random().Next(0, rangeSec);
-			_ipUpdateTime = DateTime.Now;
+			//if (DateTime.Now <= target)
+			//{
+			//	LogWriter.Write($"VpnManager # UpdateExternalIp wait");
+			//	return;
+			//}
 
-			try
-			{
-				string extIp = new WebClient().DownloadString("http://icanhazip.com");
+			//_additionalSeconds = new Random().Next(0, rangeSec);
+			//_ipUpdateTime = DateTime.Now;
 
-				LogWriter.Write($"VpnManager # UpdateExternalIp - External IP: {extIp.Trim()}");
+			//try
+			//{
+			//	LogWriter.Write($"VpnManager # UpdateExternalIp start");
 
-				if (_displayBoxesDictionary.TryGetValue(DisplayBoxes.ExternalIp, out TextBox ipBox))
-				{
-					ipBox.Text = extIp;
-				}
-			}
-			catch (Exception ex)
-			{
-				LogWriter.Write($"VpnManager # UpdateExternalIp - Caught exception while getting external IP:\n{ex}");
-			}
+			//	string extIp = new WebClient().DownloadString("http://icanhazip.com");
+
+			//	LogWriter.Write($"VpnManager # UpdateExternalIp - External IP: {extIp.Trim()}");
+
+			//	if (_displayBoxesDictionary.TryGetValue(DisplayBoxes.ExternalIp, out TextBox ipBox))
+			//	{
+			//		ipBox.Text = extIp;
+			//	}
+			//}
+			//catch (Exception ex)
+			//{
+			//	LogWriter.Write($"VpnManager # UpdateExternalIp - Caught exception while getting external IP:\n{ex}");
+			//}
 		}
 
 		#endregion
@@ -690,6 +711,28 @@ namespace MediaManager.VPN
 				}
 			}
 
+			SetState(VpnManagerState.LoadingProfile);
+		}
+
+		#endregion
+
+		#region VPN Manager - load Profile
+
+		private void ProcessLoadProfile()
+		{
+			var data = _profileData.Import();
+
+			if (data != null)
+			{
+				LogWriter.Write($"VpnManager # Processed all configs and config data.");
+			}
+			else
+			{
+				LogWriter.Write($"VpnManager # Could not load VPN data, creating new XML skeletons.");
+				_profileData.Export();
+			}
+
+			_profileData = data;
 			SetState(VpnManagerState.LoadingConfigs);
 		}
 
@@ -701,13 +744,19 @@ namespace MediaManager.VPN
 		{
 			if (_configManager == null)
 			{
-				_configManager = new ConfigManager();
+				_configManager = new ConfigManager(_profileData);
 				_configManager.SetControls(_ownedControls);
-				_configManager.SetSettings(ref _userSettings);
 				_configManager.Start();
 			}
 
 			_configManager.Update();
+
+			string error = "";
+			if (_configManager.GetError(ref error))
+			{
+				LogWriter.Write($"VpnManager # VPN config manager threw an error: {error}.");
+				return; // Exit early - no point in going past the error point
+			}
 
 			if ((ConfigManager.ConfigManagerState)_configManager.State == ConfigManager.ConfigManagerState.MaintainConfigs)
 			{
@@ -746,7 +795,7 @@ namespace MediaManager.VPN
 			if (_currentComponent == null)
 			{
 				LogWriter.Write($"VpnManager # Starting the OpenVPN process (initial).");
-				_currentComponent = new VpnProcess(_userSettings);
+				_currentComponent = new VpnProcess(_profileData as VpnProfileData);
 				_currentComponent.Start();
 
 				_vpnComponents.Add(VpnComponentTypes.COMPONENT_PROCESS, _currentComponent);
@@ -801,7 +850,7 @@ namespace MediaManager.VPN
 			if (_currentComponent == null)
 			{
 				LogWriter.Write($"VpnManager # Creating new socket.");
-				_currentComponent = new VpnSocket(VpnComponentTypes.COMPONENT_SOCKET, _userSettings);
+				_currentComponent = new VpnSocket(VpnComponentTypes.COMPONENT_SOCKET, _profileData as VpnProfileData);
 				_currentComponent.Start();
 
 				_vpnComponents.Add(VpnComponentTypes.COMPONENT_SOCKET, _currentComponent);

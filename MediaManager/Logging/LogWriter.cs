@@ -142,11 +142,11 @@ namespace MediaManager.Logging
 			return _instance != null;
 		}
 
-		public static void Write(string value, DebugPriority priority = DebugPriority.Medium, bool assert = false)
+		public static void Write(string message, DebugPriority priority = DebugPriority.Medium, bool assert = false)
 		{
 			try
 			{
-				string printValue = $"{GetTimestamp()} - {FormatPriority(priority)} - {value}";
+				string printValue = $"{GetTimestamp()} - {FormatPriority(priority)} - {message}";
 				_logStream.WriteLine(printValue);
 #if DEBUG
 				Debug.WriteLine(printValue);

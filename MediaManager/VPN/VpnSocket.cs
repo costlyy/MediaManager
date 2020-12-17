@@ -38,7 +38,7 @@ namespace MediaManager.VPN
 
 			public int Id { get; }
 
-			private readonly SettingsData _settings;
+			private readonly VpnProfileData _profileData;
 			private Socket _vpnSocket;
 
 			private string _activeError;
@@ -46,11 +46,11 @@ namespace MediaManager.VPN
 
 			#region CTOR & Public Interface
 
-			public VpnSocket(int Id, SettingsData settingData)
+			public VpnSocket(int Id, VpnProfileData profileData)
 			{
 
 				this.Id = Id;
-				_settings = settingData;
+				_profileData = profileData;
 				LogWriter.Write($"VpnSocket # Constructed new VPN Socket ID: {Id}.");
 			}
 
@@ -89,10 +89,10 @@ namespace MediaManager.VPN
 
 			public bool Start()
 			{
-				if (_settings == null)
+				if (_profileData == null)
 				{
 					SetState(SocketState.Error);
-					_activeError = "Socket was passed an empty SettingData object, cannot start.";
+					_activeError = "Socket was passed an empty VpnProfileData object, cannot start.";
 					_activeErrorDetail = "";
 					return false;
 				}

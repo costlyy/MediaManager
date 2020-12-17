@@ -44,7 +44,7 @@ namespace MediaManager.SABnzbd
 
 			public int Id { get; }
 
-			private readonly SettingsData _settings;
+			private readonly SabProfileData _profileData;
 			private HttpClient _client;
 
 			private DateTime _bootStartTime;
@@ -76,10 +76,10 @@ namespace MediaManager.SABnzbd
 				return true;
 			}
 
-			public SabHttpClient(int Id, SettingsData settingData)
+			public SabHttpClient(int Id, SabProfileData profileData)
 			{
 				this.Id = Id;
-				_settings = settingData;
+				_profileData = profileData;
 				Data = new SabHttpData();
 				LogWriter.Write($"SabClient # Constructed new SAB HttpClient ID: {Id}.");
 			}
@@ -208,7 +208,7 @@ namespace MediaManager.SABnzbd
 
 			private void ProcessConnect()
 			{
-				if (string.IsNullOrEmpty(_settings.SabApi))
+				if (string.IsNullOrEmpty(_profileData.ApiKey))
 				{
 					LogWriter.Write($"SabClient # No API key specified, cannot connect to SABnzbd.", DebugPriority.High, true);
 					SetState(ClientState.Error);
@@ -216,13 +216,13 @@ namespace MediaManager.SABnzbd
 				}
 
 				_client = new HttpClient {
-					BaseAddress = new Uri($"http://{_settings.SabIP}:{_settings.SabPort}/sabnzbd/")
+					BaseAddress = new Uri($"http://{_profileData.IP}:{_profileData.Port}/sabnzbd/")
 				};
 
 				_client.DefaultRequestHeaders.Accept.Clear();
 				_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				LogWriter.Write($"SabClient # Created HttpClient and initialised to: {_settings.SabIP}:{_settings.SabPort}/sabnzbd/ .");
+				LogWriter.Write($"SabClient # Created HttpClient and initialised to: {_profileData.IP}:{_profileData.Port}/sabnzbd/ .");
 
 				_bootStartTime = DateTime.Now;
 				SetSubState(ClientSubState.None);
@@ -315,7 +315,7 @@ namespace MediaManager.SABnzbd
 				string returnValue = "";
 
 				var cmd = new SabCommands.SabManager.GetVersion();
-				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()}");
+				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()}");
 
 				try
 				{
@@ -323,7 +323,7 @@ namespace MediaManager.SABnzbd
 				}
 				catch (HttpRequestException ex)
 				{
-					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()} \n\nError: \n\n{ex}");
+					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()} \n\nError: \n\n{ex}");
 				}
 				
 				if (response.IsSuccessStatusCode)
@@ -381,7 +381,7 @@ namespace MediaManager.SABnzbd
 				string returnValue = "";
 
 				var cmd = new SabCommands.SabManager.GetStatus();
-				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()}");
+				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()}");
 
 				try
 				{
@@ -389,7 +389,7 @@ namespace MediaManager.SABnzbd
 				}
 				catch (HttpRequestException ex)
 				{
-					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()} \n\nError: \n\n{ex}");
+					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()} \n\nError: \n\n{ex}");
 				}
 
 				if (response.IsSuccessStatusCode)
@@ -520,7 +520,7 @@ namespace MediaManager.SABnzbd
 				string returnValue = "";
 
 				var cmd = new SabCommands.SabManager.GetQueue();
-				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()}");
+				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()}");
 
 				try
 				{
@@ -528,7 +528,7 @@ namespace MediaManager.SABnzbd
 				}
 				catch (HttpRequestException ex)
 				{
-					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_settings.SabApi}{cmd.CommandText()} \n\nError: \n\n{ex}");
+					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()} \n\nError: \n\n{ex}");
 				}
 
 				if (response.IsSuccessStatusCode)
@@ -541,7 +541,7 @@ namespace MediaManager.SABnzbd
 
 			private async Task SentCommandToClient(SabClientCommand command)
 			{
-				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_settings.SabApi}{command.CommandText()}");
+				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_profileData.ApiKey}{command.CommandText()}");
 
 				try
 				{
@@ -549,7 +549,7 @@ namespace MediaManager.SABnzbd
 				}
 				catch (HttpRequestException ex)
 				{
-					LogWriter.Write($"SabClient # Encountered an error when verifying POST success. Query: \n\n {JsonParser.Format()}{_settings.SabApi}{command.CommandText()} \n\nError: \n\n{ex}");
+					LogWriter.Write($"SabClient # Encountered an error when verifying POST success. Query: \n\n {JsonParser.Format()}{_profileData.ApiKey}{command.CommandText()} \n\nError: \n\n{ex}");
 				}
 
 				if (response.IsSuccessStatusCode)

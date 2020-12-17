@@ -34,7 +34,7 @@ namespace MediaManager.VPN
 			public int Id { get; }
 
 			private Process _vpnProcess;
-			private readonly SettingsData _userSettings;
+			private readonly VpnProfileData _profileData;
 			private TimeSpan _processFreezeTotal;
 			private DateTime _processFreezeStart;
 
@@ -48,9 +48,9 @@ namespace MediaManager.VPN
 
 			#region CTOR & Public API
 
-			public VpnProcess(SettingsData data, int componentId = -1)
+			public VpnProcess(VpnProfileData data, int componentId = -1)
 			{
-				_userSettings = data;
+				_profileData = data;
 				Id = componentId;
 			}
 
@@ -206,12 +206,12 @@ namespace MediaManager.VPN
 					_vpnProcess = new Process();
 				}
 
-				var binaryPath = _userSettings.VpnBinaryPath;
+				var binaryPath = _profileData.BinaryPath;
 				var error = "";
 
 				if (!Helpers.SanitisePath(Helpers.PathTypes.Executable, ref binaryPath, ref error))
 				{
-					LogWriter.Write($"VpnProcess # LoadSabProcess - Error! Failed to validate/sanitise VPN binary path: {_userSettings.VpnBinaryPath} (error: {error}).");
+					LogWriter.Write($"VpnProcess # LoadSabProcess - Error! Failed to validate/sanitise VPN binary path: {_profileData.BinaryPath} (error: {error}).");
 					SetState(ProcessState.Error);
 					_activeError = error;
 					return;
@@ -220,7 +220,7 @@ namespace MediaManager.VPN
 				try
 				{
 					_vpnProcess.StartInfo.CreateNoWindow = false;
-					_vpnProcess.StartInfo.Arguments = $"--config \"{_userSettings.ActiveVpnRootConfg}\" --service \"{EVENT_NAME}\" 0";
+					_vpnProcess.StartInfo.Arguments = $"--config \"{_profileData.BinaryPath}\" --service \"{EVENT_NAME}\" 0";
 					_vpnProcess.StartInfo.FileName = binaryPath;
 					_vpnProcess.EnableRaisingEvents = true;
 

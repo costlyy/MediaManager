@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Logging;
 
 namespace MediaManager.GUI.Status
@@ -25,27 +26,30 @@ namespace MediaManager.GUI.Status
 
 		private TableLayoutPanel _controlsPanel;
 
-		public DriveDisplay(SettingsData baseData)
+		private readonly CoreProfileData _profileData;
+
+		public DriveDisplay(ProfileData<CoreProfileData> baseData)
 		{
+			_profileData = (CoreProfileData) baseData;
 			_diskDrivesDictionary = new Dictionary<int, DriveTableEntry>();
 
 			DriveTableEntry tempDrive = new DriveTableEntry
 			{
-				DiskLabel = baseData.Storage0
+				DiskLabel = _profileData.Storage0
 			};
 
 			_diskDrivesDictionary.Add(0, tempDrive);
 
 			tempDrive = new DriveTableEntry
 			{
-				DiskLabel = baseData.Storage1
+				DiskLabel = _profileData.Storage1
 			};
 
 			_diskDrivesDictionary.Add(1, tempDrive);
 
 			tempDrive = new DriveTableEntry
 			{
-				DiskLabel = baseData.Storage2
+				DiskLabel = _profileData.Storage2
 			};
 
 			_diskDrivesDictionary.Add(2, tempDrive);

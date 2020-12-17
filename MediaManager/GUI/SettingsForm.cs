@@ -6,7 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Logging;
+using MediaManager.SABnzbd;
+using MediaManager.VPN;
 
 namespace MediaManager.GUI
 {
@@ -20,108 +23,90 @@ namespace MediaManager.GUI
 			Four,
 		}
 
+		private enum SettingsPanel
+		{
+			PanelSab,
+			PanelVpn,
+			PanelInterface,
+			PanelGeneral
+		}
+
 		private const int SCROLL_HIGHLIGHT_VARIANCE = 15;
 
-		private SettingsData _data;
+		private readonly CoreProfileData _coreProfileData;
+		private readonly VpnProfileData _vpnProfileData;
+		private readonly SabProfileData _sabProfileData;
 
-		private Size _backgroundOuterSize = new Size(909, 555);
-		private Size _formSize = new Size(933, 580);
+		private Size _backgroundOuterSize = new Size(909, 500);
+		private Size _formSize = new Size(950, 520);
+
+		private Point _panelPoint = new Point(150, 10);
+		private Point _panelSize = new Point(780, 500);
+
+
 		private int _ignoreEventCount;
 		private int _scrollPosition;
-	    private static DriveLoadState _driveLoadState = DriveLoadState.Idle;
-	    private Thread _drivesThread;
-	    private static List<DriveInfo> _driveData;
+		private static DriveLoadState _driveLoadState = DriveLoadState.Idle;
+		private Thread _drivesThread;
+		private static List<DriveInfo> _driveData;
 
-	    private enum DriveLoadState
-	    {
-            Idle,
-            Loading,
-            Ready
-	    }
+		private enum DriveLoadState
+		{
+			Idle,
+			Loading,
+			Ready
+		}
 
-	    public SettingsForm(ref SettingsData data)
-	    {
-	        LogWriter.Write($"SettingsForm # Loading - Started loading settings form.");
+		public SettingsForm()
+		{
+			_coreProfileData = new CoreProfileData(ProfileManager.Instance.GetProfilePath());
+			var tempCoreData = _coreProfileData.Import();
+			if (tempCoreData == null)
+			{
+				LogWriter.Write($"SettingsForm # Loading - Failed to load core profile data.", DebugPriority.High, true);
+				return;
+			}
+			_coreProfileData = tempCoreData as CoreProfileData;
 
+			_vpnProfileData = new VpnProfileData(ProfileManager.Instance.GetProfilePath());
+			var tempVpnData = _vpnProfileData.Import();
+			if (tempVpnData == null)
+			{
+				LogWriter.Write($"SettingsForm # Loading - Failed to load VPN profile data.", DebugPriority.High, true);
+			}
+			_vpnProfileData = tempVpnData as VpnProfileData;
 
-	        InitializeComponent();
+			_sabProfileData = new SabProfileData(ProfileManager.Instance.GetProfilePath());
+			var tempSabData = _sabProfileData.Import();
+			if (tempSabData == null)
+			{
+				LogWriter.Write($"SettingsForm # Loading - Failed to load SAB NZBD profile data.", DebugPriority.High, true);
+			}
+			_sabProfileData = tempSabData as SabProfileData;
 
-	        Size = _formSize;
-	        panelBackgroundGrey.Size = _backgroundOuterSize;
-	        panelBackground.Size = new Size(panelBackground.Size.Width, 500);
-	        panelBackground.AutoScrollPosition = new Point(0, 0);
-	        panelBackground.VerticalScroll.Maximum = 800;
-	        panelBackground.MouseWheel += panelBackground_Scroll;
+			LogWriter.Write($"SettingsForm # Loading - Started loading settings form.");
 
-	        DoubleBuffered = true;
+			InitializeComponent();
 
-	        BuildScrollTabs();
+			Size = _formSize;
+			//panelBackgroundGrey.Size = _backgroundOuterSize;
+			//panelBackground.Size = new Size(panelBackground.Size.Width, 500);
+			//panelBackground.AutoScrollPosition = new Point(0, 0);
+			//panelBackground.VerticalScroll.Maximum = 800;
 
-	        foreach (Control item in panelBackground.Controls)
-	        {
-	            if (item == null) continue;
+			DoubleBuffered = true;
 
-	            item.MouseWheel += panelBackground_Scroll;
-	        }
+			BuildScrollTabs();
+			SetupPanels();
+			ShowDefaultMenu();
 
-	        if (data == null)
-	        {
-	            LogWriter.Write($"SettingsForm # Loading - Creating new settings.");
-	            _data = new SettingsData();
-	        }
-	        else
-	        {
-	            LogWriter.Write($"SettingsForm # Loading - Found saved settings: {data.ToString()}");
-	            _data = data;
-	            SetFieldsFromData();
-	        }
+			_drivesThread = new Thread(ProcessLocalStorage);
+			_drivesThread.Start();
 
-	        _drivesThread = new Thread(ProcessLocalStorage);
-	        _drivesThread.Start();
+			SetFieldsFromData();
 
-            LogWriter.Write($"SettingsForm # Loading - Finished loading settings form.");
-        }
-
-	    public new void Update()
-	    {
-            switch (_driveLoadState)
-            {
-                case DriveLoadState.Idle:
-                    _driveLoadState = DriveLoadState.Loading;
-                    break;
-
-                case DriveLoadState.Loading:
-                    LogWriter.Write($"SettingsForm # Update - Waiting for local drive data...");
-                    break;
-
-                case DriveLoadState.Ready:
-                    if (cmbStorage1.DataSource == null)
-                    {
-                        cmbStorage1.DataSource = new List<DriveInfo>(_driveData);
-                        ProcessSavedStorage();
-                    }
-
-                    if (cmbStorage2.DataSource == null)
-                    {
-                        cmbStorage2.DataSource = new List<DriveInfo>(_driveData);
-                        ProcessSavedStorage();
-                    }
-
-                    if (cmbStorage3.DataSource == null)
-                    {
-                        cmbStorage3.DataSource = new List<DriveInfo>(_driveData);
-                        ProcessSavedStorage();
-                    }
-                    break;
-            }
-        }
-
-        private static void ProcessLocalStorage()
-        {
-            if (_driveLoadState == DriveLoadState.Ready) return;
-
-            _driveLoadState = FindStorage() ? DriveLoadState.Ready : DriveLoadState.Loading;
-        }
+			LogWriter.Write($"SettingsForm # Loading - Finished loading settings form.");
+		}
 
 		private void BuildScrollTabs()
 		{
@@ -166,54 +151,153 @@ namespace MediaManager.GUI
 			panelTab3.BackColor = Color.Transparent;
 		}
 
-		private void SetFieldsFromData()
+		private void SetupPanels()
 		{
-			tbxPathSab.Text = _data.SabBinaryPath;
-			tbxPathOVPN.Text = _data.VpnBinaryPath;
-			tbxPathOVPNConfig.Text = _data.VpnConfigPath;
-			cbxVpnKill.Checked = _data.VpnAutoKill;
-			cbxVpnReconnect.Checked = _data.VpnAutoReconnect;
-			cbxVpnCOnnectOnLoad.Checked = _data.VpnConnectOnBoot;
-			cbxLoadWithWindows.Checked = _data.LoadWithWindows;
+			panelSab.Visible = false;
+			panelSab.Location = new Point(160, 10);
 
-			tbxVpnUserName.Text = _data.VpnUserName;
-			tbxVpnPassword.Text = _data.VpnPassword;
+			panelVpn.Visible = false;
+			panelVpn.Location = new Point(160, 10);
 
-			tbxSabAPI.Text = _data.SabApi;
-			tbxSabIP.Text = _data.SabIP;
-			tbxSabPort.Text = _data.SabPort.ToString();
+			panelInterface.Visible = false;
+			panelInterface.Location = new Point(160, 10);
 
-		    cbxSingleLogin.Checked = _data.VpnGlobalLogin;
-		    cbxConfigLogin.Checked = !cbxSingleLogin.Checked;
-		    grpLoginDetailsVpn.Enabled = _data.VpnGlobalLogin;
+			panelGeneral.Visible = false;
+			panelGeneral.Location = new Point(160, 10);
+		}
+
+		private void ShowDefaultMenu()
+		{
+			ScrollTabSelected(null, null, ScrollTabs.One);
+		}
+
+		#region Every Tick Update
+
+		public new void Update()
+		{
+			UpdateGeneral();
+			UpdateSab();
+			UpdateVpn();
+			UpdateInterface();
+		}
+
+		private void UpdateGeneral()
+		{
 
 		}
 
-		public SettingsData GetData()
+		private void UpdateSab()
 		{
-			return _data;
+
+		}
+
+		private void UpdateVpn()
+		{
+
+		}
+
+		private void UpdateInterface()
+		{
+			switch (_driveLoadState)
+			{
+				case DriveLoadState.Idle:
+					_driveLoadState = DriveLoadState.Loading;
+					break;
+
+				case DriveLoadState.Loading:
+					LogWriter.Write($"SettingsForm # UpdateInterface - Waiting for local drive data...");
+					break;
+
+				case DriveLoadState.Ready:
+					if (cbmInterfaceDisk1.DataSource == null)
+					{
+						cbmInterfaceDisk1.DataSource = new List<DriveInfo>(_driveData);
+						ProcessSavedStorage();
+					}
+
+					if (cbmInterfaceDisk2.DataSource == null)
+					{
+						cbmInterfaceDisk2.DataSource = new List<DriveInfo>(_driveData);
+						ProcessSavedStorage();
+					}
+
+					if (cbmInterfaceDisk3.DataSource == null)
+					{
+						cbmInterfaceDisk3.DataSource = new List<DriveInfo>(_driveData);
+						ProcessSavedStorage();
+					}
+
+					break;
+			}
+		}
+
+		#endregion
+
+		private void SetFieldsFromData()
+		{
+			if (_coreProfileData != null)
+				SetCoreProfileFields();
+
+			if (_sabProfileData != null)
+				SetSabProfileFields();
+
+			if (_vpnProfileData != null)
+				SetVpnProfileFields();
+		}
+
+		private void SetCoreProfileFields()
+		{
+			cbxGeneralLoadWithWindows.Checked = _coreProfileData.StartWithWindows;
+		}
+
+		private void SetSabProfileFields()
+		{
+			tbxSabBinary.Text = _sabProfileData.BinaryPath;
+			tbxSabApiKey.Text = _sabProfileData.ApiKey;
+			tbxSabIpAddress.Text = _sabProfileData.IP;
+			tbxSabPort.Text = _sabProfileData.Port.ToString();
+			cbxSabRunWithoutVpn.Checked = _sabProfileData.RunWithoutVpn;
+		}
+
+		private void SetVpnProfileFields()
+		{
+			tbxVpnBinaryPath.Text = _vpnProfileData.BinaryPath;
+			tbxVpnConfigPath.Text = _vpnProfileData.ConfigPath;
+			tbxVpnUserName.Text = _vpnProfileData.Username;
+			tbxVpnPassword.Text = _vpnProfileData.Password;
+			cbxVpnAutoReconnect.Checked = _vpnProfileData.AutoReconnect;
+			cbxVpnLoadWithWindows.Checked = _vpnProfileData.AutoConnectOnBoot;
+		}
+
+		#region Interface Settings
+
+		private static void ProcessLocalStorage()
+		{
+			if (_driveLoadState == DriveLoadState.Ready) return;
+
+			_driveLoadState = FindStorage() ? DriveLoadState.Ready : DriveLoadState.Loading;
 		}
 
 		private static bool FindStorage()
 		{
 			if (_driveData == null)
 			{
-			    _driveData = new List<DriveInfo>();
+				_driveData = new List<DriveInfo>();
 			}
 
 			LogWriter.Write($"SettingsForm # Starting local drive check...");
 
 			var drives = DriveInfo.GetDrives();
 
-		    LogWriter.Write($"SettingsForm # Find Storage - Found {drives.Length} local drives.");
+			LogWriter.Write($"SettingsForm # Find Storage - Found {drives.Length} local drives.");
 
-            foreach (DriveInfo item in drives.Where(item => item != null))
+			foreach (DriveInfo item in drives.Where(item => item != null))
 			{
 				try
 				{
 					if (item.IsReady)
 					{
-					    _driveData.Add(item);
+						_driveData.Add(item);
 					}
 				}
 				catch (Exception)
@@ -230,146 +314,116 @@ namespace MediaManager.GUI
 
 			foreach (DriveInfo drive in _driveData)
 			{
-				if (!string.IsNullOrWhiteSpace(_data.Storage0))
+				if (!string.IsNullOrWhiteSpace(_coreProfileData.Storage0))
 				{
-					if (drive.Name.ToUpper().Contains(_data.Storage0))
+					if (drive.Name.ToUpper().Contains(_coreProfileData.Storage0))
 					{
-						cmbStorage1.SelectedItem = drive;
+						cbmInterfaceDisk1.SelectedItem = drive;
 						continue;
 					}
 				}
 
-				if (!string.IsNullOrWhiteSpace(_data.Storage1))
+				if (!string.IsNullOrWhiteSpace(_coreProfileData.Storage1))
 				{
-					if (drive.Name.ToUpper().Contains(_data.Storage1))
+					if (drive.Name.ToUpper().Contains(_coreProfileData.Storage1))
 					{
-						cmbStorage2.SelectedItem = drive;
+						cbmInterfaceDisk2.SelectedItem = drive;
 						continue;
 					}
 				}
 
-				if (!string.IsNullOrWhiteSpace(_data.Storage2))
+				if (!string.IsNullOrWhiteSpace(_coreProfileData.Storage2))
 				{
-					if (drive.Name.ToUpper().Contains(_data.Storage2))
+					if (drive.Name.ToUpper().Contains(_coreProfileData.Storage2))
 					{
-						cmbStorage3.SelectedItem = drive;
+						cbmInterfaceDisk3.SelectedItem = drive;
 						continue;
 					}
 				}
 			}
 		}
 
-		private void btnBrowseFolder_Click(object sender, EventArgs e)
+		private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-		    if (!(sender is Button btnSource)) return;
+			LogWriter.Write($"SettingsForm # Closing settings form.");
+			_drivesThread.Abort();
+		}
 
-			FolderBrowserDialog dialog = new FolderBrowserDialog();
+		#endregion
+
+		#region Sab NZBD Settings
+
+		private void btnSabBinaryBrowse_Click(object sender, EventArgs e)
+		{
+			_sabProfileData.BinaryPath = ShowFolderBrowse();
+		}
+
+		private void tbxSabApi_TextChanged(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox castControl)) return;
+			_sabProfileData.ApiKey = castControl.Text;
+		}
+
+		private void tbxSabIp_TextChanged(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox castControl)) return;
+			_sabProfileData.IP = castControl.Text;
+		}
+
+		private void tbxSabPort_TextChanged(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox castControl)) return;
+			int.TryParse(castControl.Text, out int castInt);
+			_sabProfileData.Port = castInt;
+		}
+
+		private void cbxRunWithoutVpn_CheckedChanged(object sender, EventArgs e)
+		{
+			_sabProfileData.RunWithoutVpn = cbxSabRunWithoutVpn.Checked;
+		}
+
+		#endregion
+
+		#region VPN Settings
+
+		private void btnVpnBinaryBrowse_Click(object sender, EventArgs e)
+		{
+			_vpnProfileData.BinaryPath = ShowFolderBrowse();
+		}
+
+		private void btnVpnConfigBrowse_Click(object sender, EventArgs e)
+		{
+			_vpnProfileData.ConfigPath = ShowFolderBrowse();
+		}
+
+		private void tbxVpnUsername_TextChanged(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox castControl)) return;
+			_vpnProfileData.Username = castControl.Text;
+		}
+
+		private void tbxVpnPassword_TextChanged(object sender, EventArgs e)
+		{
+			if (!(sender is TextBox castControl)) return;
+			_vpnProfileData.Password = castControl.Text;
+		}
+
+		#endregion
+
+		private string ShowFolderBrowse(Environment.SpecialFolder rootFolder = Environment.SpecialFolder.MyComputer)
+		{
+			FolderBrowserDialog dialog = new FolderBrowserDialog {RootFolder = rootFolder};
 
 			DialogResult result = dialog.ShowDialog();
 
-			if (result != DialogResult.OK) return;
-			var newPath = dialog.SelectedPath;
-
-			if (newPath.Length <= 0)
-			{
-				return;
-			}
-
-		    int.TryParse(btnSource.Tag.ToString(), out var buttonTag);
-
-			switch (buttonTag)
-			{
-				case 1:
-					LogWriter.Write($"SettingsForm # Saving new Config Folder Path: {newPath}");
-					_data.VpnConfigPath = newPath;
-					break;
-			}
-
-			SetFieldsFromData();
-		}
-	
-		private void btnBrowseFile_Click(object sender, EventArgs e)
-		{
-			Button btnSource = sender as Button;
-			if (btnSource == null) return;
-
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.CheckFileExists = true;
-			dialog.Filter = "Binary File (*.exe)|*.exe";
-
-			DialogResult result = dialog.ShowDialog();
-
-			if (result != DialogResult.OK) return;
-			var newPath = dialog.FileName;
-
-			if (newPath.Length <= 0)
-			{
-				return;
-			}
-
-			int buttonTag;
-			int.TryParse((string)btnSource.Tag, out buttonTag);
-
-			switch (buttonTag)
-			{
-				case 1:
-					LogWriter.Write($"SettingsForm # Saving new SABnzbd Binary Path: {newPath}");
-					_data.SabBinaryPath = newPath;
-					break;
-
-				case 2:
-					LogWriter.Write($"SettingsForm # Saving new OpenVPN Binary Path: {newPath}");
-					_data.VpnBinaryPath = newPath;
-					break;
-			}
-
-			SetFieldsFromData();
+			return result != DialogResult.OK ? "" : dialog.SelectedPath;
 		}
 
-		private void cbxVpnKill_CheckedChanged(object sender, EventArgs e)
+		private void btnSave_Click(object sender, EventArgs e)
 		{
-			CheckBox control = sender as CheckBox;
-			if (control == null) return;
-
-			_data.VpnAutoKill = control.Checked;
-		}
-
-		private void cbxReconnect_CheckedChanged(object sender, EventArgs e)
-		{
-			CheckBox control = sender as CheckBox;
-			if (control == null) return;
-
-			_data.VpnAutoReconnect = control.Checked;
-		}
-
-		private void cbxVpnCOnnectOnLoad_CheckedChanged(object sender, EventArgs e)
-		{
-			CheckBox control = sender as CheckBox;
-			if (control == null) return;
-
-			_data.VpnConnectOnBoot = control.Checked;
-		}
-
-        private void cbxLoadWithWindows_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox control = sender as CheckBox;
-            if (control == null) return;
-
-            _data.LoadWithWindows = control.Checked;
-        }
-
-        private void bntSave_Click(object sender, EventArgs e)
-		{
-			_data.VpnUserName = tbxVpnUserName.Text;
-			_data.VpnPassword = tbxVpnPassword.Text;
-
-			_data.SabApi = tbxSabAPI.Text;
-			_data.SabIP = tbxSabIP.Text;
-			_data.SabPort = Convert.ToInt32(tbxSabPort.Text);
-
-		    _data.VpnGlobalLogin = cbxSingleLogin.Checked;
-
-            _data.Save();
+			_coreProfileData.Export();
+			_sabProfileData.Export();
+			_vpnProfileData.Export();
 			Close();
 		}
 
@@ -378,167 +432,39 @@ namespace MediaManager.GUI
 			Close();
 		}
 
-		private void cmbStorage_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			ComboBox control = sender as ComboBox;
-			if (control == null || control.Tag == null) return;
+		//private void cmbStorage_SelectedIndexChanged(object sender, EventArgs e)
+		//{
+		//	ComboBox control = sender as ComboBox;
+		//	if (control == null || control.Tag == null) return;
 
-			if (_ignoreEventCount < 4)
-			{
-				_ignoreEventCount++;
-				return;
-			}
+		//	if (_ignoreEventCount < 4)
+		//	{
+		//		_ignoreEventCount++;
+		//		return;
+		//	}
 
-			int tag;
-			int.TryParse(control.Tag.ToString(), out tag);
+		//	int tag;
+		//	int.TryParse(control.Tag.ToString(), out tag);
 
-			DriveInfo selectedDrive = (DriveInfo) control.SelectedItem;
+		//	DriveInfo selectedDrive = (DriveInfo) control.SelectedItem;
 
-			if (selectedDrive == null) return;
+		//	if (selectedDrive == null) return;
 
-			switch (tag)
-			{
-				case 0:
-					_data.Storage0 = selectedDrive.Name;
-					break;
+		//	switch (tag)
+		//	{
+		//		case 0:
+		//			_data.Storage0 = selectedDrive.Name;
+		//			break;
 
-				case 1:
-					_data.Storage1 = selectedDrive.Name;
-					break;
+		//		case 1:
+		//			_data.Storage1 = selectedDrive.Name;
+		//			break;
 
-				case 2:
-					_data.Storage2 = selectedDrive.Name;
-					break;
-			}
-		}
-
-		private bool IsIntWithinRange(int value, int target, int range = SCROLL_HIGHLIGHT_VARIANCE)
-		{
-			int max = target + range;
-			int min = target - range;
-
-			return (value >= min && value <= max);
-		}
-
-		private int GetTabLocationFromId(ScrollTabs tabId)
-		{
-			switch (tabId)
-			{
-				case ScrollTabs.One:
-					return 1;
-				case ScrollTabs.Two:
-					return 250;
-				case ScrollTabs.Three:
-					return 625;
-				case ScrollTabs.Four:
-					return 800;
-			}
-
-			LogWriter.Write($"[Settings] GetTabLocationFromId - Invalid scroll ID: {tabId}");
-			return 1;
-		}
-
-		private void panelBackground_Scroll(object sender, MouseEventArgs e)
-		{
-			if (e == null || e.Button != MouseButtons.None || e.Delta == 0)
-			{
-				return;
-			}
-
-			//// Make sure not to attempt to scroll while at maximum
-			//if (Math.Abs(_scrollPosition) == panelBackground.VerticalScroll.Maximum)
-			//{
-			//	return;
-			//}
-
-			if (e.Delta <= -1)
-			{
-				if (_scrollPosition + 20 < panelBackground.VerticalScroll.Maximum)
-				{
-					_scrollPosition += 20;
-					panelBackground.VerticalScroll.Value = _scrollPosition;
-				}
-				else
-				{
-					if (_scrollPosition != panelBackground.VerticalScroll.Maximum)
-					{
-						_scrollPosition = panelBackground.VerticalScroll.Maximum;
-						panelBackground.AutoScrollPosition = new Point(0, _scrollPosition);
-					}
-				}
-			}
-			else
-			{
-				if (_scrollPosition - 20 < 0)
-				{
-					if (_scrollPosition != 1)
-					{
-						_scrollPosition = 1;
-						panelBackground.VerticalScroll.Value = _scrollPosition;
-					}
-				}
-				else
-				{
-					_scrollPosition = _scrollPosition - 20;
-					panelBackground.AutoScrollPosition = new Point(0, _scrollPosition);
-				}
-			}
-
-			// Create an acceptable variance for checking to enable tab indicators for scroll position.
-
-			Color newColor = Color.FromArgb(32, 32, 32);
-
-			if (IsIntWithinRange(_scrollPosition, GetTabLocationFromId(ScrollTabs.One)))
-			{
-				panelTab0.BackColor = newColor;
-				panelTab1.BackColor = Color.Transparent;
-				panelTab2.BackColor = Color.Transparent;
-				panelTab3.BackColor = Color.Transparent;
-			}
-			else if (IsIntWithinRange(_scrollPosition, GetTabLocationFromId(ScrollTabs.Two)))
-			{
-				panelTab1.BackColor = newColor;
-				panelTab0.BackColor = Color.Transparent;
-				panelTab2.BackColor = Color.Transparent;
-				panelTab3.BackColor = Color.Transparent;
-			}
-			else if (IsIntWithinRange(_scrollPosition, GetTabLocationFromId(ScrollTabs.Three)))
-			{
-				panelTab2.BackColor = newColor;
-				panelTab0.BackColor = Color.Transparent;
-				panelTab1.BackColor = Color.Transparent;
-				panelTab3.BackColor = Color.Transparent;
-			}
-			else if (IsIntWithinRange(_scrollPosition, GetTabLocationFromId(ScrollTabs.Four)))
-			{
-				panelTab3.BackColor = newColor;
-				panelTab0.BackColor = Color.Transparent;
-				panelTab1.BackColor = Color.Transparent;
-				panelTab2.BackColor = Color.Transparent;
-			}
-		}
-
-		private void SetScrollPositionManually(ScrollTabs tabToScrollTo)
-		{
-			// Get the scroll values based on the tab selected.
-			int targetLocation = GetTabLocationFromId(tabToScrollTo);
-
-			// Sanity checks to prevent flashing.
-			if (targetLocation <= 0)
-			{
-				return;
-			}
-
-			if (_scrollPosition == targetLocation)
-			{
-				return;
-			}
-
-			// Apply the change.
-			LogWriter.Write($"[Settings] Set scroll position from: {_scrollPosition} to {targetLocation}");
-			_scrollPosition = targetLocation;
-			panelBackground.VerticalScroll.Value = _scrollPosition;
-		}
+		//		case 2:
+		//			_data.Storage2 = selectedDrive.Name;
+		//			break;
+		//	}
+		//}
 
 		private void ScrollTabSelected(object sender, EventArgs e, ScrollTabs tabId)
 		{
@@ -547,61 +473,50 @@ namespace MediaManager.GUI
 			panelTab2.BackColor = Color.Transparent;
 			panelTab3.BackColor = Color.Transparent;
 
-			Color newColor = Color.FromArgb(32, 32, 32);
+			Color newColor = Color.FromArgb(28, 28, 28);
 
 			switch (tabId)
 			{
 				case ScrollTabs.One:
 					panelTab0.BackColor = newColor;
-					tbxPathSab.Select();
+
+					panelGeneral.Visible = true;
+					panelSab.Visible = false;
+					panelVpn.Visible = false;
+					panelInterface.Visible = false;
+
 					break;
 
 				case ScrollTabs.Two:
 					panelTab1.BackColor = newColor;
-					tbxPathOVPN.Select();
+
+					panelGeneral.Visible = false;
+					panelSab.Visible = true;
+					panelVpn.Visible = false;
+					panelInterface.Visible = false;
+
 					break;
 
 				case ScrollTabs.Three:
 					panelTab2.BackColor = newColor;
-					cmbStorage1.Select();
+
+					panelGeneral.Visible = false;
+					panelSab.Visible = false;
+					panelVpn.Visible = true;
+					panelInterface.Visible = false;
+
 					break;
 
 				case ScrollTabs.Four:
 					panelTab3.BackColor = newColor;
+
+					panelGeneral.Visible = false;
+					panelSab.Visible = false;
+					panelVpn.Visible = false;
+					panelInterface.Visible = true;
+
 					break;
 			}
-
-			SetScrollPositionManually(tabId);
-		}
-
-	    private void ToggleUseGlobalVpn(bool isGlobal)
-	    {
-	        cbxSingleLogin.Checked = isGlobal;
-	        cbxConfigLogin.Checked = !isGlobal;
-	        grpLoginDetailsVpn.Enabled = isGlobal;
-	        LogWriter.Write($"SettingsForm # Toggle use global login to: {isGlobal}");
-        }
-
-	    private void cbxConfigLogin_Clicked(object sender, EventArgs e)
-	    {
-	        ToggleUseGlobalVpn(false);
-
-	    }
-
-	    private void cbxSingleLogin_Clicked(object sender, EventArgs e)
-	    {
-	        ToggleUseGlobalVpn(true);
-        }
-
-        private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            LogWriter.Write($"SettingsForm # Closing settings form.");
-            _drivesThread.Abort();
-        }
-
-		private void panelBackground_Paint(object sender, PaintEventArgs e)
-		{
-
 		}
 	}
 }

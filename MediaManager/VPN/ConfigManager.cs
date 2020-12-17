@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Logging;
 
 namespace MediaManager.VPN
 {
 	public partial class VpnManager
 	{
-		private class ConfigManager : IManager
+		private class ConfigManager : IManagerAdvanced
 		{
 			private const int CONTROL_ID_CONFIG_0 = 10;
 			private const int CONTROL_ID_CONFIG_1 = 11;
@@ -50,23 +51,31 @@ namespace MediaManager.VPN
 			private ConfigManagerState _state;
 			public int State => (int) _state;
 
+			public DateTime StartTime { get; }
+
 			private string _errorString;
 			private string _detailedErrorString;
 
 			private List<Control> _controls;
-			private SettingsData _settings;
 
 			private KeyValuePair<int, string> _kvpBestConfig;
 			private List<KeyValuePair<int, string>> _orderedConfigs;
+
+			private VpnProfileData _profileData;
 
 			private List<TextBox> _configsBoxes;
 			private List<Button> _configsPriorityButtons;
 
 			#region CTOR & Public Interface
 
-			public ConfigManager()
+			public ConfigManager(ProfileData<VpnProfileData> profileData)
 			{
 				LogWriter.Write($"ConfigManager # Constructed new ConfigManager.");
+				StartTime = DateTime.Now;
+				_profileData = profileData as VpnProfileData;
+
+				_configsBoxes = new List<TextBox>();
+				_configsPriorityButtons = new List<Button>();
 			}
 
 			public bool Start()
@@ -128,30 +137,25 @@ namespace MediaManager.VPN
 				_controls = controls;
 			}
 
-			public void SetSettings(ref SettingsData settings)
+			public bool GetError(ref string detailedError)
 			{
-				if (settings == null)
-				{
-					// TODO: Add error case.
-					return;
-				}
+				if (_state != ConfigManagerState.Error) return false;
 
-				_settings = settings;
-				_configsBoxes = new List<TextBox>();
-				_configsPriorityButtons = new List<Button>();
-			}
-
-			public string GetError(ref string detailedError)
-			{
 				SetState(ConfigManagerState.Idle);
 
-				detailedError = _detailedErrorString;
-				return _errorString;
+				LogWriter.Write($"ConfigManager # Error dump: {_detailedErrorString}");
+				detailedError = _errorString;
+				return true;
 			}
 
 			public string GetUpTime()
 			{
 				return "00:00:00";
+			}
+
+			public void SaveData()
+			{
+				// TODO: save data
 			}
 
 			#endregion Public Interface
@@ -175,50 +179,49 @@ namespace MediaManager.VPN
 						switch (itemTag)
 						{
 							case CONTROL_ID_CONFIG_0:
-
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig0))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[0].Path))
 								{
-									configSplit = _settings.VpnConfig0.Split('.');
+									configSplit = _profileData.VpnConfig[0].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
 
 							case CONTROL_ID_CONFIG_1:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig1))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[1].Path))
 								{
-									configSplit = _settings.VpnConfig1.Split('.');
+									configSplit = _profileData.VpnConfig[1].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
 
 							case CONTROL_ID_CONFIG_2:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig2))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[2].Path))
 								{
-									configSplit = _settings.VpnConfig2.Split('.');
+									configSplit = _profileData.VpnConfig[2].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
 
 							case CONTROL_ID_CONFIG_3:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig3))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[3].Path))
 								{
-									configSplit = _settings.VpnConfig3.Split('.');
+									configSplit = _profileData.VpnConfig[3].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
 
 							case CONTROL_ID_CONFIG_4:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig4))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[4].Path))
 								{
-									configSplit = _settings.VpnConfig4.Split('.');
+									configSplit = _profileData.VpnConfig[4].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
 
 							case CONTROL_ID_CONFIG_5:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig5))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[5].Path))
 								{
-									configSplit = _settings.VpnConfig5.Split('.');
+									configSplit = _profileData.VpnConfig[5].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								break;
@@ -235,27 +238,27 @@ namespace MediaManager.VPN
 					switch (itemTag)
 					{
 						case CONTROL_ID_PRIORITY_0:
-							item.Text = _settings.VpnConfigPriority0.ToString();
+							item.Text = _profileData.VpnConfig[0].Path;
 							break;
 
 						case CONTROL_ID_PRIORITY_1:
-							item.Text = _settings.VpnConfigPriority1.ToString();
+							item.Text = _profileData.VpnConfig[1].Path;
 							break;
 
 						case CONTROL_ID_PRIORITY_2:
-							item.Text = _settings.VpnConfigPriority2.ToString();
+							item.Text = _profileData.VpnConfig[2].Path;
 							break;
 
 						case CONTROL_ID_PRIORITY_3:
-							item.Text = _settings.VpnConfigPriority3.ToString();
+							item.Text = _profileData.VpnConfig[3].Path;
 							break;
 
 						case CONTROL_ID_PRIORITY_4:
-							item.Text = _settings.VpnConfigPriority4.ToString();
+							item.Text = _profileData.VpnConfig[4].Path;
 							break;
 
 						case CONTROL_ID_PRIORITY_5:
-							item.Text = _settings.VpnConfigPriority5.ToString();
+							item.Text = _profileData.VpnConfig[5].Path;
 							break;
 					}
 				}
@@ -286,9 +289,9 @@ namespace MediaManager.VPN
 						switch (buttonTag)
 						{
 							case CONTROL_ID_CONFIG_0:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig0))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[0].Path))
 								{
-									configSplit = _settings.VpnConfig0.Split('.');
+									configSplit = _profileData.VpnConfig[0].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 
@@ -296,27 +299,27 @@ namespace MediaManager.VPN
 								continue;
 
 							case CONTROL_ID_CONFIG_1:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig1))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[1].Path))
 								{
-									configSplit = _settings.VpnConfig1.Split('.');
+									configSplit = _profileData.VpnConfig[1].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								_configsBoxes.Add((TextBox)item);
 								continue;
 
 							case CONTROL_ID_CONFIG_2:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig2))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[2].Path))
 								{
-									configSplit = _settings.VpnConfig2.Split('.');
+									configSplit = _profileData.VpnConfig[2].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								_configsBoxes.Add((TextBox)item);
 								continue;
 
 							case CONTROL_ID_CONFIG_3:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig3))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[3].Path))
 								{
-									configSplit = _settings.VpnConfig3.Split('.');
+									configSplit = _profileData.VpnConfig[3].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 
@@ -324,18 +327,18 @@ namespace MediaManager.VPN
 								continue;
 
 							case CONTROL_ID_CONFIG_4:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig4))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[4].Path))
 								{
-									configSplit = _settings.VpnConfig4.Split('.');
+									configSplit = _profileData.VpnConfig[4].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								_configsBoxes.Add((TextBox)item);
 								continue;
 
 							case CONTROL_ID_CONFIG_5:
-								if (!string.IsNullOrWhiteSpace(_settings.VpnConfig5))
+								if (!string.IsNullOrWhiteSpace(_profileData.VpnConfig[5].Path))
 								{
-									configSplit = _settings.VpnConfig5.Split('.');
+									configSplit = _profileData.VpnConfig[5].Path.Split('.');
 									item.Text = configSplit[0];
 								}
 								_configsBoxes.Add((TextBox)item);
@@ -362,22 +365,22 @@ namespace MediaManager.VPN
 								switch (buttonTag)
 								{
 									case CONTROL_ID_PRIORITY_0:
-										item.Text = _settings.VpnConfigPriority0.ToString();
+										item.Text = _profileData.VpnConfig[0].Priority.ToString();
 										continue;
 									case CONTROL_ID_PRIORITY_1:
-										item.Text = _settings.VpnConfigPriority1.ToString();
+										item.Text = _profileData.VpnConfig[1].Priority.ToString();
 										continue;
 									case CONTROL_ID_PRIORITY_2:
-										item.Text = _settings.VpnConfigPriority2.ToString();
+										item.Text = _profileData.VpnConfig[2].Priority.ToString();
 										continue;
 									case CONTROL_ID_PRIORITY_3:
-										item.Text = _settings.VpnConfigPriority3.ToString();
+										item.Text = _profileData.VpnConfig[3].Priority.ToString();
 										continue;
 									case CONTROL_ID_PRIORITY_4:
-										item.Text = _settings.VpnConfigPriority4.ToString();
+										item.Text = _profileData.VpnConfig[4].Priority.ToString();
 										continue;
 									case CONTROL_ID_PRIORITY_5:
-										item.Text = _settings.VpnConfigPriority5.ToString();
+										item.Text = _profileData.VpnConfig[5].Priority.ToString();
 										continue;
 								}
 
@@ -398,9 +401,12 @@ namespace MediaManager.VPN
 			{
 				List<KeyValuePair<int, string>> configs = new List<KeyValuePair<int, string>>
 				{
-					new KeyValuePair<int, string>(_settings.VpnConfigPriority0, _settings.VpnConfig0),
-					new KeyValuePair<int, string>(_settings.VpnConfigPriority1, _settings.VpnConfig1),
-					new KeyValuePair<int, string>(_settings.VpnConfigPriority2, _settings.VpnConfig2)
+					new KeyValuePair<int, string>(_profileData.VpnConfig[0].Priority, _profileData.VpnConfig[0].Path),
+					new KeyValuePair<int, string>(_profileData.VpnConfig[1].Priority, _profileData.VpnConfig[1].Path),
+					new KeyValuePair<int, string>(_profileData.VpnConfig[2].Priority, _profileData.VpnConfig[2].Path),
+					new KeyValuePair<int, string>(_profileData.VpnConfig[3].Priority, _profileData.VpnConfig[3].Path),
+					new KeyValuePair<int, string>(_profileData.VpnConfig[4].Priority, _profileData.VpnConfig[4].Path),
+					new KeyValuePair<int, string>(_profileData.VpnConfig[5].Priority, _profileData.VpnConfig[5].Path),
 				};
 
 				_orderedConfigs = new List<KeyValuePair<int, string>>();
@@ -418,7 +424,7 @@ namespace MediaManager.VPN
 
 					foundConfig = true;
 					_kvpBestConfig = configItem; // Going to need this later, no point in throwing it away.
-					_settings.ActiveVpnConfg = configItem.Value;
+					_profileData.ActiveConfig = configItem.Value;
 					break;
 				}
 
@@ -446,7 +452,7 @@ namespace MediaManager.VPN
 
 					if (!Path.IsPathRooted(kvpConfig.Value))
 					{
-						ovpnConfigRootPath = Path.Combine(_settings.VpnConfigPath, kvpConfig.Value);
+						ovpnConfigRootPath = Path.Combine(_profileData.ConfigPath, kvpConfig.Value);
 					}
 
 					var ovpnFileContent = File.ReadAllLines(ovpnConfigRootPath);
@@ -470,19 +476,19 @@ namespace MediaManager.VPN
 						index = Array.FindIndex(ovpnFileContent, x => x.StartsWith("auth-user-pass"));
 						if (index >= 0)
 						{
-							if (_settings.VpnUserName == null || _settings.VpnPassword == null)
+							if (_profileData.Username == null || _profileData.Password == null)
 							{
 								throw new ArgumentException("Username or password cannot be null");
 							}
 
 							// Create a credentials file as we're assuming there isn't one, if so it doesn't matter anyway.
 							var passFileName = Path.Combine(Path.GetTempPath(), "ovpnpass.txt").Replace(@"\", @"\\");
-							File.WriteAllLines(passFileName, new[] { _settings.VpnUserName, _settings.VpnPassword });
+							File.WriteAllLines(passFileName, new[] { _profileData.Username, _profileData.Password });
 							ovpnFileContent[index] = $"auth-user-pass {passFileName}";
 						}
 						else
 						{
-							if (_settings.VpnUserName != null || _settings.VpnPassword != null)
+							if (_profileData.Username != null || _profileData.Password != null)
 							{
 								throw new ArgumentException($"Username or password are provided but the *.ovpn file ({ovpnConfigRootPath}) doesn't have the line 'auth-user-pass'");
 							}
@@ -517,7 +523,7 @@ namespace MediaManager.VPN
 				{
 					CheckFileExists = true,
 					Multiselect = false,
-					InitialDirectory = _settings.VpnConfigPath,
+					InitialDirectory = _profileData.ConfigPath,
 					Filter = "Open VPN Config Files (*.ovpn)|*.ovpn"
 				};
 
@@ -536,44 +542,43 @@ namespace MediaManager.VPN
 				switch (buttonTag)
 				{
 					case CONTROL_ID_BROWSE_0:
-						_settings.VpnConfig0 = dialog.SafeFileName;
+						_profileData.VpnConfig[0].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						            $"[{buttonTag}, {_settings.VpnConfig0}].");
+						            $"[{buttonTag}, { _profileData.VpnConfig[0].Path}].");
 						break;
 
 					case CONTROL_ID_BROWSE_1:
-						_settings.VpnConfig1 = dialog.SafeFileName;
+						_profileData.VpnConfig[1].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						            $"[{buttonTag}, {_settings.VpnConfig1}].");
+						            $"[{buttonTag}, { _profileData.VpnConfig[1].Path}].");
 						break;
 
 					case CONTROL_ID_BROWSE_2:
-						_settings.VpnConfig2 = dialog.SafeFileName;
+						_profileData.VpnConfig[2].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						            $"[{buttonTag}, {_settings.VpnConfig2}].");
+						            $"[{buttonTag}, { _profileData.VpnConfig[2].Path}].");
 						break;
 
 					case CONTROL_ID_BROWSE_3:
-						_settings.VpnConfig3 = dialog.SafeFileName;
+						_profileData.VpnConfig[3].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						                $"[{buttonTag}, {_settings.VpnConfig3}].");
+						                $"[{buttonTag}, { _profileData.VpnConfig[3].Path}].");
 						break;
 
 					case CONTROL_ID_BROWSE_4:
-						_settings.VpnConfig4 = dialog.SafeFileName;
+						_profileData.VpnConfig[4].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						                $"[{buttonTag}, {_settings.VpnConfig4}].");
+						                $"[{buttonTag}, { _profileData.VpnConfig[4].Path}].");
 						break;
 
 					case CONTROL_ID_BROWSE_5:
-						_settings.VpnConfig5 = dialog.SafeFileName;
+						_profileData.VpnConfig[5].Path = dialog.SafeFileName;
 						LogWriter.Write($"ConfigManager # Updating config file for slot " +
-						                $"[{buttonTag}, {_settings.VpnConfig5}].");
+						                $"[{buttonTag}, { _profileData.VpnConfig[5].Path}].");
 						break;
 				}
 
-				_settings.Save();
-
+				_profileData.Export();
 			}
 
 			private void PriorityButtonClick(Button sender, MouseEventArgs e)
@@ -591,16 +596,16 @@ namespace MediaManager.VPN
 						{
 							case CONTROL_ID_PRIORITY_0:
 
-								if (_settings.VpnConfigPriority0 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[0].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority0++;
+									_profileData.VpnConfig[0].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority0 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[0].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority0;
+								priority = _profileData.VpnConfig[0].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -609,16 +614,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_1:
 
-								if (_settings.VpnConfigPriority1 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[1].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority1++;
+									_profileData.VpnConfig[1].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority1 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[1].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority1;
+								priority = _profileData.VpnConfig[1].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -627,16 +632,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_2:
 
-								if (_settings.VpnConfigPriority2 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[2].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority2++;
+									_profileData.VpnConfig[2].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority2 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[2].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority2;
+								priority = _profileData.VpnConfig[2].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -645,16 +650,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_3:
 
-								if (_settings.VpnConfigPriority3 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[3].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority3++;
+									_profileData.VpnConfig[3].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority3 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[3].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority3;
+								priority = _profileData.VpnConfig[3].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -663,16 +668,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_4:
 
-								if (_settings.VpnConfigPriority4 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[4].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority4++;
+									_profileData.VpnConfig[4].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority4 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[4].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority4;
+								priority = _profileData.VpnConfig[4].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -681,16 +686,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_5:
 
-								if (_settings.VpnConfigPriority5 < LOWEST_PRIORITY)
+								if (_profileData.VpnConfig[5].Priority < LOWEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority5++;
+									_profileData.VpnConfig[5].Priority++;
 								}
 								else
 								{
-									_settings.VpnConfigPriority5 = HIGHEST_PRIORITY;
+									_profileData.VpnConfig[5].Priority = HIGHEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority5;
+								priority = _profileData.VpnConfig[5].Priority;
 
 								LogWriter.Write($"ConfigManager # Increase config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -706,16 +711,16 @@ namespace MediaManager.VPN
 						{
 							case CONTROL_ID_PRIORITY_0:
 
-								if (_settings.VpnConfigPriority0 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[0].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority0--;
+									_profileData.VpnConfig[0].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority0 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[0].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority0;
+								priority = _profileData.VpnConfig[0].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -724,16 +729,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_1:
 
-								if (_settings.VpnConfigPriority1 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[1].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority1--;
+									_profileData.VpnConfig[1].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority1 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[1].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority1;
+								priority = _profileData.VpnConfig[1].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -742,16 +747,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_2:
 
-								if (_settings.VpnConfigPriority2 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[2].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority2--;
+									_profileData.VpnConfig[2].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority2 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[2].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority2;
+								priority = _profileData.VpnConfig[2].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 											$"[{buttonTag}, {priority}].");
@@ -760,16 +765,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_3:
 
-								if (_settings.VpnConfigPriority3 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[3].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority3--;
+									_profileData.VpnConfig[3].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority3 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[3].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority3;
+								priority = _profileData.VpnConfig[3].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -778,16 +783,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_4:
 
-								if (_settings.VpnConfigPriority4 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[4].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority4--;
+									_profileData.VpnConfig[4].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority4 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[4].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority4;
+								priority = _profileData.VpnConfig[4].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -796,16 +801,16 @@ namespace MediaManager.VPN
 
 							case CONTROL_ID_PRIORITY_5:
 
-								if (_settings.VpnConfigPriority5 > HIGHEST_PRIORITY)
+								if (_profileData.VpnConfig[5].Priority > HIGHEST_PRIORITY)
 								{
-									_settings.VpnConfigPriority5--;
+									_profileData.VpnConfig[5].Priority--;
 								}
 								else
 								{
-									_settings.VpnConfigPriority5 = LOWEST_PRIORITY;
+									_profileData.VpnConfig[5].Priority = LOWEST_PRIORITY;
 								}
 
-								priority = _settings.VpnConfigPriority5;
+								priority = _profileData.VpnConfig[5].Priority;
 
 								LogWriter.Write($"ConfigManager # Decrease config priority for slot " +
 												$"[{buttonTag}, {priority}].");
@@ -816,11 +821,9 @@ namespace MediaManager.VPN
 						break;
 				}
 
-				
-
 				sender.Text = priority.ToString();
 
-				_settings.Save();
+				_profileData.Export();
 			}
 
 			#endregion Control Event Handlers

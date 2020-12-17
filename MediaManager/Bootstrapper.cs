@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
+using MediaManager.Core.Profile;
 using MediaManager.GUI;
 using MediaManager.Logging;
 
@@ -15,10 +16,30 @@ namespace MediaManager
 		{
 			LogWriter.Initialize();
 			HeartbeatManager.Initialize();
-			
+
+			LogWriter.Write("Initialise # Pre-GUI data loading...");
+
+			ProfileManager.Initialize();
+
+			ProfileManager.Instance.Start();
+
+			while (ProfileManager.Instance.State != (int) ProfileManager.ProfileManagerState.Running)
+			{
+				LogWriter.Write("Initialise # Waiting for profile to be loaded.");
+				ProfileManager.Instance.Update();
+
+				string errorString = "";
+				if (ProfileManager.Instance.GetError(ref errorString))
+				{
+					LogWriter.Write($"Encountered a major error while loading profile data.\n\n{errorString}", DebugPriority.High, true);
+				}
+			}
+
 			_main = new MainForm(args);
 
+			HeartbeatManager.Instance.AddUpdateCall(ProfileManager.Instance.Update);
 			HeartbeatManager.Instance.AddUpdateCall(_main.MainUpdate);
+
 			HeartbeatManager.Instance.Start(HeartbeatManager.OperatingMode.Active);
 
 			if (!Config.CORE_LEAK_EXCEPTIONS)

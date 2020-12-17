@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using MediaManager.Actions;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Downloads;
 using MediaManager.GUI.Status;
 using MediaManager.Logging;
@@ -21,17 +22,14 @@ namespace MediaManager.GUI
 {
 	public partial class MainForm : Form
 	{
-		
-		private SettingsData _settingData;
 		private SettingsForm _settingsForm;
 		private readonly Dictionary<int, List<string>> _errorMessages = new Dictionary<int, List<string>>();
 		private DriveDisplay _statusDriveDisplay;
+		private ProfileData<CoreProfileData> _coreProfileData;
 
 		public MainForm(string[] args)
 		{
 			LogWriter.Write("Constructed MainForm.");
-
-			_settingData = new SettingsData(Settings.Default);
 
 			InitializeComponent();
 			InitializeKeepAlive();
@@ -45,10 +43,10 @@ namespace MediaManager.GUI
 			lblDebugMode.Visible = true;
 #endif
 
-			if (_settingData.VpnConnectOnBoot)
-			{
-				//ConnectVpn();
-			}
+			//if (_settingData.VpnConnectOnBoot)
+			//{
+			//	//ConnectVpn();
+			//}
 
 			lblVersion.Text = Application.ProductVersion;
 			StartPosition = FormStartPosition.Manual;
@@ -101,7 +99,11 @@ namespace MediaManager.GUI
 
 		private void InitializeStatus()
 		{
-			_statusDriveDisplay = new DriveDisplay(_settingData);
+			//_coreProfileData = ProfileManager.Instance.ImportData<CoreProfileData>();
+			_coreProfileData = new CoreProfileData(ProfileManager.Instance.GetProfilePath());
+			_coreProfileData.Import();
+
+			_statusDriveDisplay = new DriveDisplay(_coreProfileData);
 			_statusDriveDisplay.AttachControls(statusTableDisk);
 			_statusDriveDisplay?.Update();
 			LogWriter.Write("Forms # Initialized status manager components.");
@@ -213,8 +215,7 @@ namespace MediaManager.GUI
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			_settingData.Save();
-			Settings.Default.Save();
+			_coreProfileData.Export();
 			VpnManager.Instance?.Destroy();
 			SabManager.Instance?.KillProcess();
 			LogWriter.Write($"MainForm # Finished save, program closed.");
@@ -239,9 +240,8 @@ namespace MediaManager.GUI
 			panelShade.Size = new Size(1920, 1080);
 			panelShade.Visible = true;
 
-			_settingsForm = new SettingsForm(ref _settingData);
+			_settingsForm = new SettingsForm();
 			_settingsForm.ShowDialog();
-			_settingData = _settingsForm.GetData();
 
 			panelShade.Location = new Point(1920, 1080);
 			panelShade.Visible = false;
@@ -268,7 +268,6 @@ namespace MediaManager.GUI
 			}
 
 			ActionsManager.Instance.SetControls(controls);
-			ActionsManager.Instance.SetSettings(ref _settingData);
 			ActionsManager.Instance.Start();
 		}
 
@@ -326,7 +325,6 @@ namespace MediaManager.GUI
 				return;
 			}
 
-			SabManager.Instance.SetSettings(ref _settingData);
 			SabManager.Instance.SetControls(sabControls);
 		}
 
@@ -481,6 +479,7 @@ namespace MediaManager.GUI
 
 			lblVpnUptime.Text = VpnManager.Instance.GetUpTime();
 
+			// TODO: Split up the GUI from the functional logic
 			switch ((VpnManager.VpnManagerState) VpnManager.Instance.State)
 			{
 				case VpnManager.VpnManagerState.Idle:
@@ -492,6 +491,13 @@ namespace MediaManager.GUI
 				case VpnManager.VpnManagerState.LoadingSocket:
 					lblVpnState.Text = "INITIALISE";
 					lblVpnState.ForeColor = Color.Yellow;
+					break;
+				case VpnManager.VpnManagerState.Error:
+					string error = "";
+					if (VpnManager.Instance.GetError(ref error))
+					{
+						LogWriter.Write($"MainForm # Vpn Manager encountered an error: {error}.", DebugPriority.High);
+					}
 					break;
 			}
 
@@ -599,7 +605,6 @@ namespace MediaManager.GUI
 					return;
 				}
 
-				VpnManager.Instance.SetSettings(ref _settingData);
 				VpnManager.Instance.SetControls(vpnControls);
 
 				if (VpnManager.Instance.Start())
@@ -612,9 +617,9 @@ namespace MediaManager.GUI
 
 					string errorMegDetailed = "";
 
-					var errorMsg = VpnManager.Instance.GetError(ref errorMegDetailed);
+					var errorMsg = "";
 
-					if (errorMsg.Length > 0)
+					if (VpnManager.Instance.GetError(ref errorMegDetailed))
 					{
 						errorMessages.Add(errorMsg);
 						errorMessages.Add(errorMegDetailed);
@@ -622,7 +627,7 @@ namespace MediaManager.GUI
 						_errorMessages.Add(errorMsg.GetHashCode(), errorMessages);
 					}
 
-					MessageBox.Show("The VPN configs are still being loaded, please wait.", "Please be patient.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show("The VPN configs are still being loaded, please wait.", "Please be patient", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					VpnManager.Instance.Start();
 				}
@@ -645,15 +650,15 @@ namespace MediaManager.GUI
 		// TODO: Move this into the sab manager class
 		private void LblTitleSab_Click(object sender, EventArgs e)
 		{
-			var sabAddress = new StringBuilder();
-			sabAddress.Append("http://");
-			sabAddress.Append(_settingData.SabIP);
-			sabAddress.Append(":");
-			sabAddress.Append(_settingData.SabPort);
-			sabAddress.Append("/sabnzbd/");
+			//var sabAddress = new StringBuilder();
+			//sabAddress.Append("http://");
+			//sabAddress.Append(_settingData.SabIP);
+			//sabAddress.Append(":");
+			//sabAddress.Append(_settingData.SabPort);
+			//sabAddress.Append("/sabnzbd/");
 
-			LogWriter.Write($"MainForm # Starting new Downloads View at: {sabAddress}");
-			Process.Start(sabAddress.ToString());
+			//LogWriter.Write($"MainForm # Starting new Downloads View at: {sabAddress}");
+			//Process.Start(sabAddress.ToString());
 		}
 
 	}

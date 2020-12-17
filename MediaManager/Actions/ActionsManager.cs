@@ -14,7 +14,7 @@ using MediaManager.VPN;
 
 namespace MediaManager.Actions
 {
-	class ActionsManager : IManager
+	class ActionsManager : IManagerAdvanced
 	{
 		public enum ActionsManagerState
 		{
@@ -47,7 +47,8 @@ namespace MediaManager.Actions
 		private string _errorString;
 		private string _detailedErrorString;
 
-		private SettingsData _settings;
+		public DateTime StartTime { get; }
+
 		private List<Control> _controls;
 
 		private Timer _streamingModeTimer;
@@ -74,6 +75,12 @@ namespace MediaManager.Actions
 
 			_instance = new ActionsManager();
 		}
+
+		private ActionsManager()
+		{
+			StartTime = DateTime.Now;
+		}
+
 		#endregion
 
 		public bool Start()
@@ -129,27 +136,24 @@ namespace MediaManager.Actions
 			_controls = controls;
 		}
 
-		public void SetSettings(ref SettingsData settings)
+		public bool GetError(ref string error)
 		{
-			if (settings == null)
-			{
-				LogWriter.Write($"ActionsManager # Passed settings data was NULL.", DebugPriority.High);
-			}
+			if (_state != ActionsManagerState.Error) return false;
 
-			_settings = settings;
-		}
-
-		public string GetError(ref string detailedError)
-		{
 			SetState(ActionsManagerState.Idle);
 
-			detailedError = _detailedErrorString;
-			return _errorString;
+			error = _detailedErrorString;
+			return true;
 		}
 
 		public string GetUpTime()
 		{
 			return "00:00:00";
+		}
+
+		public void SaveData()
+		{
+			// TODO: Save profile data
 		}
 
 		private void SetState(ActionsManagerState newState)
@@ -274,17 +278,18 @@ namespace MediaManager.Actions
 						"ActionsManager # DisableStreamingMode - Failed to start process, attempting to process errors.");
 
 					string error = "";
-					SabManager.Instance.GetError(ref error);
-
-					if (!SabManager.Instance.StartProcess())
+					if (SabManager.Instance.GetError(ref error))
 					{
-						LogWriter.Write(
-							"ActionsManager # DisableStreamingMode - Critical Error! Processed errors but still could not start.",
-							DebugPriority.High, true);
-						return;
-					}
+						if (!SabManager.Instance.StartProcess())
+						{
+							LogWriter.Write(
+								"ActionsManager # DisableStreamingMode - Critical Error! Processed errors but still could not start.",
+								DebugPriority.High, true);
+							return;
+						}
 
-					LogWriter.Write($"ActionsManager # DisableStreamingMode - Got error: {error}");
+						LogWriter.Write($"ActionsManager # DisableStreamingMode - Got error: {error}");
+					}
 				}
 			}
 
