@@ -355,7 +355,8 @@ namespace MediaManager.GUI
 
 		private void btnSabBinaryBrowse_Click(object sender, EventArgs e)
 		{
-			_sabProfileData.BinaryPath = ShowFolderBrowse();
+			_sabProfileData.BinaryPath =
+				ShowFileBrowse(Environment.SpecialFolder.MyComputer.ToString(), "All files (*.*)|*.*");
 		}
 
 		private void tbxSabApi_TextChanged(object sender, EventArgs e)
@@ -388,7 +389,7 @@ namespace MediaManager.GUI
 
 		private void btnVpnBinaryBrowse_Click(object sender, EventArgs e)
 		{
-			_vpnProfileData.BinaryPath = ShowFolderBrowse();
+			_vpnProfileData.BinaryPath = ShowFileBrowse(Environment.SpecialFolder.MyComputer.ToString(), "All files (*.*)|*.*");
 		}
 
 		private void btnVpnConfigBrowse_Click(object sender, EventArgs e)
@@ -417,6 +418,21 @@ namespace MediaManager.GUI
 			DialogResult result = dialog.ShowDialog();
 
 			return result != DialogResult.OK ? "" : dialog.SelectedPath;
+		}
+
+		private string ShowFileBrowse(string rootFolder, string filter)
+		{
+			var dialog = new OpenFileDialog
+			{
+				CheckFileExists = true,
+				Multiselect = false,
+				InitialDirectory = rootFolder,
+				Filter = filter
+			};
+
+			DialogResult result = dialog.ShowDialog();
+
+			return result != DialogResult.OK ? "" : dialog.FileName;
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)

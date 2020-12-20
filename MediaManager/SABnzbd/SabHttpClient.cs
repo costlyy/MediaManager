@@ -30,6 +30,7 @@ namespace MediaManager.SABnzbd
 			{
 				None,
 				GetVersion,
+				ValidateApi,
 				GetStatus,
 				Finished,
 				Error,
@@ -253,9 +254,15 @@ namespace MediaManager.SABnzbd
 					case ClientSubState.GetVersion:
 						ProcessGetVersion();
 						break;
+
+					case ClientSubState.ValidateApi:
+						ProcessValidateApi();
+						break;
+
 					case ClientSubState.GetStatus:
 						ProcessGetStatus();
 						break;
+
 					case ClientSubState.Finished:
 						LogWriter.Write($"SabClient # Verified connection to SABnzbd via HttpClient, awaiting commands.");
 
@@ -296,12 +303,12 @@ namespace MediaManager.SABnzbd
 			    }
 
 			    // Delayed async calls can be thrown away.
-				if (_subState == ClientSubState.GetStatus) return;
+			    if (_subState == ClientSubState.ValidateApi || _subState == ClientSubState.Error) return;
 
 				if (JsonParser.IsValid(version))
 				{
 					Data.Version = new SabCommands.SabManager.GetVersion().Parse(version) as JsonVersion;
-					SetSubState(ClientSubState.GetStatus);
+					SetSubState(ClientSubState.ValidateApi);
 				}
 				else
 				{
@@ -334,6 +341,76 @@ namespace MediaManager.SABnzbd
 				return returnValue;
 			}
 
+			private async void ProcessValidateApi()
+			{
+				string returnValue = "";
+
+				try
+				{
+					returnValue = await ValidateApiAsync();
+				}
+				catch (TaskCanceledException cancelException)
+				{
+					LogWriter.Write($"SabClient # Caught TaskCanceledException while validating API: \n{cancelException}",
+						DebugPriority.High, true);
+					SetSubState(ClientSubState.Error);
+					return;
+				}
+				catch (HttpRequestException httpException)
+				{
+					LogWriter.Write($"SabClient # Caught HttpRequestException while validating API: \n{httpException}",
+						DebugPriority.High, true);
+					SetSubState(ClientSubState.Error);
+					return;
+				}
+
+				// Delayed async calls can be thrown away.
+				if (_subState == ClientSubState.GetStatus || _subState == ClientSubState.Error) return;
+
+				if (JsonParser.IsValid(returnValue))
+				{
+					SetSubState(ClientSubState.GetStatus);
+				}
+				else
+				{
+					SetSubState(ClientSubState.Error);
+
+					if (!JsonParser.IsKeyCorrect(returnValue))
+					{
+						LogWriter.Write($"SabClient # SabNZBD API Key is incorrectly set. Please update the API key in the general settings menu.", DebugPriority.High, true);
+					}
+					else
+					{
+						LogWriter.Write($"SabClient # Failed to validate API key.");
+					}
+				}
+			}
+
+			private async Task<string> ValidateApiAsync()
+			{
+				string returnValue = "";
+
+				var cmd = new SabCommands.SabManager.GetStatus();
+				LogWriter.Write($"SabClient # Waiting for API validation from command: {JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()}");
+				HttpResponseMessage response = await _client.GetAsync($"{JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()}");
+
+				try
+				{
+					response.EnsureSuccessStatusCode();
+				}
+				catch (HttpRequestException ex)
+				{
+					LogWriter.Write($"SabClient # Encountered an error when verifying GET success. Query: \n\n {JsonParser.Format()}{_profileData.ApiKey}{cmd.CommandText()} \n\nError: \n\n{ex}");
+				}
+
+				if (response.IsSuccessStatusCode)
+				{
+					returnValue = await response.Content.ReadAsStringAsync();
+				}
+
+				return returnValue;
+			}
+
 			private async void ProcessGetStatus()
 			{
 				string status = "N/A";
@@ -356,7 +433,7 @@ namespace MediaManager.SABnzbd
 				}
 
 				// Delayed async calls can be thrown away.
-				if (_subState == ClientSubState.Finished) return;
+				if (_subState == ClientSubState.Finished || _subState == ClientSubState.Error) return;
 
 				if (JsonParser.IsValid(status))
 				{

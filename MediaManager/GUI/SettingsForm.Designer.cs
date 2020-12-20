@@ -112,7 +112,7 @@
 			this.bntSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.bntSave.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.bntSave.ForeColor = System.Drawing.SystemColors.Control;
-			this.bntSave.Location = new System.Drawing.Point(10, 420);
+			this.bntSave.Location = new System.Drawing.Point(16, 418);
 			this.bntSave.Name = "bntSave";
 			this.bntSave.Size = new System.Drawing.Size(131, 40);
 			this.bntSave.TabIndex = 26;
@@ -169,7 +169,7 @@
 			this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnCancel.Font = new System.Drawing.Font("Rubik", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnCancel.ForeColor = System.Drawing.SystemColors.Control;
-			this.btnCancel.Location = new System.Drawing.Point(10, 470);
+			this.btnCancel.Location = new System.Drawing.Point(15, 469);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(131, 40);
 			this.btnCancel.TabIndex = 25;
@@ -358,7 +358,7 @@
 			// tbxSabBinary
 			// 
 			this.tbxSabBinary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-			this.tbxSabBinary.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxSabBinary.Font = new System.Drawing.Font("Rubik", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tbxSabBinary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.tbxSabBinary.Location = new System.Drawing.Point(24, 67);
 			this.tbxSabBinary.Multiline = true;
@@ -553,7 +553,7 @@
 			// tbxVpnConfigPath
 			// 
 			this.tbxVpnConfigPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-			this.tbxVpnConfigPath.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxVpnConfigPath.Font = new System.Drawing.Font("Rubik", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tbxVpnConfigPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.tbxVpnConfigPath.Location = new System.Drawing.Point(24, 142);
 			this.tbxVpnConfigPath.Multiline = true;
@@ -620,7 +620,7 @@
 			// tbxVpnBinaryPath
 			// 
 			this.tbxVpnBinaryPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-			this.tbxVpnBinaryPath.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tbxVpnBinaryPath.Font = new System.Drawing.Font("Rubik", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tbxVpnBinaryPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(215)))), ((int)(((byte)(215)))));
 			this.tbxVpnBinaryPath.Location = new System.Drawing.Point(24, 67);
 			this.tbxVpnBinaryPath.Multiline = true;

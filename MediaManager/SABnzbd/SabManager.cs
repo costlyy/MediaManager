@@ -788,6 +788,7 @@ namespace MediaManager.SABnzbd
 
 				case SabHttpClient.ClientState.Error:
 				    ProcessError(_currentComponent);
+				    SetState(SabManagerState.Error);
 					break;
 			}
 		}
