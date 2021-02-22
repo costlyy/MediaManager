@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using MediaManager.Logging;
 using Newtonsoft.Json;
 
@@ -25,6 +26,7 @@ namespace MediaManager.Core.Profile
 		private string _errorString = "";
 		private string _errorStringDetailed = "";
 		private string _profilePath = "";
+		private string _basePath = "";
 
 		#region Singleton
 		private static ProfileManager _instance;
@@ -113,6 +115,32 @@ namespace MediaManager.Core.Profile
 			return _profilePath;
 		}
 
+		public bool DoFactoryReset()
+		{
+			if (_state == ProfileManagerState.Loading)
+			{
+				LogWriter.Write($"ProfileManager # DoFactoryReset waiting for manager to load.");
+				return false;
+			}
+			
+			LogWriter.Initialize();
+
+			try
+			{
+				Directory.Delete(_profilePath, true);
+				Directory.Delete(_basePath, true);
+			}
+			catch (Exception ex)
+			{
+				LogWriter.Write($"ProfileManager # DoFactoryReset caught general exception on reset.\n\n{ex}");
+			}
+
+			SetState(ProfileManagerState.Loading);
+
+			LogWriter.Write($"ProfileManager # DoFactoryReset complete.");
+			return true;
+		}
+
 		private void SetState(ProfileManagerState newState)
 		{
 			LogWriter.Write($"ProfileManager # SetState to new state: {newState} from {_state}.");
@@ -135,7 +163,6 @@ namespace MediaManager.Core.Profile
 			newCoreData.Import();
 		}
 
-
 		private void ProcessLoadingUpdate()
 		{
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -154,6 +181,8 @@ namespace MediaManager.Core.Profile
 				Directory.CreateDirectory(path);
 			}
 
+			_basePath = path;
+
 			path += @"\Profile";
 
 			if (!Directory.Exists(path))
@@ -169,6 +198,8 @@ namespace MediaManager.Core.Profile
 			}
 
 			_profilePath = path;
+
+			LogWriter.Write($"ProfileManager # Located profile at base path: {_basePath}");
 
 			SetState(ProfileManagerState.Running);
 		}

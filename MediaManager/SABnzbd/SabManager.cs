@@ -969,7 +969,11 @@ namespace MediaManager.SABnzbd
 			_currentComponent = null;
 			_bootTimerStarted = false;
 			LogWriter.Write($"SabManager # Cleaned SabManager.");
-			SetState(SabManagerState.Idle);
+
+			if (_state != SabManagerState.Restart)
+			{
+				SetState(SabManagerState.Idle);
+			}
 		}
 
 		#endregion

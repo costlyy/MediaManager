@@ -26,10 +26,9 @@ namespace MediaManager.Logging
 
 		public static void Initialize()
 		{
-			if (_instance != null)
+			if (Exists())
 			{
-				Write("LogWriter # Failed to Initialize, already an instance active.");
-				return;
+				_instance.Reset();
 			}
 
 			_instance = new LogWriter();
@@ -140,6 +139,13 @@ namespace MediaManager.Logging
 		public static bool Exists()
 		{
 			return _instance != null;
+		}
+
+		private void Reset()
+		{
+			_logStream.Flush();
+			_logStream.Close();
+			_logStream = null;
 		}
 
 		public static void Write(string message, DebugPriority priority = DebugPriority.Medium, bool assert = false)

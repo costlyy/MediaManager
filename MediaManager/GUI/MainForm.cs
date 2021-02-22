@@ -660,6 +660,5 @@ namespace MediaManager.GUI
 			//LogWriter.Write($"MainForm # Starting new Downloads View at: {sabAddress}");
 			//Process.Start(sabAddress.ToString());
 		}
-
 	}
 }

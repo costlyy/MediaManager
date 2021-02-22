@@ -238,27 +238,27 @@ namespace MediaManager.VPN
 					switch (itemTag)
 					{
 						case CONTROL_ID_PRIORITY_0:
-							item.Text = _profileData.VpnConfig[0].Path;
+							item.Text = _profileData.VpnConfig[0].Priority.ToString();
 							break;
 
 						case CONTROL_ID_PRIORITY_1:
-							item.Text = _profileData.VpnConfig[1].Path;
+							item.Text = _profileData.VpnConfig[1].Priority.ToString();
 							break;
 
 						case CONTROL_ID_PRIORITY_2:
-							item.Text = _profileData.VpnConfig[2].Path;
+							item.Text = _profileData.VpnConfig[2].Priority.ToString();
 							break;
 
 						case CONTROL_ID_PRIORITY_3:
-							item.Text = _profileData.VpnConfig[3].Path;
+							item.Text = _profileData.VpnConfig[3].Priority.ToString();
 							break;
 
 						case CONTROL_ID_PRIORITY_4:
-							item.Text = _profileData.VpnConfig[4].Path;
+							item.Text = _profileData.VpnConfig[4].Priority.ToString();
 							break;
 
 						case CONTROL_ID_PRIORITY_5:
-							item.Text = _profileData.VpnConfig[5].Path;
+							item.Text = _profileData.VpnConfig[5].Priority.ToString();
 							break;
 					}
 				}

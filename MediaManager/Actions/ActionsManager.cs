@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MediaManager.Core;
+using MediaManager.Core.Profile;
 using MediaManager.Logging;
 using MediaManager.Properties;
 using MediaManager.SABnzbd;
@@ -352,6 +353,12 @@ namespace MediaManager.Actions
 		private void ActionFactoryReset(object sender, EventArgs e)
 		{
 			LogWriter.Write($"ActionsManager # ActionFactoryReset");
+
+			DialogResult result = MessageBox.Show("This operation cannot be undone. Are you sure you wish to delete all data?", "Confirm Delete?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result == DialogResult.No) return;
+			SabManager.Instance?.StopProcess();
+			VpnManager.Instance?.Disconnect(true);
+			ProfileManager.Instance.DoFactoryReset();
 		}
 
 		private void ActionToggleStreamMode(object sender, EventArgs e)

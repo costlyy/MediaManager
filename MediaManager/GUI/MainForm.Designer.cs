@@ -250,6 +250,7 @@ namespace MediaManager.GUI
 			this.btnRestartSab.TabIndex = 35;
 			this.btnRestartSab.Text = "Restart SabNZBD";
 			this.btnRestartSab.UseVisualStyleBackColor = true;
+
 			// 
 			// btnFactoryReset
 			// 
